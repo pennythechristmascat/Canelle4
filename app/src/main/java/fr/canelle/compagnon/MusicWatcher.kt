@@ -60,20 +60,26 @@ object MusicWatcher {
         }
     }
 
+    private val MUSIC_APPS = setOf(SPOTIFY, DEEZER)
+
+    /** Lecteur Spotify ou Deezer (celui qui joue en priorité). Les autres applications et sons sont ignorés. */
     private fun playingController(ctx: Context): MediaController? {
         if (!titleAccess(ctx)) return null
         return runCatching {
             val msm = ctx.getSystemService(MediaSessionManager::class.java)
-            val list = msm.getActiveSessions(ComponentName(ctx, MusicListener::class.java))
+            val list = msm.getActiveSessions(ComponentName(ctx, MusicListener::class.java)).filter { it.packageName in MUSIC_APPS }
             list.firstOrNull { it.playbackState?.state == PlaybackState.STATE_PLAYING } ?: list.firstOrNull()
         }.getOrNull()
     }
 
-    /** { active, playing, title, artist, app, access } */
+    /**
+     * { playing, title, artist, app, access }
+     * playing = Spotify ou Deezer est en train de lire de la musique. Les notifications, vidéos, jeux
+     * et les sons de Canelle lui-même ne comptent pas.
+     */
     fun state(ctx: Context): JSONObject {
-        val am = ctx.getSystemService(AudioManager::class.java)
-        val active = runCatching { am.isMusicActive }.getOrDefault(false)
-        val o = JSONObject().put("active", active).put("access", titleAccess(ctx))
+        val access = titleAccess(ctx)
+        val o = JSONObject().put("access", access).put("playing", false)
         val c = playingController(ctx)
         if (c != null) {
             val playing = c.playbackState?.state == PlaybackState.STATE_PLAYING
@@ -83,7 +89,7 @@ object MusicWatcher {
                 .put("artist", md?.getString(MediaMetadata.METADATA_KEY_ARTIST) ?: md?.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST) ?: "")
                 .put("app", APPS[c.packageName] ?: "")
         }
-        if (!active) release()
+        if (!o.optBoolean("playing")) release()
         return o
     }
 

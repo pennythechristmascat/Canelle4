@@ -513,7 +513,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         <option value="spotify">Appli de musique : Spotify</option>
         <option value="deezer">Appli de musique : Deezer</option>
       </select>
-      <button class="btn" id="musicAccessBtn" type="button" style="margin-top:8px">Afficher le titre en cours (facultatif)</button>
+      <button class="btn" id="musicAccessBtn" type="button" style="margin-top:8px">Autoriser Canelle à voir Spotify et Deezer</button>
       <label class="lab" for="codeIn">Code d'accès</label>
       <div class="code-row">
         <input class="field" id="codeIn" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Entre un code">
@@ -1904,7 +1904,7 @@ setInterval(() => {
 }, 1000);
 
 /* ---------- musique : casque, yeux fermés, et Canelle bouge en rythme ---------- */
-const music = { on: false, pos: 0, neg: 0, title: "", artist: "", app: "", access: false, timer: null, prev: 0, lastNote: 0, sway: 0, synthetic: false };
+const music = { on: false, hinted: false, pos: 0, neg: 0, title: "", artist: "", app: "", access: false, timer: null, prev: 0, lastNote: 0, sway: 0, synthetic: false };
 const MUSIC_ON = [
   { text: "Oh ! De la musique ! *met son casque*", mood: "musique" },
   { text: "Ooh, j'adore ce son ! *enfile son casque*", mood: "musique" },
@@ -1923,8 +1923,7 @@ function musicPoll() {
   let st;
   try { st = JSON.parse(NATIVE.musicState()); } catch (e) { return; }
   music.access = !!st.access;
-  if (ownAudioBusy()) return; // la voix ou les sons de Canelle ne comptent pas comme de la musique
-  const playing = !!st.active && st.playing !== false;
+  const playing = !!st.playing; // uniquement Spotify ou Deezer en lecture
   if (playing) { music.pos++; music.neg = 0; } else { music.neg++; music.pos = 0; }
   if (!music.on && music.pos >= 2) enterMusic(st);
   else if (music.on && music.neg >= 2) exitMusic();
@@ -1994,8 +1993,9 @@ const ICON = {
 function musicCard() {
   return { type: "music", app: music.app, title: music.title, artist: music.artist, playing: music.on };
 }
+// Vrai si Spotify/Deezer joue, ou si on ne peut pas le savoir (autorisation absente) : la commande est alors envoyée quand même.
 function musicActive() {
-  try { return !!JSON.parse(NATIVE.musicState()).active; } catch (e) { return false; }
+  try { const st = JSON.parse(NATIVE.musicState()); return !!st.playing || !st.access; } catch (e) { return true; }
 }
 const NO_MUSIC = [{ text: "Aucune musique ne joue pour l'instant.", mood: "reflechit" }];
 function musicControl(act) {
@@ -2008,8 +2008,13 @@ function playMusic(app, query) {
   const r = NATIVE.musicPlay(app || "", query || "");
   const label = r.split(":")[1] || "";
   if (r.startsWith("ok:")) {
-    speak([{ text: query ? "C'est parti : « " + query + " » sur " + label + " !" : "J'ouvre " + label + " et je relance la musique !", mood: "content" },
-      { text: "*prépare son casque*", mood: "musique" }]);
+    const lines = [{ text: query ? "C'est parti : « " + query + " » sur " + label + " !" : "J'ouvre " + label + " et je relance la musique !", mood: "content" },
+      { text: "*prépare son casque*", mood: "musique" }];
+    if (!music.access && !music.hinted) {
+      music.hinted = true;
+      lines.push({ text: "Pour que je mette mon casque en rythme, autorise-moi dans le menu : « Autoriser Canelle à voir Spotify et Deezer ».", mood: "clin" });
+    }
+    speak(lines);
   } else if (r.startsWith("absent:")) {
     speak([{ text: "Tu n'as pas " + label + " sur ton téléphone.", mood: "reflechit" }, { text: "Je t'ouvre sa page sur le Play Store.", mood: "content" }]);
   } else {
@@ -2021,12 +2026,13 @@ function whatPlaying() {
   if (!NATIVE || !NATIVE.musicState) return;
   let st = {};
   try { st = JSON.parse(NATIVE.musicState()); } catch (e) {}
-  if (!st.active) { speak([{ text: "Aucune musique ne joue pour l'instant.", mood: "reflechit" }, { text: "Tu veux que j'en mette ? Dis « mets de la musique ».", mood: "clin" }]); return; }
-  if (!st.title) {
-    speak([{ text: "J'entends de la musique, mais je ne vois pas son titre.", mood: "reflechit" },
-      { text: "Pour que je le voie : menu, puis « Afficher le titre en cours ».", mood: "content" }]);
+  if (!st.access) {
+    speak([{ text: "Je ne peux pas voir ce que jouent Spotify ou Deezer.", mood: "reflechit" },
+      { text: "Pour ça : menu, puis « Autoriser Canelle à voir Spotify et Deezer ».", mood: "content" }]);
     return;
   }
+  if (!st.playing) { speak([{ text: "Ni Spotify ni Deezer ne jouent pour l'instant.", mood: "reflechit" }, { text: "Tu veux que j'en mette ? Dis « mets de la musique ».", mood: "clin" }]); return; }
+  if (!st.title) { speak([{ text: "Ça joue, mais je ne vois pas le titre.", mood: "reflechit" }]); return; }
   music.title = st.title; music.artist = st.artist || ""; music.app = st.app || "";
   showCard(musicCard(), 20000);
   speak([{ text: "Tu écoutes « " + st.title + " »" + (st.artist ? " de " + st.artist : "") + (st.app ? ", sur " + st.app : "") + ".", mood: "musique" }]);
@@ -2692,7 +2698,8 @@ function renderMusicSettings() {
   document.getElementById("musicNote").textContent =
     (names.length ? "Installée" + (names.length > 1 ? "s" : "") + " : " + names.join(" et ") + ". " : "Ni Spotify ni Deezer ne sont installés. ") +
     "Dis « mets de la musique » ou « joue Daft Punk sur Spotify ». " +
-    (access ? "Canelle voit le titre en cours." : "Pour qu'il voie le titre en cours, autorise-le ci-dessous (facultatif, tout reste sur le téléphone).");
+    (access ? "Canelle met son casque dès que Spotify ou Deezer joue, et voit le titre en cours."
+      : "Pour que Canelle mette son casque quand Spotify ou Deezer joue (et voie le titre), autorise-le ci-dessous. Sans ça, Android ne lui dit pas quelle appli fait du son. Tout reste sur le téléphone.");
   musicSel.value = S.musicApp || "";
   document.getElementById("musicAccessBtn").hidden = access;
 }

@@ -1,4 +1,4 @@
-# Canelle — compagnon de poche (Android) · V5.0.0
+# Canelle — compagnon de poche (Android) · V5.0.1
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -49,9 +49,10 @@ Quand l'appli est ouverte, la **position est actualisée toutes les 2 minutes** 
 ## Musique
 
 - Canelle lance la musique dans **Spotify** ou **Deezer** (Menu → Musique pour choisir l'appli préférée). Deezer peut s'ouvrir sur les résultats de recherche au lieu de lancer directement la lecture.
-- **Quand de la musique joue** (n'importe quelle appli), il met un **casque**, ferme les yeux, bouge et chante. Quand elle s'arrête, il retire son casque.
+- **Quand Spotify ou Deezer joue**, il met un **casque**, ferme les yeux, bouge et chante. Quand la lecture s'arrête (pause ou fin), il retire son casque. Les autres sons du téléphone (notifications, vidéos, jeux, ses propres bruitages) ne déclenchent rien.
+- Pour ça, il faut l'autorisation **Menu → Musique → « Autoriser Canelle à voir Spotify et Deezer »** : sans elle, Android ne dit pas quelle application fait du son.
 - Il suit le **rythme réel** si le téléphone le permet (autorisation micro, rien n'est enregistré), sinon un tempo régulier.
-- **Titre en cours** et boutons précédent / pause / suivant : autorisation facultative dans Menu → Musique (« Afficher le titre en cours »). Canelle ne lit ni ne garde aucune notification.
+- La même autorisation donne le **titre en cours** et les boutons précédent / pause / suivant. Canelle ne lit ni ne garde aucune notification.
 
 ## Jouer avec Canelle
 
