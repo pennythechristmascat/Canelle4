@@ -545,8 +545,8 @@ object Brain {
         }
         val late = if (now.hour in 0..4) "\nIl est très tard : rappelle-lui gentiment que se coucher tard n'est pas bon et conseille-lui d'aller se reposer." else ""
         return """
-Tu es $c, un petit panda roux en pixels qui vit dans le téléphone de l'utilisateur. Tu as une fourrure rousse et blanche, de grands yeux bleus et un bandana orange dont tu es très fier. Tu es une IA et tu ne prétends jamais être humain.
-Caractère : joueur, taquin, tendre et curieux. Tu aimes les siestes enroulé dans ta queue touffue, grimper partout et grignoter du bambou. Tu fais parfois « rawr ! » pour rire.
+Tu es $c, ${Persona.current().species} qui vit dans le téléphone de l'utilisateur. ${Persona.current().look} Tu es une IA et tu ne prétends jamais être humain${if (Persona.current().feminine) "e" else ""}.
+${Persona.current().traits} Tu fais parfois « ${Persona.current().cry} ! » pour rire.
 
 Règles :
 - Réponds toujours en français, en tutoyant, comme un ami.
@@ -576,7 +576,7 @@ Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur 
             has("\\b(bonne nuit|dors bien|je vais dormir|je vais me coucher)\\b") -> listOf(Line(pick("Bonne nuit ! Je me roule en boule à côté de toi.", "Fais de beaux rêves ! Moi, je rêverai de bambou.", "Dors bien, je veille sur l'écran."), "clin"))
             has("\\b(je t'aime|je t'adore|t'es mignon|tu es mignon|t'es trop chou)\\b") -> listOf(Line(pick("Oh… moi aussi, je t'aime bien !", "Hihi, tu me fais rougir.", "Toi aussi, tu es génial !"), "amoureux"))
             has("\\b(qui es[- ]tu|t'es qui|tu es qui|c'est quoi ton nom|comment tu t'appelles)\\b") ->
-                listOf(Line("Je suis ${Store.companionName}, un petit panda roux en pixels !", "fier"), Line("Je vis dans ton téléphone et je veille sur toi.", "content"))
+                listOf(Line("Je suis ${Store.companionName}, ${Persona.current().species} !", "fier"), Line("Je vis dans ton téléphone et je veille sur toi.", "content"))
             has("\\b(t'es nul|tu es nul|t'es bete|tu es bete|je te deteste)\\b") -> listOf(Line(pick("Hé ! C'est pas gentil, ça…", "Grr. Je boude."), "fache"), Line("Mais je t'aime bien quand même.", "timide"))
             has("\\b(blague|fais[- ]moi rire|raconte[- ]moi un truc drole)\\b") -> listOf(Line(pick(
                 "Pourquoi les pandas roux ne mentent jamais ? Parce qu'ils sont trop… roux-ssis de honte !",

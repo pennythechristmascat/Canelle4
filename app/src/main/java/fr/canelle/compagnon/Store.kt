@@ -73,6 +73,17 @@ object Store {
     var javaCrash: String
         get() = str("javaCrash")
         set(v) { p.edit().putString("javaCrash", v).commit() }
+    /** Cerveau installé ("e2b", "e4b" ou "" = aucun) et cerveau en cours de téléchargement. */
+    var modelId: String
+        get() = str("modelId")
+        set(v) { p.edit().putString("modelId", v).commit() }
+    var pendingModel: String
+        get() = str("pendingModel")
+        set(v) = putStr("pendingModel", v)
+    /** Personnage choisi : "canelle", "raton", "chat", "chien" ou "chauve". */
+    var character: String
+        get() = str("character", "canelle")
+        set(v) = putStr("character", v)
     var gpuBroken: Boolean
         get() = p.getBoolean("gpuBroken", false)
         set(v) = putBool("gpuBroken", v)
@@ -272,6 +283,7 @@ object Store {
         .put("hidePrivacy", hidePrivacy)
         .put("musicApp", musicApp)
         .put("skin", skin)
+        .put("character", character)
         .put("ownerFails", ownerFails)
         .put("lockUntil", Access.lockedUntil())
         .put("now", System.currentTimeMillis())

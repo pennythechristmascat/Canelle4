@@ -290,6 +290,13 @@ class MainActivity : ComponentActivity(), ToolHost {
                 if (o.has("hidePrivacy")) Store.hidePrivacy = o.optBoolean("hidePrivacy", Store.hidePrivacy)
                 if (o.has("musicApp")) Store.musicApp = o.optString("musicApp", Store.musicApp)
                 if (o.has("skin")) Store.skin = o.optString("skin", Store.skin)
+                if (o.has("character")) {
+                    val ch = o.optString("character", Store.character)
+                    if (ch != Store.character) {
+                        Store.character = ch
+                        LocalModel.markDirty() // nouvelle personnalité : la conversation du cerveau repart avec le bon caractère
+                    }
+                }
             }
         }
 
@@ -435,6 +442,18 @@ class MainActivity : ComponentActivity(), ToolHost {
         fun startDownload(allowMobile: Boolean): String {
             Store.brainIntroShown = true
             return LocalModel.startDownload(this@MainActivity, allowMobile) ?: ""
+        }
+
+        /** Change de cerveau : "e2b" (plus léger) ou "e4b" (plus intelligent). L'ancien reste utilisable pendant le téléchargement. */
+        @JavascriptInterface
+        fun switchModel(id: String, allowMobile: Boolean): String =
+            LocalModel.startDownload(this@MainActivity, allowMobile, modelId = id) ?: ""
+
+        /** Téléphone jugé trop faible : essai quand même (réservé au gérant et aux développeurs). */
+        @JavascriptInterface
+        fun forceDownload(allowMobile: Boolean): String {
+            if (Store.rank != "dev" && Store.rank != "owner") return "faible"
+            return LocalModel.startDownload(this@MainActivity, allowMobile, modelId = LocalModel.E2B.id, force = true) ?: ""
         }
 
         @JavascriptInterface

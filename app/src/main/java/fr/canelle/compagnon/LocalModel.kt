@@ -33,13 +33,51 @@ import java.io.File
  * entièrement sur le téléphone grâce à LiteRT-LM. Aucune donnée ne part sur internet.
  */
 object LocalModel {
-    const val FILE_NAME = "gemma-4-E2B-it.litertlm"
-    private const val PART_NAME = "gemma-4-E2B-it.litertlm.part"
-    private const val URL =
-        "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm?download=true"
-    const val APPROX_BYTES = 2_590_000_000L
-    private const val MIN_BYTES = 2_000_000_000L
-    private const val NEEDED_FREE = 3_300_000_000L
+    /** Un cerveau téléchargeable (fichier .litertlm de Google, licence Apache 2.0). */
+    class Spec(
+        val id: String, val label: String, val fileName: String, val url: String,
+        val approxBytes: Long, val minBytes: Long, val neededFree: Long
+    )
+
+    val E2B = Spec(
+        "e2b", "Gemma 4 E2B", "gemma-4-E2B-it.litertlm",
+        "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm?download=true",
+        2_590_000_000L, 2_000_000_000L, 3_300_000_000L
+    )
+    val E4B = Spec(
+        "e4b", "Gemma 4 E4B", "gemma-4-E4B-it.litertlm",
+        "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/main/gemma-4-E4B-it.litertlm?download=true",
+        3_660_000_000L, 3_000_000_000L, 4_500_000_000L
+    )
+    fun spec(id: String): Spec = if (id == E4B.id) E4B else E2B
+
+    // Mémoire totale telle qu'Android l'annonce (un téléphone « 8 Go » annonce environ 7,4 Go).
+    /** À partir d'ici (téléphones de 12 Go), le cerveau E4B est choisi d'office. */
+    const val RAM_E4B_AUTO = 10.5
+    /** À partir d'ici (téléphones de 8 Go), le cerveau E4B peut être choisi à la main. */
+    const val RAM_E4B_POSSIBLE = 7.2
+    /** En dessous (moins de 6 Go), le cerveau ne tient pas : Canelle fonctionne sans lui. */
+    const val RAM_E2B_MIN = 5.2
+
+    /** Cerveau conseillé pour ce téléphone : "e4b", "e2b" ou "none". */
+    fun recommended(ctx: Context): String {
+        val ram = ramGb(ctx)
+        return when {
+            ram <= 0.0 -> E2B.id
+            ram >= RAM_E4B_AUTO -> E4B.id
+            ram >= RAM_E2B_MIN -> E2B.id
+            else -> "none"
+        }
+    }
+
+    /** Cerveau installé (ou à installer) sur ce téléphone. */
+    private fun current(ctx: Context): Spec {
+        if (Store.modelId.isBlank()) {
+            // installation antérieure : le cerveau E2B est déjà là
+            if (File(dir(ctx), E2B.fileName).let { it.exists() && it.length() >= E2B.minBytes }) Store.modelId = E2B.id
+        }
+        return spec(Store.modelId.ifBlank { recommended(ctx).let { if (it == "none") E2B.id else it } })
+    }
 
     // Niveaux de chargement, du plus rapide au plus léger. Après un plantage, on passe au suivant.
     const val TIER_GPU = 0
@@ -77,12 +115,14 @@ object LocalModel {
     // ---------------------------------------------------------------- fichier du modèle
 
     private fun dir(ctx: Context): File = ctx.getExternalFilesDir(null) ?: ctx.filesDir
-    fun file(ctx: Context): File = File(dir(ctx), FILE_NAME)
-    private fun partFile(ctx: Context): File = File(dir(ctx), PART_NAME)
+    fun file(ctx: Context): File = File(dir(ctx), current(ctx).fileName)
+    private fun partFile(ctx: Context, sp: Spec): File = File(dir(ctx), sp.fileName + ".part")
 
     fun isDownloaded(ctx: Context): Boolean {
-        val f = file(ctx)
-        return f.exists() && f.length() >= MIN_BYTES
+        val sp = current(ctx) // (reconnaît aussi un cerveau E2B installé par une ancienne version)
+        if (Store.modelId.isBlank()) return false
+        val f = File(dir(ctx), sp.fileName)
+        return f.exists() && f.length() >= sp.minBytes
     }
 
     fun ramGb(ctx: Context): Double = runCatching {
@@ -111,31 +151,40 @@ object LocalModel {
         }
     }.getOrNull()
 
-    /** Lance le téléchargement. Renvoie un code d'erreur, ou null si tout va bien. */
+    /**
+     * Lance le téléchargement d'un cerveau ([modelId] vide = celui conseillé pour ce téléphone).
+     * Renvoie un code d'erreur ("place", "faible", "indisponible"), ou null si tout va bien.
+     * Si un autre cerveau est déjà installé, il reste utilisable jusqu'à la fin du téléchargement.
+     */
     @Synchronized
-    fun startDownload(ctx: Context, allowMobile: Boolean): String? {
-        if (isDownloaded(ctx)) return null
+    fun startDownload(ctx: Context, allowMobile: Boolean, modelId: String = "", force: Boolean = false): String? {
+        val rec = recommended(ctx)
+        val target = modelId.ifBlank { if (Store.modelId.isNotBlank() && !isDownloaded(ctx)) Store.modelId else rec }
+        if (target == "none" && !force) return "faible"
+        val sp = spec(if (target == "none") E2B.id else target)
+        if (sp.id == Store.modelId && isDownloaded(ctx)) return null
         val dm = ctx.getSystemService(DownloadManager::class.java) ?: return "indisponible"
         val current = Store.downloadId
         if (current >= 0) {
             val d = query(dm, current)
-            if (d != null && d.status != DownloadManager.STATUS_FAILED && d.status != DownloadManager.STATUS_SUCCESSFUL) {
+            if (d != null && d.status != DownloadManager.STATUS_FAILED && d.status != DownloadManager.STATUS_SUCCESSFUL && Store.pendingModel == sp.id) {
                 return null // déjà en cours
             }
             runCatching { dm.remove(current) }
             Store.downloadId = -1L
         }
         val free = runCatching { StatFs(dir(ctx).path).availableBytes }.getOrDefault(Long.MAX_VALUE)
-        if (free < NEEDED_FREE) return "place"
-        partFile(ctx).delete()
+        if (free < sp.neededFree) return "place"
+        partFile(ctx, sp).delete()
         return try {
-            val req = DownloadManager.Request(Uri.parse(URL))
+            val req = DownloadManager.Request(Uri.parse(sp.url))
                 .setTitle("Cerveau de ${Store.companionName}")
-                .setDescription("Gemma 4 E2B (environ 2,6 Go)")
+                .setDescription("${sp.label} (environ ${String.format(java.util.Locale.FRANCE, "%.1f", sp.approxBytes / 1e9)} Go)")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalFilesDir(ctx, null, PART_NAME)
+                .setDestinationInExternalFilesDir(ctx, null, sp.fileName + ".part")
                 .setAllowedOverMetered(allowMobile)
                 .setAllowedOverRoaming(false)
+            Store.pendingModel = sp.id
             Store.downloadId = dm.enqueue(req)
             null
         } catch (e: Exception) {
@@ -148,53 +197,55 @@ object LocalModel {
         val id = Store.downloadId
         if (id >= 0) runCatching { ctx.getSystemService(DownloadManager::class.java)?.remove(id) }
         Store.downloadId = -1L
-        partFile(ctx).delete()
+        if (Store.pendingModel.isNotBlank()) partFile(ctx, spec(Store.pendingModel)).delete()
+        Store.pendingModel = ""
     }
 
-    /** État du cerveau, pour l'écran « Mon cerveau ». */
-    @Synchronized
-    fun status(ctx: Context): JSONObject {
-        val o = JSONObject()
-            .put("approxBytes", APPROX_BYTES)
-            .put("ramGb", ramGb(ctx))
-            .put("useGpu", Store.useGpu)
-        if (isDownloaded(ctx)) {
-            val s = when {
-                state == "loading" -> "loading"
-                state == "loaded" -> "loaded"
-                state == "error" -> "error"
-                engine == null && Store.brainTier >= TIER_BLOCKED -> "blocked"
-                else -> "ready"
-            }
-            return o.put("state", s)
-                .put("backend", backendUsed ?: JSONObject.NULL)
-                .put("error", lastError ?: JSONObject.NULL)
-                .put("tier", if (engine != null) engineTier else Store.brainTier)
-                .put("crashNotice", Store.brainCrashNotice)
-                .put("memoryCrash", Store.lastExitMemory)
-                .put("report", Store.lastExitReport)
+    /** Un nouveau cerveau vient d'arriver : il remplace l'ancien, avec un garde-fou tout neuf. */
+    private fun install(ctx: Context, sp: Spec, part: File): Boolean {
+        val target = File(dir(ctx), sp.fileName)
+        target.delete()
+        if (!part.renameTo(target)) return false
+        val old = if (Store.modelId.isNotBlank() && Store.modelId != sp.id) File(dir(ctx), spec(Store.modelId).fileName) else null
+        Store.modelId = sp.id
+        Store.pendingModel = ""
+        Store.brainTier = TIER_GPU
+        Store.gpuBroken = false
+        Store.brainOkOnce = false
+        Store.loadAttempt = -1
+        bg.launch {
+            release()
+            old?.delete()
         }
+        return true
+    }
+
+    /** Progression du téléchargement en cours (et installation quand il se termine), ou null. */
+    private fun download(ctx: Context): JSONObject? {
         val id = Store.downloadId
-        if (id < 0) return o.put("state", "absent")
-        val dm = ctx.getSystemService(DownloadManager::class.java) ?: return o.put("state", "absent")
+        if (id < 0) return null
+        val dm = ctx.getSystemService(DownloadManager::class.java) ?: return null
         val d = query(dm, id)
+        val sp = spec(Store.pendingModel.ifBlank { current(ctx).id })
         if (d == null) {
             Store.downloadId = -1L
-            return o.put("state", "absent")
+            Store.pendingModel = ""
+            return null
         }
+        val o = JSONObject().put("model", sp.id).put("modelLabel", sp.label)
         when (d.status) {
             DownloadManager.STATUS_SUCCESSFUL -> {
-                val part = partFile(ctx)
+                val part = partFile(ctx, sp)
                 Store.downloadId = -1L
-                val complete = part.exists() && part.length() >= MIN_BYTES && (d.total <= 0 || part.length() == d.total)
-                if (complete && part.renameTo(file(ctx))) {
-                    return o.put("state", "ready").put("justFinished", true)
-                }
+                val complete = part.exists() && part.length() >= sp.minBytes && (d.total <= 0 || part.length() == d.total)
+                if (complete && install(ctx, sp, part)) return o.put("state", "ready").put("justFinished", true)
                 part.delete()
+                Store.pendingModel = ""
                 return o.put("state", "failed").put("reason", "incomplet")
             }
             DownloadManager.STATUS_FAILED -> {
                 Store.downloadId = -1L
+                Store.pendingModel = ""
                 runCatching { dm.remove(id) }
                 val reason = when (d.reason) {
                     DownloadManager.ERROR_INSUFFICIENT_SPACE -> "place"
@@ -213,7 +264,54 @@ object LocalModel {
             }
             else -> o.put("state", "downloading")
         }
-        return o.put("done", d.done).put("total", if (d.total > 0) d.total else APPROX_BYTES)
+        return o.put("done", d.done).put("total", if (d.total > 0) d.total else sp.approxBytes)
+    }
+
+    /** État du cerveau, pour l'écran « Mon cerveau ». */
+    @Synchronized
+    fun status(ctx: Context): JSONObject {
+        val ram = ramGb(ctx)
+        val rec = recommended(ctx)
+        val dl = download(ctx)
+        val installed = isDownloaded(ctx)
+        val cur = current(ctx)
+        val o = JSONObject()
+            .put("ramGb", ram)
+            .put("useGpu", Store.useGpu)
+            .put("recommended", rec)
+            .put("model", if (installed) cur.id else "")
+            .put("modelLabel", if (installed) cur.label else "")
+            .put("approxBytes", spec(if (rec == "none") E2B.id else rec).approxBytes)
+            .put("e2bBytes", E2B.approxBytes)
+            .put("e4bBytes", E4B.approxBytes)
+            // passer au cerveau E4B : possible à partir de 8 Go, si le E2B est installé
+            .put("canUpgrade", installed && cur.id == E2B.id && ram >= RAM_E4B_POSSIBLE)
+            .put("canDowngrade", installed && cur.id == E4B.id)
+            .put("report", Store.lastExitReport)
+            .put("memoryCrash", Store.lastExitMemory)
+            .put("crashNotice", Store.brainCrashNotice)
+        if (installed) {
+            val s = when {
+                state == "loading" -> "loading"
+                state == "loaded" -> "loaded"
+                state == "error" -> "error"
+                engine == null && Store.brainTier >= TIER_BLOCKED -> "blocked"
+                else -> "ready"
+            }
+            o.put("state", s)
+                .put("backend", backendUsed ?: JSONObject.NULL)
+                .put("error", lastError ?: JSONObject.NULL)
+                .put("tier", if (engine != null) engineTier else Store.brainTier)
+            // téléchargement d'un autre cerveau pendant que celui-ci reste utilisable
+            if (dl != null && dl.optString("state") != "ready") o.put("switch", dl)
+            if (dl != null && dl.optBoolean("justFinished")) o.put("justFinished", true).put("switched", true)
+            return o
+        }
+        if (dl != null) {
+            dl.keys().forEach { k -> o.put(k, dl.get(k)) }
+            return o
+        }
+        return o.put("state", if (rec == "none") "weak" else "absent")
     }
 
     // ---------------------------------------------------------------- moteur
@@ -341,7 +439,11 @@ object LocalModel {
     suspend fun delete(ctx: Context) {
         release()
         cancelDownload(ctx)
-        file(ctx).delete()
+        File(dir(ctx), E2B.fileName).delete()
+        File(dir(ctx), E4B.fileName).delete()
+        Store.modelId = ""
+        Store.brainTier = TIER_GPU
+        Store.brainOkOnce = false
     }
 
     /**

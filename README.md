@@ -1,4 +1,4 @@
-# Canelle — compagnon de poche (Android) · V5.1.1
+# Canelle AI — compagnon de poche (Android) · V5.3.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -54,13 +54,27 @@ Quand l'appli est ouverte, la **position est actualisée toutes les 2 minutes** 
 - Il suit le **rythme réel** si le téléphone le permet (autorisation micro, rien n'est enregistré), sinon un tempo régulier.
 - La même autorisation donne le **titre en cours** et les boutons précédent / pause / suivant. Canelle ne lit ni ne garde aucune notification.
 
+## Personnages
+
+Raccourci **Personnages** (ou Menu → Personnages). Chacun a son dessin, sa personnalité, son cri et sa nourriture préférée ; tous gardent la même mémoire de l'utilisateur et toutes les expressions, skins et interactions.
+
+| Personnage | Espèce | Personnalité |
+|---|---|---|
+| **Canelle** (principal) | panda roux | doux, joueur et curieux |
+| **Filou** | raton laveur | malicieux et farceur, fan de biscuits |
+| **Mochi** | chat | indépendant, un brin moqueur, câlin quand il veut |
+| **Biscotte** | chien | enthousiaste, fidèle, toujours partant |
+| **Nyx** | chauve-souris | mystérieuse, rêveuse, amoureuse de la nuit |
+
+Le cerveau adopte la personnalité du personnage choisi. Changer de personnage lui redonne son nom par défaut.
+
 ## Jouer avec Canelle
 
-**55 jeux et interactions**, tous accessibles depuis les raccourcis **Jeux** et **Interactions** en bas de l'écran, ou en les écrivant. Ils répondent tout de suite, sans passer par le cerveau.
+**71 jeux et interactions**, tous accessibles depuis les raccourcis **Jeux** et **Interactions** en bas de l'écran, ou en les écrivant. Ils répondent tout de suite, sans passer par le cerveau.
 
 **15 jeux** : devine le nombre, quiz (20 questions), vrai ou faux, calcul mental, jeu de mémoire (couleurs), test de réflexes, morpion, mots mélangés, devinettes, clique vite, cache-cache, boule magique (« boule magique : est-ce que… ? »), chifoumi, pile ou face, lancer de dé. Pendant un jeu, réponds dans la zone de texte ou sur la carte ; « stop » arrête la partie.
 
-**37 interactions** : high five, check, danse, câlin, bisou, chatouille, manger un bambou, boire, bulles, feu d'artifice, arc-en-ciel, tour de magie, robot, moonwalk, yoga, balle, étoile filante, blague, compliment, anniversaire (gâteau et bougies à souffler), pirouette, saut, rawr, chanson, faire le mort, éternuer, grimace, muscles, pleurer, prendre la pose, roulade, applaudir, coucou, dodo, s'étirer, clin d'œil, « tu as froid ? ».
+**53 interactions** : donner la patte, guitare, tambour, selfie (photo souvenir), compter jusqu'à 10, histoires, toupie, karaté, fantôme, imiter un animal, crêpe, bisous volants, trampoline, statue, confettis, boules de neige, cri du personnage, high five, check, danse, câlin, bisou, chatouille, manger un bambou, boire, bulles, feu d'artifice, arc-en-ciel, tour de magie, robot, moonwalk, yoga, balle, étoile filante, blague, compliment, anniversaire (gâteau et bougies à souffler), pirouette, saut, rawr, chanson, faire le mort, éternuer, grimace, muscles, pleurer, prendre la pose, roulade, applaudir, coucou, dodo, s'étirer, clin d'œil, « tu as froid ? ».
 
 **Au toucher (3)** : boop sur le nez, caresse, petite tape.
 
@@ -79,12 +93,14 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 ## Démarrage
 
+L'application s'appelle désormais **Canelle AI**. L'écran de chargement montre Canelle, le nom « Canelle AI » et la mention **Early Access**.
+
 - À chaque ouverture : un **écran de chargement**, puis l'avertissement de confidentialité (case **Ne plus montrer** pour ne plus le voir).
 - Au tout premier lancement, Canelle **se matérialise** : faisceau lumineux, pixels qui apparaissent un à un, étincelles.
 
-## Skins (gérant et développeurs)
+## Skins (pour tout le monde)
 
-Menu → **Skins** : 10 apparences en plus du look classique, avec un aperçu de chacune : Neige, Minuit, Doré (avec couronne), Sakura (avec fleur), Menthe, Cyber (lunettes néon), Pirate (cache-œil et bandana noir), Fantôme (translucide et flottant), Magma et Galaxie (pelage étoilé). Si le rang est retiré, Canelle reprend son look classique.
+Raccourci **Skins** (ou Menu → Skins) : **20 apparences**, pour tous les personnages, avec un aperçu : Classique, Neige, Minuit, Doré (couronne), Sakura (fleur), Menthe, Cyber (lunettes néon), Pirate (cache-œil), Fantôme (translucide et flottant), Magma, Galaxie (pelage étoilé), Panda, Chocolat, Océan, Citrouille (chapeau de sorcière), Noël (bonnet), Bonbon, Chrome, Forêt et Aurore.
 
 ## Code d'accès
 
@@ -107,6 +123,23 @@ Si tu as déjà installé la version 0.2 (celle avec le cerveau local), installe
 Si tu viens d'une version plus ancienne (0.1, avec la clé API), désinstalle-la **une seule fois** avant : elle avait une signature différente. Depuis la 0.2, la signature est fixe (`app/canelle.keystore`).
 
 Ensuite, ouvre l'APK sur le téléphone et accepte l'installation depuis cette source si Android le demande.
+
+## Un cerveau adapté à chaque téléphone
+
+Au premier lancement, Canelle regarde la mémoire du téléphone et choisit son cerveau tout seul :
+
+| Téléphone | Cerveau |
+|---|---|
+| 12 Go de mémoire ou plus | Gemma 4 E4B (3,7 Go), le plus intelligent |
+| 8 Go | Gemma 4 E2B (2,6 Go) par défaut ; le E4B peut être choisi dans « Mon cerveau » |
+| 6 Go | Gemma 4 E2B (2,6 Go), le meilleur compromis |
+| Moins de 6 Go | Pas de cerveau : Canelle l'explique, et tout le reste fonctionne (batterie, météo, réveils, musique, jeux…) |
+
+- On peut changer de cerveau dans « Mon cerveau » (« Passer au cerveau E4B » / « Revenir au cerveau E2B ») : l'ancien reste utilisable pendant le téléchargement du nouveau, puis il est supprimé.
+- Chaque cerveau a son propre garde-fou : s'il fait fermer l'appli, Canelle passe au niveau plus léger (voir plus bas), et un E4B en pause de sécurité propose de revenir au E2B.
+- Les seuils sont réglables dans `LocalModel.kt` (`RAM_E4B_AUTO`, `RAM_E4B_POSSIBLE`, `RAM_E2B_MIN`).
+- Le gérant et les développeurs peuvent forcer le téléchargement sur un téléphone jugé trop faible, pour tester.
+- Les deux modèles sont sous licence Apache 2.0 (Google, via LiteRT).
 
 ## Si l'appli se ferme toute seule (cerveau trop lourd)
 

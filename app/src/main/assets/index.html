@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Canelle</title>
+<title>Canelle AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Pixelify+Sans:wght@500&display=swap" rel="stylesheet">
@@ -193,6 +193,19 @@ select.field{appearance:auto}
 @keyframes rollAnim{50%{transform:translateX(-30px) rotate(-180deg)}100%{transform:translateX(0) rotate(-360deg)}}
 .face.dead{animation:none;transform:rotate(-80deg) translateY(30px);transition:transform .5s cubic-bezier(.5,0,.8,.4)}
 .face.shiver{animation:shake .08s linear 10}
+.face.rock{animation:rockAnim .35s ease-in-out infinite}
+@keyframes rockAnim{50%{transform:translateY(6px) rotate(-7deg)}}
+.face.ghosty{opacity:.4;animation:floatZen 1.6s ease-in-out infinite;transition:opacity .4s}
+.face.frozen,.face.frozen canvas{animation:none!important}
+.prop.crepe{left:50%;top:18%;width:90px;height:22px;margin-left:-45px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#f7d28a,#d9a04a 70%,#b97a2a);box-shadow:0 0 10px rgba(247,210,138,.5);animation:crepeFlip 2.4s ease-in-out forwards}
+@keyframes crepeFlip{0%{transform:translateY(40px) rotateX(0);opacity:0}15%{opacity:1}45%{transform:translateY(-60px) rotateX(540deg)}75%{transform:translateY(20px) rotateX(720deg)}100%{transform:translateY(20px) rotateX(720deg);opacity:0}}
+.prop.snowball{top:30%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#dbe9ff);box-shadow:0 0 8px rgba(255,255,255,.6)}
+.prop.snowball.from-left{left:-30px;animation:snowL 1.2s ease-in forwards}
+.prop.snowball.from-right{right:-30px;animation:snowR 1.2s ease-in forwards}
+@keyframes snowL{to{left:42%;top:40%;opacity:.2;transform:scale(1.6)}}
+@keyframes snowR{to{right:42%;top:36%;opacity:.2;transform:scale(1.6)}}
+.polaroid{background:#f5f1e6;border-radius:6px;padding:8px 8px 10px;margin:8px auto 2px;width:150px;color:#3b2a1a;font-weight:800;font-size:.75rem;box-shadow:0 8px 18px rgba(0,0,0,.4);transform:rotate(-3deg)}
+.polaroid canvas{width:100%;image-rendering:pixelated;display:block;background:#0b1426;border-radius:3px;margin-bottom:6px}
 .face.music{animation:none}
 .face.music.groove{animation:groove .52s ease-in-out infinite alternate}
 @keyframes groove{from{transform:translateY(0) rotate(-2.5deg)}to{transform:translateY(-7px) rotate(2.5deg)}}
@@ -257,7 +270,13 @@ select.field{appearance:auto}
 .cake i.out::after{display:none}
 @keyframes flicker{to{transform:scale(.85,1.1)}}
 /* skins */
-.skins{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.skins{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chars{display:grid;gap:8px}
+.char{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:14px;background:rgba(236,232,220,.05);color:var(--phosphor);padding:8px 12px 8px 8px;cursor:pointer}
+.char canvas{width:72px;image-rendering:pixelated;display:block}
+.char b{display:block;font-size:1rem}
+.char span{display:block;font-size:.82rem;line-height:1.35;color:var(--phosphor-dim);font-weight:700;margin-top:2px}
+.char.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .skin{border:1px solid var(--line);border-radius:14px;background:rgba(236,232,220,.05);color:var(--phosphor);padding:6px 4px 8px;cursor:pointer;font-weight:800;font-size:.8rem}
 .skin canvas{width:100%;image-rendering:pixelated;display:block}
 .skin.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
@@ -396,8 +415,13 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 .boot.out{opacity:0;transform:scale(1.05);pointer-events:none}
 .boot[hidden]{display:none}
 .boot-box{display:grid;justify-items:center;gap:16px}
-.boot-paw{width:76px;height:76px;filter:drop-shadow(0 0 16px rgba(232,116,59,.55));animation:pawPulse 1.1s ease-in-out infinite}
-@keyframes pawPulse{50%{transform:scale(1.1) rotate(-4deg)}}
+.boot-hero{position:relative;display:grid;place-items:center}
+.boot-hero::before{content:"";position:absolute;width:250px;height:250px;border-radius:50%;background:radial-gradient(closest-side,rgba(232,116,59,.3),transparent 72%);animation:bootHalo 2.2s ease-in-out infinite}
+@keyframes bootHalo{50%{transform:scale(1.08);opacity:.75}}
+#bootCv{position:relative;width:min(58vw,230px);image-rendering:pixelated;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));animation:bootBob 2.4s ease-in-out infinite}
+@keyframes bootBob{50%{transform:translateY(-10px)}}
+.boot-title span{color:#e8743b}
+.boot-ea{font:500 .82rem var(--f-px);letter-spacing:.16em;text-transform:uppercase;color:#1a1204;background:#ffd166;border-radius:999px;padding:4px 12px;margin-top:-6px;box-shadow:0 0 14px rgba(255,209,102,.4)}
 .boot-title{font:500 2rem var(--f-px);letter-spacing:.32em;padding-left:.32em;color:var(--phosphor);text-shadow:0 0 18px rgba(143,227,255,.5);animation:glitch 2.2s steps(1) infinite}
 @keyframes glitch{0%,90%,100%{transform:none;opacity:1}91%{transform:translateX(4px) skewX(10deg);opacity:.7}93%{transform:translateX(-3px);opacity:1}96%{opacity:.4}}
 .boot-bar{display:flex;gap:5px}
@@ -438,7 +462,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 .facts li{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .facts .del{flex:none;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--phosphor-dim);cursor:pointer;line-height:1}
 @media (prefers-reduced-motion: reduce){
-  .halo,.beam.on,.p,.boot-paw,.boot-title,.ico *{animation:none!important}
+  .halo,.beam.on,.p,#bootCv,.boot-hero::before,.boot-title,.ico *{animation:none!important}
 }
 
 /* raccourcis */
@@ -463,11 +487,9 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 <body>
 <div class="boot" id="boot" role="status" aria-label="Chargement de Canelle">
   <div class="boot-box">
-    <svg class="boot-paw" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
-      <g fill="#e8743b"><rect x="1" y="5" width="3" height="4"/><rect x="4" y="1" width="3" height="4"/><rect x="9" y="1" width="3" height="4"/><rect x="12" y="5" width="3" height="4"/><rect x="5" y="7" width="6" height="1"/><rect x="4" y="8" width="8" height="2"/><rect x="3" y="10" width="10" height="3"/><rect x="4" y="13" width="3" height="1"/><rect x="9" y="13" width="3" height="1"/></g>
-      <g fill="#fbb98a"><rect x="2" y="6" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="5" y="9" width="2" height="1"/></g>
-    </svg>
-    <div class="boot-title">CANELLE</div>
+    <div class="boot-hero"><canvas id="bootCv" width="64" height="54" aria-hidden="true"></canvas></div>
+    <div class="boot-title">CANELLE <span>AI</span></div>
+    <div class="boot-ea">Early Access</div>
     <div class="boot-bar" aria-hidden="true"><i style="animation-delay:.10s"></i><i style="animation-delay:.24s"></i><i style="animation-delay:.38s"></i><i style="animation-delay:.52s"></i><i style="animation-delay:.66s"></i><i style="animation-delay:.80s"></i><i style="animation-delay:.94s"></i><i style="animation-delay:1.08s"></i><i style="animation-delay:1.22s"></i><i style="animation-delay:1.36s"></i><i style="animation-delay:1.50s"></i><i style="animation-delay:1.64s"></i></div>
     <div class="boot-msg" id="bootMsg">Allumage de l'écran…</div>
   </div>
@@ -596,9 +618,15 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="ok" id="settingsMsg" aria-live="polite"></p>
     </section>
 
-    <section id="skinsSec" hidden>
+    <section id="charSec">
+      <h3>Personnages</h3>
+      <p class="note">Choisis ton compagnon. Chacun a sa personnalité, et il garde tout ce qu'il sait de toi.</p>
+      <div class="chars" id="charGrid"></div>
+    </section>
+
+    <section id="skinsSec">
       <h3>Skins</h3>
-      <p class="note">Réservé au gérant et aux développeurs. Choisis l'apparence de Canelle.</p>
+      <p class="note">20 apparences, pour tous les personnages.</p>
       <div class="skins" id="skinGrid"></div>
     </section>
 
@@ -633,7 +661,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <h2 id="brainTitle">Mon cerveau</h2>
       <button class="pill" id="brainClose" type="button">Fermer</button>
     </div>
-    <p class="note" style="margin-top:12px">Je réfléchis directement dans ton téléphone : c'est gratuit, sans compte, et tes messages ne partent jamais sur internet. Pour ça, je télécharge une seule fois mon cerveau : le modèle Gemma 4 de Google (2,6 Go).</p>
+    <p class="note" style="margin-top:12px">Je réfléchis directement dans ton téléphone : c'est gratuit, sans compte, et tes messages ne partent jamais sur internet. Pour ça, je télécharge une seule fois mon cerveau : un modèle Gemma 4 de Google, choisi selon la puissance de ton téléphone (2,6 à 3,7 Go).</p>
     <div class="brain-card">
       <p class="brain-state" id="brainState">…</p>
       <div class="bar-track" id="brainTrack" hidden><div class="bar-fill" id="brainFill"></div></div>
@@ -658,7 +686,7 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "" };
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "", character: "canelle" };
 // Choisit au hasard en évitant ce qui vient d'être dit dans la même liste (pas deux fois la même chose d'affilée).
 const PICKED = new Map();
 function pick(a) {
@@ -688,7 +716,7 @@ function pull() {
 }
 function saveUi() {
   try {
-    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy, musicApp: S.musicApp || "", skin: S.skin || "" }));
+    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy, musicApp: S.musicApp || "", skin: S.skin || "", character: S.character || "canelle" }));
     else localStorage.setItem("canelle-web", JSON.stringify(S));
   } catch (e) {}
 }
@@ -711,7 +739,8 @@ const PAL = { O: "#3b1a14", F: "#e8743b", f: "#c9552c", H: "#fbb98a", W: "#fdf8f
   B: "#6b332b", b: "#552520", N: "#3a3436", n: "#8a8385", Q: "#ff9b2f", q: "#d9741a", Z: "#ffc36e",
   I: "#1d4fa8", i: "#3f82e0", j: "#8cc6ff", P: "#0d1733", x: "#ffffff", M: "#7a2533", T: "#f2849a", K: "#f9b3b6", k: "#e9707f",
   R: "#ff4f73", r: "#ffc2cf", G: "#3a4560", g: "#9fb0d6", A: "#ff9b4a",
-  Y: "#ffd84a", y: "#fff3b0", U: "#7cc8ff", u: "#bfe6ff", V: "#9ad17a", v: "#6fb35a", C: "#00e5ff", c: "#0a3a4a" };
+  Y: "#ffd84a", y: "#fff3b0", U: "#7cc8ff", u: "#bfe6ff", V: "#9ad17a", v: "#6fb35a", C: "#00e5ff", c: "#0a3a4a",
+  E: "#d62839", e: "#a51d2d", L: "#2a1f3d", l: "#4a3a6b" };
 const BASE = [
   "................................................................",
   "................................................................",
@@ -849,6 +878,279 @@ const MARKS = {
   clin:    [[58, 17], [57, 18], [58, 18], [59, 18], [58, 19]],
   triste:  [[57, 12], [56, 13], [57, 13], [55, 14], [56, 14], [57, 14], [58, 14], [55, 15], [56, 15], [57, 15], [58, 15], [56, 16], [57, 16]]
 };
+
+// ---------- personnages ----------
+// Chaque personnage a son dessin (mêmes emplacements d'yeux et de bouche que Canelle, pour garder toutes les expressions),
+// sa palette, sa personnalité et ses petites phrases. Les jetons {nom}, {cri}, {esp}… sont remplacés quand il parle.
+const CHARS = {
+  canelle: { id: "canelle", name: "Canelle", esp: "panda roux", unesp: "un petit panda roux", cri: "Rawr", unsnack: "un bambou", grignote: "un peu de bambou",
+    gout: "le bambou", head: 16, pitch: 1, trait: "Doux, joueur et curieux. Notre compagnon principal.",
+    fait: "Tu savais que les pandas roux dorment dans les arbres ?", pasmoi: "Je suis un panda roux, pas un raton laveur, hein !",
+    reve: "J'ai rêvé d'un bambou géant !", pal: {}, base: BASE,
+    lines: [{ text: "Mon bandana orange, c'est mon porte-bonheur.", mood: "fier" }, { text: "Une petite sieste enroulé dans ma queue, ça te dit ?", mood: "content" },
+      { text: "Je suis curieux de tout ! Raconte-moi un truc.", mood: "reflechit" }] },
+  raton: { id: "raton", name: "Filou", esp: "raton laveur", unesp: "un petit raton laveur", cri: "Krr krr", unsnack: "un biscuit", grignote: "un biscuit en douce",
+    gout: "les biscuits", head: 16, pitch: 1.08, trait: "Malicieux et farceur. Il adore les biscuits… et les bêtises.",
+    fait: "Tu savais que les ratons laveurs tripotent leur nourriture dans l'eau avant de la manger ?", pasmoi: "Je suis un raton laveur, pas un panda roux, hein !",
+    reve: "J'ai rêvé d'une montagne de biscuits !", pal: {"F": "#8e8f98", "f": "#6f7079", "W": "#eceef2", "D": "#3a3a42", "t": "#26262c", "B": "#55565e", "b": "#43444b", "Q": "#3f7fd9", "q": "#2c5fb0", "Z": "#8cc0ff", "O": "#1f1f25"}, base: [
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "..............OO................................OO..............",
+    ".............OWWOOO..........................OOOWWO.............",
+    ".............OWWWWWO........................OWWWWWO.............",
+    "............OWWWWWWWO......................OWWWWWWWO............",
+    "............OWDDWWWWWO....................OWWWWWDDWO............",
+    "...........OWDDDDDWWWWO..................OWWWWDDDDDWO...........",
+    "..........OWWDDDDDDWWWWO................OWWWWDDDDDDWWO..........",
+    "..........OWWDDDDDDDWWWWO..............OWWWWDDDDDDDWWO..........",
+    ".........OWWDDDDDDDDDWWWWO............OWWWWDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWWO..........OWWWWDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWWO........OWWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDDWWWO........OWWWDDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWO..........OWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWO............OWWWDDDDDDDDDDWWO.........",
+    ".........OWWWDDDDDDDDWWWWOfFFFFFFFFFFfOWWWWDDDDDDDDWWWO.........",
+    ".........OWWWDDDDDDDWWFFFfFffFFFFFFffFfFFFWWDDDDDDDWWWO.........",
+    "..........OWWDDDDDWWFFFFfFFFFfFFFFfFFFFfFFFFWWDDDDDWWO..........",
+    "..........OWWDDDWWWOfFFfFFFFFFffffFFFFFFfFFfOWWWDDDWWO..........",
+    "..........OWWDWWWWOFWWWWFFFFFFFFFFFFFFFFWWWWFOWWWWDWWO..........",
+    "..........OWWWWWWOFFWWWWFFFFFFFFFFFFFFFFWWWWFFOWWWWWWO..........",
+    "..........OWWWOOOtttttttttttttFFFFtttttttttttttOOOWWWO..........",
+    "..........OOOO..OtttttttttttttFFFFtttttttttttttO..OOOO..........",
+    "................OtttttttttttttFFFFtttttttttttttO................",
+    "...............OFtttttttttttttFFFFtttttttttttttFO...............",
+    "...............OFtttttttttttttFFFFtttttttttttttFO...............",
+    "..........OOOOOWWWWtttttttttttFFFFtttttttttttWWWWOOOOO..........",
+    "..........OWWWWWWWWWttttttttttFFFFttttttttttWWWWWWWWWO..........",
+    "..........OOWWWWWWWWWtttttttttFFFFtttttttttWWWWWWWWWOO..........",
+    "............OWWWWWWWttttttttttFFFFttttttttttWWWWWWWO............",
+    "............OWWWWWWWttttttttWWWWWWWWttttttttWWWWWWWO............",
+    ".........OOOWWWWWWWWtttttttWWWWWWWWWWtttttttWWWWWWWWOOO.........",
+    ".......OOWWWWWWWWWWWttttttWWWWnNNNWWWWttttttWWWWWWWWWWWOO.......",
+    ".......OWWWWWWWWWWWKkKkttWWWWWWNNWWWWWWttkKkKWWWWWWWWWWWO.......",
+    ".......OOOWWWWWWWWWtkKkKtWWWWWWWWWWWWWWtKkKktWWWWWWWWWOOO.......",
+    "..........OOWWWWWWWttttttWWWWWWWWWWWWWWttttttWWWWWWWOO..........",
+    "............OWWWWWWttttttWWWWWWWWWWWWWWttttttWWWWWWO............",
+    "...........OWWWWWWWtttttttWWWWWWWWWWWWtttttttWWWWWWWO...........",
+    "..........OWWWWWWWWWWtttttfWWWWWWWWWWftttttWWWWWWWWWWO..........",
+    ".........OWWWWWWWOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOWWWWWWWO.........",
+    ".........WWWWOOOOqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqOOOWWWWO.........",
+    ".........OOOO...OQQQZZZZZZZZZZZZZZZZZZZZZZZZZQQO..OOOO..........",
+    "................OQQQQQQQqQQQQQQQQQQQQQQqQQQQQQQO................",
+    "................OOOQQQQQqQQQQQQQQQQQQQQqQQQQOOOO................",
+    "..................OOOOOOOQQQZqQQQQQQQQZOOOOObO..................",
+    "..................ObbbbbbOQQQZqQQQQQQZObbbbbbO..................",
+    ".................ObbbbbbbBOQQQZqQQQQZOBbbbbbbbO.................",
+    "................ObbbbbbbbBBOOQQZqQQOOBBbbbbbbbbO................",
+    "...............ObbbbbbbbbBBBBOQQZqOBBBBbbbbbbbbbO...............",
+    "...............OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...............",
+    "................................................................",
+    "................................................................"
+  ],
+    lines: [{ text: "Chut… tu n'as rien vu. Surtout pas le biscuit.", mood: "clin" }, { text: "Mon masque ? C'est pour faire des farces incognito.", mood: "rigole" },
+      { text: "J'ai caché un trésor quelque part dans ton téléphone. Hé hé.", mood: "clin" }] },
+  chat: { id: "chat", name: "Mochi", esp: "chat", unesp: "un petit chat", cri: "Miaou", unsnack: "un morceau de thon", grignote: "un peu de thon",
+    gout: "le thon", head: 16, pitch: 1.15, trait: "Indépendant et un brin moqueur, mais très câlin quand il en a envie.",
+    fait: "Tu savais que les chats peuvent dormir jusqu'à 16 heures par jour ? J'essaie de battre le record.", pasmoi: "Je suis un chat. Pas un chien. Merci de noter.",
+    reve: "J'ai rêvé d'une boîte de thon grande comme une maison !", pal: {"F": "#aab0bf", "f": "#838a9c", "W": "#ffffff", "D": "#f3a7ba", "B": "#8a90a0", "b": "#737a8b", "N": "#e8788e", "n": "#d7dbe4", "Q": "#e84a5f", "q": "#b8344a", "Z": "#ff9aa8", "O": "#2e2f3a"}, base: [
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "..............OO................................OO..............",
+    ".............OWWOOO..........................OOOWWO.............",
+    ".............OWWWWWO........................OWWWWWO.............",
+    "............OWWWWWWWO......................OWWWWWWWO............",
+    "............OWDDWWWWWO....................OWWWWWDDWO............",
+    "...........OWDDDDDWWWWO..................OWWWWDDDDDWO...........",
+    "..........OWWDDDDDDWWWWO................OWWWWDDDDDDWWO..........",
+    "..........OWWDDDDDDDWWWWO..............OWWWWDDDDDDDWWO..........",
+    ".........OWWDDDDDDDDDWWWWO............OWWWWDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWWO..........OWWWWDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWWO........OWWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDDWWWO........OWWWDDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWO..........OWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWO............OWWWDDDDDDDDDDWWO.........",
+    ".........OWWWDDDDDDDDWWWWOfFFFFFFFFFFfOWWWWDDDDDDDDWWWO.........",
+    ".........OWWWDDDDDDDWWFFFfFffFFfFFFffFfFFFWWDDDDDDDWWWO.........",
+    "..........OWWDDDDDWWFFFFfFFFffFfFFffFFFfFFFFWWDDDDDWWO..........",
+    "..........OWWDDDWWWOfFFffFFFfFffffFfFFFffFFfOWWWDDDWWO..........",
+    "..........OWWDWWWWOFWWWWFFFFFFFfFFFFFFFFWWWWFOWWWWDWWO..........",
+    "..........OWWWWWWOFFWWWWFFFFFFFFFFFFFFFFWWWWFFOWWWWWWO..........",
+    "..........OWWWOOOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFOOOWWWO..........",
+    "..........OOOO..OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO..OOOO..........",
+    "................OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO................",
+    "...............OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO...............",
+    "...............OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO...............",
+    "..........OOOOOWWWWFFFFFFFFFFFFFFFFFFFFFFFFFFWWWWOOOOO..........",
+    "..........OWWWWWWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWWWWWWO..........",
+    "..........OOWWWWWWWWWFFFFFFFFFFFFFFFFFFFFFFWWWWWWWWWOO..........",
+    "............OWWWWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWWWWO............",
+    "............OWWWWWWWFFFFFFFFWWWWWWWWFFFFFFFFWWWWWWWO............",
+    ".........OOOWWWWWWWWFFFFFFFWWWWWWWWWWFFFFFFFWWWWWWWWOOO.........",
+    ".......OOnnnWWWWWWWWFFFFFFWWWWnNNNWWWWFFFFFFWWWWWWWWnnnOO.......",
+    ".......OWWWWnnnnnWWKkKkFFWWWWWWNNWWWWWWFFkKkKWWnnnnnWWWWO.......",
+    ".......OOOWWWWWWWnnnkKkKFWWWWWWWWWWWWWWFKkKknnnWWWWWWWOOO.......",
+    "..........OOWWWWWWWFFFFFFWWWWWWWWWWWWWWFFFFFFWWWWWWWOO..........",
+    "............OWnnnnnnFFFFFWWWWWWWWWWWWWWFFFFFnnnnnnWO............",
+    ".........nnnnnWWWWWFFFFFFFWWWWWWWWWWWWFFFFFFFWWWWWnnnnn.........",
+    "..........OWWWWWWWWWWFFFFFfWWWWWWWWWWfFFFFFWWWWWWWWWWO..........",
+    ".........OWWWWWWWOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOWWWWWWWO.........",
+    ".........WWWWOOOOqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqOOOWWWWO.........",
+    ".........OOOO...OQQQZZZZZZZZZZZZZZZZZZZZZZZZZQQO..OOOO..........",
+    "................OQQQQQQQqQQQQQQQQQQQQQQqQQQQQQQO................",
+    "................OOOQQQQQqQQQQQQQQQQQQQQqQQQQOOOO................",
+    "..................OOOOOOOQQQZqQQQQQQQQZOOOOObO..................",
+    "..................ObbbbbbOQQQZqQQQQQQZObbbbbbO..................",
+    ".................ObbbbbbbBOQQQZqQQQQZOBbbbbbbbO.................",
+    "................ObbbbbbbbBBOOQQZqQQOOBBbbbbbbbbO................",
+    "...............ObbbbbbbbbBBBBOQQZqOBBBBbbbbbbbbbO...............",
+    "...............OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...............",
+    "................................................................",
+    "................................................................"
+  ],
+    lines: [{ text: "Je ne suis pas vexé. Je fais juste semblant de t'ignorer.", mood: "fier" }, { text: "Une caresse ? Bon… d'accord. Mais vite fait.", mood: "timide" },
+      { text: "Ton écran est tiède. Je vais faire la sieste dessus.", mood: "zen" }] },
+  chien: { id: "chien", name: "Biscotte", esp: "chien", unesp: "un petit chien", cri: "Wouf wouf", unsnack: "une croquette", grignote: "une croquette",
+    gout: "les croquettes", head: 13, pitch: 0.92, trait: "Enthousiaste, fidèle et toujours partant. Tout lui fait plaisir !",
+    fait: "Tu savais que la truffe de chaque chien est unique, comme une empreinte digitale ?", pasmoi: "Je suis un chien, et j'en suis super fier !",
+    reve: "J'ai rêvé d'un os grand comme une maison !", pal: {"F": "#dca45a", "f": "#bd853e", "W": "#fff4e2", "D": "#8a5526", "B": "#a8743a", "b": "#8d5f2c", "Q": "#4caf6a", "q": "#37894f", "Z": "#9be0ae", "O": "#3b2412"}, base: [
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    ".........................OOOOOOOOOOOOO..........................",
+    ".........OOOO.........OOfffffffffffffffOO..........OOOO.........",
+    ".......OODDDDO......OfffffffffffffffffffffO.......ODDDDOO.......",
+    "......ODDDDDDDO...OFFFFFFFFFFFFFFFFFFFFFFFFFO....ODDDDDDDO......",
+    ".....ODDDDDDDDDO.OFFFFFFFFFFFFFFFFFFFFFFFFFFFO..ODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO.ODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO.ODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOWWFFWWWWFFFFFFFFFFFFFFFFWWWWFFWOODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOFFFFWWWWFFFFFFFFFFFFFFFFWWWWFFFOODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFOODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFOODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFOODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFODDDDDDDDDO.....",
+    ".....ODDDDDDDDDOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFODDDDDDDDDO.....",
+    "......ODDDDDDDDOWWWFFFFFFFFFFFFFFFFFFFFFFFFFFWWWODDDDDDDDO......",
+    "......ODDDDDDDDOWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWODDDDDDDDO......",
+    ".......ODDDDDDOWWWWWWFFFFFFFFFFFFFFFFFFFFFFWWWWWWODDDDDDO.......",
+    ".......ODDDDDDOWWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWWODDDDDDO.......",
+    "........ODDDDOWWWWWWFFFFFFFFWWWWWWWWFFFFFFFFWWWWWWODDDDO........",
+    ".........OOOOWWWWWWWFFFFFFFWWWWWWWWWWFFFFFFFWWWWWWWOOOO.........",
+    ".......OOWWWWWWWWWWWFFFFFFWWWWnNNNWWWWFFFFFFWWWWWWWWWWWOO.......",
+    ".......OWWWWWWWWWWWKkKkFFWWWWWWNNWWWWWWFFkKkKWWWWWWWWWWWO.......",
+    ".......OOOWWWWWWWWWFkKkKFWWWWWWWWWWWWWWFKkKkFWWWWWWWWWOOO.......",
+    "..........OOWWWWWWWFFFFFFWWWWWWWWWWWWWWFFFFFFWWWWWWWOO..........",
+    "............OWWWWWWFFFFFFWWWWWWWWWWWWWWFFFFFFWWWWWWO............",
+    "...........OWWWWWWWFFFFFFFWWWWWWWWWWWWFFFFFFFWWWWWWWO...........",
+    "..........OWWWWWWWWWWFFFFFfWWWWWWWWWWfFFFFFWWWWWWWWWWO..........",
+    ".........OWWWWWWWOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOWWWWWWWO.........",
+    ".........WWWWOOOOqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqOOOWWWWO.........",
+    ".........OOOO...OQQQZZZZZZZZZZZZZZZZZZZZZZZZZQQO..OOOO..........",
+    "................OQQQQQQQqQQQQQQQQQQQQQQqQQQQQQQO................",
+    "................OOOQQQQQqQQQQQQQQQQQQQQqQQQQOOOO................",
+    "..................OOOOOOOQQQZqQQQQQQQQZOOOOObO..................",
+    "..................ObbbbbbOQQQZqQQQQQQZObbbbbbO..................",
+    ".................ObbbbbbbBOQQQZqQQQQZOBbbbbbbbO.................",
+    "................ObbbbbbbbBBOOQQZqQQOOBBbbbbbbbbO................",
+    "...............ObbbbbbbbbBBBBOQQZqOBBBBbbbbbbbbbO...............",
+    "...............OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...............",
+    "................................................................",
+    "................................................................"
+  ],
+    lines: [{ text: "On joue ? On joue ? Dis oui, dis oui !", mood: "emerveille" }, { text: "Tu es mon humain préféré. De tout le téléphone !", mood: "amoureux" },
+      { text: "Je remue la queue tellement fort que je vais m'envoler !", mood: "rigole" }] },
+  chauve: { id: "chauve", name: "Nyx", esp: "chauve-souris", unesp: "une petite chauve-souris", cri: "Iiiik", unsnack: "une figue", grignote: "une figue bien mûre",
+    gout: "les figues", head: 16, pitch: 1.25, trait: "Mystérieuse et rêveuse. Elle adore la nuit, les étoiles et les secrets.",
+    fait: "Tu savais que les chauves-souris sont les seuls mammifères qui volent vraiment ?", pasmoi: "Je suis une chauve-souris, pas un vampire. Enfin… presque.",
+    reve: "J'ai rêvé que je volais au-dessus de la lune…", pal: {"F": "#5d4b8a", "f": "#46386c", "W": "#cbb9f0", "D": "#c27bb4", "B": "#3f3163", "b": "#2e2449", "N": "#2a2233", "Q": "#9b6bd6", "q": "#6f47ad", "Z": "#d8c2ff", "O": "#1a1328"}, base: [
+    "................................................................",
+    "................................................................",
+    "................................................................",
+    "..............OO................................OO..............",
+    ".............OWWOOO..........................OOOWWO.............",
+    ".............OWWWWWO........................OWWWWWO.............",
+    "............OWWWWWWWO......................OWWWWWWWO............",
+    "............OWDDWWWWWO....................OWWWWWDDWO............",
+    "...........OWDDDDDWWWWO..................OWWWWDDDDDWO...........",
+    "..........OWWDDDDDDWWWWO................OWWWWDDDDDDWWO..........",
+    "..........OWWDDDDDDDWWWWO..............OWWWWDDDDDDDWWO..........",
+    ".........OWWDDDDDDDDDWWWWO............OWWWWDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWWO..........OWWWWDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWWO........OWWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDDWWWO........OWWWDDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDDWWWO..........OWWWDDDDDDDDDDDWWO.........",
+    ".........OWWDDDDDDDDDDWWWO............OWWWDDDDDDDDDDWWO.........",
+    ".........OWWWDDDDDDDDWWWWOfFFFFFFFFFFfOWWWWDDDDDDDDWWWO.........",
+    ".........OWWWDDDDDDDWWFFFfFffFFFFFFffFfFFFWWDDDDDDDWWWO.........",
+    "..........OWWDDDDDWWFFFFfFFFFfFFFFfFFFFfFFFFWWDDDDDWWO..........",
+    "..........OWWDDDWWWOfFFfFFFFFFffffFFFFFFfFFfOWWWDDDWWO..........",
+    "..........OWWDWWWWOFWWWWFFFFFFFFFFFFFFFFWWWWFOWWWWDWWO..........",
+    "..........OWWWWWWOFFWWWWFFFFFFFFFFFFFFFFWWWWFFOWWWWWWO..........",
+    "..........OWWWOOOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFOOOWWWO..........",
+    "..........OOOO..OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO..OOOO..........",
+    "................OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO................",
+    "...............OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO...............",
+    "...............OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFO...............",
+    "..........OOOOOWWWWFFFFFFFFFFFFFFFFFFFFFFFFFFWWWWOOOOO..........",
+    "..........OWWWWWWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWWWWWWO..........",
+    "..........OOWWWWWWWWWFFFFFFFFFFFFFFFFFFFFFFWWWWWWWWWOO..........",
+    "............OWWWWWWWFFFFFFFFFFFFFFFFFFFFFFFFWWWWWWWO............",
+    "............OWWWWWWWFFFFFFFFWWWWWWWWFFFFFFFFWWWWWWWO............",
+    ".........OOOWWWWWWWWFFFFFFFWWWWWWWWWWFFFFFFFWWWWWWWWOOO.........",
+    ".......OOWWWWWWWWWWWFFFFFFWWWWnNNNWWWWFFFFFFWWWWWWWWWWWOO.......",
+    ".......OWWWWWWWWWWWKkKkFFWWWWWWNNWWWWWWFFkKkKWWWWWWWWWWWO.......",
+    ".......OOOWWWWWWWWWFkKkKFWWWWWWWWWWWWWWFKkKkFWWWWWWWWWOOO.......",
+    "..........OOWWWWWWWFFFFFFWWWWWWWWWWWWWWFFFFFFWWWWWWWOO..........",
+    "............OWOOWWWFFFFFFWWWWWxWWxWWWWWFFFFFFWWWOOWO............",
+    "...........OOObOWWWFFFFFFFWWWWWWWWWWWWFFFFFFFWWWObOOO...........",
+    "..........OObbbOWWWWWFFFFFfWWWWWWWWWWfFFFFFWWWWWObbbOO..........",
+    "........OObbbbbOWOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOWObbbbbOO........",
+    "......OObbbbbbbOOqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqOObbbbbbbOO......",
+    "....OObbbBbbbbbOOQQQZZZZZZZZZZZZZZZZZZZZZZZZZQQOObbbbbBbbbOO....",
+    "..OObbbbBbbbbbbOOQQQQQQQqQQQQQQQQQQQQQQqQQQQQQQOObbbbbbBbbbbOO..",
+    "OObbbbbbBbbbbbO.OOOQQQQQqQQQQQQQQQQQQQQqQQQQOOOO.ObbbbbBbbbbbbOO",
+    "ObbbBbbbBbbbbO....OOOOOOOQQQZqQQQQQQQQZOOOOObO....ObbbbBbbbBbbbO",
+    ".ObbBbbbBbbbO.....ObbbbbbOQQQZqQQQQQQZObbbbbbO.....ObbbBbbbBbbO.",
+    "..ObBbOObBbO.....ObbbbbbbBOQQQZqQQQQZOBbbbbbbbO.....ObBbOObBbO..",
+    "...OO...OO......ObbbbbbbbBBOOQQZqQQOOBBbbbbbbbbO......OO...OO...",
+    "...............ObbbbbbbbbBBBBOQQZqOBBBBbbbbbbbbbO...............",
+    "...............OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...............",
+    "................................................................",
+    "................................................................"
+  ],
+    lines: [{ text: "La nuit, tout est plus beau… Tu ne trouves pas ?", mood: "zen" }, { text: "J'entends tout, tu sais. Même tes pensées. Non, je rigole.", mood: "clin" },
+      { text: "Je me suspendrais bien la tête en bas, mais ton écran est trop lisse.", mood: "rigole" }] }
+};
+const CHAR_IDS = ["canelle", "raton", "chat", "chien", "chauve"];
+const curChar = () => CHARS[S.character] || CHARS.canelle;
+Object.values(CHARS).forEach(c => { c.flat = c.base.join("").split(""); });
+const cap1 = t => t.charAt(0).toUpperCase() + t.slice(1);
+/** Remplace les jetons du personnage dans une phrase. */
+function fill(t) {
+  if (!t || t.indexOf("{") < 0) return t;
+  const c = curChar();
+  return t.replace(/\{(\w+)\}/g, (m, k) => {
+    if (k === "nom") return S.companionName || c.name;
+    if (k === "CRI") return c.cri.toUpperCase();
+    if (k === "Unsnack") return cap1(c.unsnack);
+    const v = c[k];
+    return typeof v === "string" ? v : m;
+  });
+}
+
 // Skins : palettes et accessoires. Réservés au gérant et aux développeurs.
 const SKINS = [
   { id: "classique", name: "Classique", pal: {} },
@@ -861,9 +1163,18 @@ const SKINS = [
   { id: "pirate", name: "Pirate", acc: "patch", pal: { Q: "#26262c", q: "#141418", Z: "#f2f2f2" } },
   { id: "fantome", name: "Fantôme", alpha: 175, pal: { F: "#cfe6ff", f: "#a9c9ef", t: "#8fb3e0", D: "#6f8fbf", W: "#f4fbff", B: "#9fbde3", b: "#86a6d0", O: "#5b76a8", Q: "#e3f1ff", q: "#b9d6f2", Z: "#ffffff" } },
   { id: "magma", name: "Magma", pal: { F: "#e2461e", f: "#b8300f", t: "#8c2209", D: "#3a0e05", W: "#ffd27a", B: "#5a1508", b: "#401004", O: "#1a0602", Q: "#ffcf3a", q: "#ff8f1f", Z: "#fff1a8" } },
-  { id: "galaxie", name: "Galaxie", acc: "stars", pal: { F: "#4b2a7a", f: "#3a1f62", t: "#2e184f", D: "#1d0f33", W: "#e9dcff", B: "#2e184f", b: "#241240", O: "#0e0620", Q: "#ffd84a", q: "#e0a820", Z: "#fff3b0" } }
+  { id: "galaxie", name: "Galaxie", acc: "stars", pal: { F: "#4b2a7a", f: "#3a1f62", t: "#2e184f", D: "#1d0f33", W: "#e9dcff", B: "#2e184f", b: "#241240", O: "#0e0620", Q: "#ffd84a", q: "#e0a820", Z: "#fff3b0" } },
+  { id: "panda", name: "Panda", pal: { F: "#f2f2f2", f: "#d9d9d9", t: "#222226", D: "#222226", W: "#ffffff", B: "#222226", b: "#161619", O: "#1a1a1d", Q: "#e04a4a", q: "#b53434", Z: "#ff9a9a" } },
+  { id: "chocolat", name: "Chocolat", pal: { F: "#7b4a2e", f: "#5f3822", t: "#4a2a18", D: "#3b2213", W: "#f3dcc0", B: "#4a2a18", b: "#3b2213", Q: "#ffb3c6", q: "#e88aa6", Z: "#ffe0ea" } },
+  { id: "ocean", name: "Océan", pal: { F: "#2f7fb8", f: "#256798", t: "#1d5378", D: "#133a55", W: "#d7f3ff", B: "#1d5378", b: "#153f5c", Q: "#ffd166", q: "#e0a820", Z: "#fff1b8" } },
+  { id: "citrouille", name: "Citrouille", acc: "witch", pal: { F: "#ff8c1a", f: "#e0700a", t: "#b35500", D: "#3a1f0a", W: "#fff0d0", B: "#2a1a3a", b: "#1f132b", Q: "#6a2c91", q: "#4b1d68", Z: "#b97be0" } },
+  { id: "noel", name: "Noël", acc: "santa", pal: { Q: "#2e9e4f", q: "#207a3a", Z: "#ffffff" } },
+  { id: "bonbon", name: "Bonbon", pal: { F: "#ffb3d9", f: "#ff8cc6", t: "#e86aa8", D: "#9fd8ff", W: "#ffffff", B: "#8fd0ff", b: "#6bb8ec", Q: "#b388ff", q: "#8c62d9", Z: "#e3d4ff" } },
+  { id: "chrome", name: "Chrome", pal: { F: "#b8c0cc", f: "#949dab", t: "#6d7684", D: "#4a5260", W: "#eef2f7", B: "#6d7684", b: "#555d6b", O: "#2a2f38", Q: "#00e5ff", q: "#00a8c4", Z: "#b8f7ff" } },
+  { id: "foret", name: "Forêt", pal: { F: "#6b8f3a", f: "#557230", t: "#3f5724", D: "#2d3f19", W: "#e8f0d0", B: "#5a4630", b: "#46361f", Q: "#c9892e", q: "#a06a1d", Z: "#f0c46e" } },
+  { id: "aurore", name: "Aurore", pal: { F: "#3fb6a8", f: "#2f958a", t: "#6f5cc9", D: "#2c2466", W: "#e6fffb", B: "#2c2466", b: "#211b4d", Q: "#ff7ad9", q: "#d94fb4", Z: "#ffc2ee" } }
 ];
-const skinAllowed = () => S.rank === "dev" || S.rank === "owner";
+const skinAllowed = () => true; // les skins sont pour tout le monde
 const activeSkin = () => (skinAllowed() && SKINS.find(k => k.id === S.skin)) || SKINS[0];
 const face = { mood: "neutre", blink: false, talk: false, lookX: 0, think: 0, reveal: 1, phones: false };
 // ordre d'apparition des pixels pendant la matérialisation (du bas vers le haut, avec un peu de hasard)
@@ -906,18 +1217,28 @@ let lastAccent = "";
 const CROWN = ["Y.....Y.....Y", "YY...YYY...YY", "YYY.YYYYY.YYY", "YYYYYYYYYYYYY", "YyRyYyRyYyRyY", "YYYYYYYYYYYYY"];
 const FLOWER = [".T.T.", "TTYTT", ".TTT."];
 const GALAXY = [[30, 19], [20, 27], [45, 21], [16, 33], [48, 36], [27, 29], [38, 18], [12, 30]];
-function skinRGBA(sk) {
-  if (!sk._rgba) {
+const SANTA = ["...........WW.....", "..........WWWW....", "........EEEEWW....", "......EEEEEEE.....", ".....EEEEEEEEE....", "....EEEEEEEEEEE...",
+  "...EEeEEEEEEEeEE..", "..WWWWWWWWWWWWWWW.", "..WWWWWWWWWWWWWWW."];
+const WITCH = [".........LL.......", "........LLL.......", ".......LLLl.......", "......LLLLLL......", ".....LLLLLLLL.....", ".....LLYYYYLL.....",
+  "LLLLLLLLLLLLLLLLLL", ".LLLLLLLLLLLLLLLL."];
+/** Couleurs : palette de base, puis celle du personnage, puis celle du skin. */
+function skinRGBA(sk, ch) {
+  ch = ch || curChar();
+  const key = "_rgba_" + ch.id;
+  if (!sk[key]) {
     const t = Object.assign({}, RGBA);
+    Object.keys(ch.pal).forEach(k => { t[k] = toRGBA(ch.pal[k]); });
     Object.keys(sk.pal).forEach(k => { t[k] = toRGBA(sk.pal[k]); });
     if (sk.alpha) Object.keys(t).forEach(k => { t[k] = ((t[k] & 0x00ffffff) | (sk.alpha << 24)) >>> 0; });
-    sk._rgba = t;
+    sk[key] = t;
   }
-  return sk._rgba;
+  return sk[key];
 }
 /** Compose la grille de pixels d'un visage (humeur, casque, skin). */
-function compose(st, sk) {
-  const g = BASE_FLAT.slice();
+function compose(st, sk, ch) {
+  ch = ch || curChar();
+  const base = ch.flat;
+  const g = base.slice();
   const m = st.mood;
   const e = EXPR[m] || {};
   let L = e.L || "open", R = e.R || "open";
@@ -942,13 +1263,15 @@ function compose(st, sk) {
   if (st.phones) {
     for (const [x, y] of PHONES_BAND) for (let k = 0; k < 2; k++) {
       const i = (y + k) * W + x;
-      if (!BEHIND.has(BASE_FLAT[i])) g[i] = k ? "G" : "g";
+      if (!BEHIND.has(base[i])) g[i] = k ? "G" : "g";
     }
     stamp(g, CUP_L, 3, 25); stamp(g, CUP_R, 55, 25);
   }
   switch (sk.acc) {
-    case "crown": stamp(g, CROWN, 25, 10); break;
-    case "flower": stamp(g, FLOWER, 14, 11); break;
+    case "crown": stamp(g, CROWN, 25, ch.head - 5); break;
+    case "santa": stamp(g, SANTA, 23, ch.head - 7); break;
+    case "witch": stamp(g, WITCH, 23, ch.head - 6); break;
+    case "flower": if (ch.id === "chien") stamp(g, FLOWER, 7, 17); else stamp(g, FLOWER, 14, 11); break;
     case "stars": GALAXY.forEach(([x, y]) => { const i = y * W + x; if (g[i] === "F" || g[i] === "f") g[i] = "y"; }); break;
     case "glasses":
       stamp(g, ["CCCCCCCCCC", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "CCCCCCCCCC"], 19, 22);
@@ -962,8 +1285,8 @@ function compose(st, sk) {
   }
   return g;
 }
-function paint(g, sk, pix, rv) {
-  const tab = skinRGBA(sk);
+function paint(g, sk, pix, rv, ch) {
+  const tab = skinRGBA(sk, ch);
   for (let i = 0; i < W * H; i++) {
     const ch = g[i];
     if (ch === ".") { pix[i] = 0; continue; }
@@ -977,10 +1300,11 @@ function paint(g, sk, pix, rv) {
 }
 function render() {
   const sk = activeSkin();
-  const g = compose(face, sk);
+  const ch = curChar();
+  const g = compose(face, sk, ch);
   const m = face.mood;
   const rv = face.reveal;
-  paint(g, sk, PIX, rv);
+  paint(g, sk, PIX, rv, ch);
   ctx.putImageData(IMG, 0, 0);
   const glow = [];
   if (rv >= 1) (MARKS[m] || []).forEach(p => glow.push(p));
@@ -999,9 +1323,10 @@ function render() {
   if (accent !== lastAccent) { lastAccent = accent; document.documentElement.style.setProperty("--accent", accent); }
 }
 /** Petit aperçu d'un skin (menu). */
-function drawPreview(canvas, sk) {
+function drawPreview(canvas, sk, ch, mood) {
+  ch = ch || curChar();
   const c = canvas.getContext("2d"), im = c.createImageData(W, H), px = new Uint32Array(im.data.buffer);
-  paint(compose({ mood: "content" }, sk), sk, px, 1);
+  paint(compose({ mood: mood || "content" }, sk, ch), sk, px, 1, ch);
   c.putImageData(im, 0, 0);
 }
 const MOOD_FX = {
@@ -1020,6 +1345,7 @@ function setMood(m) {
 let busy = false, ready = false;
 function scheduleBlink() {
   setTimeout(() => {
+    if (typeof statueUntil !== "undefined" && Date.now() < statueUntil) { scheduleBlink(); return; } // la statue ne cligne pas
     face.blink = true; render();
     setTimeout(() => { face.blink = false; render(); scheduleBlink(); }, 130);
   }, 2200 + Math.random() * 4200);
@@ -1062,7 +1388,7 @@ function blip() {
   if (!ac || ac.state !== "running" || cutscene) return;
   const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
   o.type = "square";
-  o.frequency.value = (PITCH[face.mood] || 540) * (0.92 + Math.random() * 0.16);
+  o.frequency.value = (PITCH[face.mood] || 540) * curChar().pitch * (0.92 + Math.random() * 0.16);
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(0.045, t + 0.006);
   g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
@@ -1101,6 +1427,11 @@ const speech = { lines: [], idx: 0, n: 0, letters: 0, state: "idle", timer: null
 const LETTER = /[\p{L}\p{N}]/u;
 
 function speak(lines) {
+  // jetons du personnage ({nom}, {cri}…) : on remplace dans une copie, sans toucher aux listes de phrases
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (l && l.text && l.text.indexOf("{") >= 0) lines[i] = Object.assign({}, l, { text: fill(l.text) });
+  }
   clearTimeout(speech.timer); stopVoice();
   speech.lines = lines; speech.idx = 0;
   startLine();
@@ -1189,7 +1520,7 @@ function thinkingLabel(t) { if (face.think) { capEl.textContent = t; liveEl.text
 
 /* ---------- mémoire des répliques affichées ---------- */
 function remember(lines) {
-  const said = lines.filter(l => LETTER.test(l.text));
+  const said = lines.filter(l => LETTER.test(l.text)).map(l => Object.assign({}, l, { text: fill(l.text) }));
   if (!said.length) return;
   if (NATIVE) { try { NATIVE.addAssistantLines(JSON.stringify(said)); } catch (e) {} }
   said.forEach(l => S.log.push({ w: "bip", t: l.text }));
@@ -1235,7 +1566,9 @@ function normalize(r) {
 function errorLines(code) {
   switch (code) {
     case "model_blocked": return [{ text: "Mon cerveau a fait fermer l'appli, alors je le laisse se reposer.", mood: "inquiet" }, { text: "Tu peux le relancer en mode économe dans « Mon cerveau ».", mood: "neutre" }];
-    case "no_model": return [{ text: "Pour discuter librement, il me faut mon cerveau.", mood: "reflechit" }, { text: "Il se télécharge une seule fois : je t'ouvre le panneau.", mood: "neutre" }];
+    case "no_model": if (lastBrain && lastBrain.state === "weak") return [{ text: "Mon cerveau ne tient pas dans ton téléphone, alors je ne peux pas discuter de tout.", mood: "timide" },
+      { text: "Mais je connais la météo, la batterie, les réveils, la musique et plein de jeux ! Touche « Jeux » en bas.", mood: "clin" }];
+      return [{ text: "Pour discuter librement, il me faut mon cerveau.", mood: "reflechit" }, { text: "Il se télécharge une seule fois : je t'ouvre le panneau.", mood: "neutre" }];
     case "model_error": return [{ text: "Aïe, mon cerveau n'arrive pas à démarrer.", mood: "triste" }, { text: "Regarde dans « Mon cerveau », ou redémarre l'appli.", mood: "neutre" }];
     case "timeout": return [{ text: "Oups, j'ai réfléchi trop longtemps.", mood: "triste" }, { text: "Tu peux reformuler plus simplement ?", mood: "neutre" }];
     default: return [{ text: "Bzzt. Mon signal a grésillé.", mood: "surpris" }, { text: "Ton message est encore là : renvoie-le.", mood: "neutre" }];
@@ -1299,7 +1632,7 @@ async function send(preset, fromChip) {
       stopThinking();
       if (!msgEl.value && typeof preset !== "string") msgEl.value = text;
       speak(errorLines(code));
-      if (code === "no_model" || code === "model_error" || code === "model_blocked") setTimeout(() => { if (sheet.hidden) openBrain(); }, 2800);
+      if ((code === "no_model" && !(lastBrain && lastBrain.state === "weak")) || code === "model_error" || code === "model_blocked") setTimeout(() => { if (sheet.hidden) openBrain(); }, 2800);
     } else if (speech.state === "waiting") speech.state = "idle";
   } finally {
     busy = false; streamId = null;
@@ -1316,6 +1649,8 @@ const CHIPS = [
   { t: "Batterie", say: "Ma batterie ?" },
   { t: "Météo", say: "Quelle météo aujourd'hui ?" },
   { t: "Heure", say: "Quelle heure est-il ?" },
+  { t: "Personnages", open: "charSec" },
+  { t: "Skins", open: "skinsSec" },
   { t: "Jeux", sub: "games" },
   { t: "Interactions", sub: "fun" },
   { t: "Autour de moi", sub: "around" },
@@ -1339,13 +1674,17 @@ const GAMES_CHIPS = [
 ];
 const FUN_CHIPS = [
   ["High five", "High five"], ["Check", "Check"], ["Danse", "Danse"], ["Câlin", "Câlin"], ["Bisou", "Bisou"], ["Chatouille", "Chatouille"],
-  ["Mange", "Mange un bambou"], ["Bois", "Bois de l'eau"], ["Bulles", "Fais des bulles"], ["Feu d'artifice", "Feu d'artifice"],
+  ["Mange", "Tu as faim ?"], ["Bois", "Bois de l'eau"], ["Bulles", "Fais des bulles"], ["Feu d'artifice", "Feu d'artifice"],
   ["Arc-en-ciel", "Arc-en-ciel"], ["Tour de magie", "Fais un tour de magie"], ["Robot", "Fais le robot"], ["Moonwalk", "Moonwalk"],
   ["Yoga", "Fais du yoga"], ["Balle", "Joue à la balle"], ["Étoile filante", "Fais un vœu"], ["Blague", "Raconte une blague"],
   ["Compliment", "Fais-moi un compliment"], ["Anniversaire", "Joyeux anniversaire"], ["Pirouette", "Fais un tour"], ["Saute", "Saute"],
-  ["Rawr", "Rawr"], ["Chante", "Chante"], ["Fais le mort", "Fais le mort"], ["Éternue", "Éternue"], ["Grimace", "Fais une grimace"],
+  ["Ton cri", "Fais ton cri"], ["Chante", "Chante"], ["Fais le mort", "Fais le mort"], ["Éternue", "Éternue"], ["Grimace", "Fais une grimace"],
   ["Muscles", "Montre tes muscles"], ["Pleure", "Pleure"], ["Pose", "Prends la pose"], ["Roulade", "Roulade"], ["Applaudis", "Applaudis"],
-  ["Coucou", "Fais coucou"], ["Dodo", "Fais dodo"], ["Étire-toi", "Étire-toi"], ["Clin d'œil", "Fais un clin d'œil"], ["Froid ?", "Tu as froid ?"]
+  ["Coucou", "Fais coucou"], ["Dodo", "Fais dodo"], ["Étire-toi", "Étire-toi"], ["Clin d'œil", "Fais un clin d'œil"], ["Froid ?", "Tu as froid ?"],
+  ["Donne la patte", "Donne la patte"], ["Guitare", "Joue de la guitare"], ["Tambour", "Joue du tambour"], ["Selfie", "Prends un selfie"],
+  ["Compte", "Compte jusqu'à 10"], ["Histoire", "Raconte une histoire"], ["Toupie", "Fais la toupie"], ["Karaté", "Fais du karaté"],
+  ["Fantôme", "Fais le fantôme"], ["Imite un animal", "Imite un animal"], ["Crêpe", "Fais une crêpe"], ["Bisous volants", "Envoie des bisous volants"],
+  ["Trampoline", "Fais du trampoline"], ["Statue", "Fais la statue"], ["Confettis", "Lance des confettis"], ["Boules de neige", "Bataille de boules de neige"]
 ];
 const SUBS = { around: AROUND, games: GAMES_CHIPS, fun: FUN_CHIPS };
 let chipsSub = false;
@@ -1363,7 +1702,8 @@ function renderChips(sub) {
     SUBS[chipsSub].forEach(([t, say]) => chipsEl.append(chip(t, () => { if (chipsSub === "around") renderChips(false); send(say, true); })));
   } else {
     CHIPS.forEach(c => chipsEl.append(chip(c.t, () => {
-      if (c.sub) renderChips(c.sub);
+      if (c.open) openMenuAt(c.open);
+      else if (c.sub) renderChips(c.sub);
       else if (c.fill) { msgEl.value = c.fill; updateSend(); msgEl.focus(); }
       else send(c.say, true);
     })));
@@ -1503,7 +1843,7 @@ window.onSpeechError = code => {
 /* ---------- phrases ---------- */
 const TAPS = [
   { text: "Hé ! Pas les oreilles, ça chatouille !", mood: "surpris" },
-  { text: "Rawr ! …Je t'ai fait peur ?", mood: "clin" },
+  { text: "{cri} ! …Je t'ai fait peur ?", mood: "clin" },
   { text: "Mon bandana est bien mis ?", mood: "fier" },
   { text: "Je veille sur ton écran, bien au chaud.", mood: "content" },
   { text: "Tu veux me raconter ta journée ?", mood: "neutre" },
@@ -1514,14 +1854,14 @@ const TAPS = [
   { text: "Oui ? Tu m'as appelé ?", mood: "surpris" },
   { text: "Je suis tout doux, hein ?", mood: "fier" },
   { text: "Attention, je mords… pour de faux !", mood: "clin" },
-  { text: "Tu savais que les pandas roux dorment dans les arbres ?", mood: "content" },
+  { text: "{fait}", mood: "content" },
   { text: "Ma queue est presque aussi longue que moi, tu as vu ?", mood: "fier" },
   { text: "Pssst… tu as bu de l'eau aujourd'hui ?", mood: "inquiet" },
   { text: "Je t'ai dit que tu étais génial ? Voilà, c'est dit.", mood: "timide" },
   { text: "Hop ! Je suis bien réveillé !", mood: "surpris" },
   { text: "Encore toi ! J'adore.", mood: "content" },
-  { text: "Les pandas roux mangent surtout du bambou. Miam.", mood: "content" },
-  { text: "Je suis un panda roux, pas un raton laveur, hein !", mood: "fache" },
+  { text: "Mon goûter préféré ? {gout}. Miam.", mood: "gourmand" },
+  { text: "{pasmoi}", mood: "fache" },
   { text: "Tu me cherches ? Je suis là !", mood: "clin" },
   { text: "On fait un câlin ? Glisse ton doigt sur moi.", mood: "amoureux" }
 ];
@@ -1551,7 +1891,7 @@ const PET_END = [
   { text: "Encore ! Encore !", mood: "content" },
   { text: "Mes poils sont tout ébouriffés maintenant !", mood: "rigole" },
   { text: "Tu m'as fait fondre…", mood: "timide" },
-  { text: "Je suis le panda le plus heureux du téléphone.", mood: "fier" },
+  { text: "Personne n'est plus heureux que moi dans ce téléphone.", mood: "fier" },
   { text: "Ronron terminé. Note : dix sur dix.", mood: "clin" },
   { text: "Mmmh… je pourrais faire la sieste, là.", mood: "content" }
 ];
@@ -1562,12 +1902,12 @@ const IDLE_LINES = [
   { text: "Si tu t'ennuies, touche mon nez !", mood: "clin" },
   { text: "*se gratte l'oreille*", mood: "content" },
   { text: "*joue avec sa queue*", mood: "rigole" },
-  { text: "J'ai un petit creux… un bambou, peut-être ?", mood: "content" },
+  { text: "J'ai un petit creux… {unsnack}, peut-être ?", mood: "gourmand" },
   { text: "Il fait bon, dans ton téléphone.", mood: "content" },
   { text: "Je me demande à quoi tu penses.", mood: "reflechit" },
   { text: "Pssst… une caresse ?", mood: "timide" },
   { text: "*suit une mouche imaginaire des yeux*", mood: "surpris" },
-  { text: "Je m'entraîne à faire rawr. Rawr !", mood: "fier" },
+  { text: "Je m'entraîne à faire mon cri. {cri} !", mood: "fier" },
   { text: "*arrange son bandana*", mood: "fier" },
   { text: "Hé ho… il y a quelqu'un ?", mood: "inquiet" }
 ];
@@ -1576,7 +1916,7 @@ const WAKE = [
   { text: "Hein ? Je ne dormais pas ! …Si, un peu.", mood: "timide" },
   { text: "Oh ! Te revoilà !", mood: "surpris" },
   { text: "*bâille* Coucou, toi…", mood: "baille" },
-  { text: "J'ai rêvé d'un bambou géant !", mood: "content" }
+  { text: "{reve}", mood: "content" }
 ];
 const NIGHT_ADVICE = [
   { text: "Se coucher tard, ce n'est pas bon pour toi, tu sais.", mood: "inquiet" },
@@ -1904,12 +2244,14 @@ function react(lines) {
   speak(lines);
 }
 function restartAnim(cls) { faceBtn.classList.remove(cls); void faceBtn.offsetWidth; faceBtn.classList.add(cls); }
+/** Une fois sur trois, une phrase propre au personnage plutôt qu'une phrase commune. */
+function charPick(pool) { const own = curChar().lines; return own && Math.random() < 0.34 ? pick(own) : pick(pool); }
 function tapFace() {
   if (busy || listening || materializing) return;
   if (speech.state !== "idle") { advance(); return; }
   restartAnim("hop");
   if (S.sound === "bips") squeak();
-  react([pick(TAPS)]);
+  react([charPick(TAPS)]);
 }
 function boop() {
   const now = Date.now();
@@ -1982,6 +2324,7 @@ function calm() {
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
+  text = fill(text);
   capEl.classList.add("dim"); capEl.textContent = text; liveEl.textContent = text;
   if (mood) idleMood(mood, ms);
 }
@@ -1999,8 +2342,8 @@ const IDLE_ACTIONS = [
   () => { restartAnim("stretch"); murmur("*s'étire*", null); },
   () => { idleMood("fier", 2400); fx("sparkle", 3); },
   () => murmur("Tu me regardes ?", "timide", 2400),
-  () => { const l = pick(IDLE_LINES); murmur(l.text, l.mood, 3000); },
-  () => { const l = pick(IDLE_LINES); murmur(l.text, l.mood, 3000); },
+  () => { const l = charPick(IDLE_LINES); murmur(l.text, l.mood, 3000); },
+  () => { const l = charPick(IDLE_LINES); murmur(l.text, l.mood, 3000); },
   () => { face.think = 1; render(); let k = 0; const t = setInterval(() => { face.think = face.think % 3 + 1; render(); if (++k > 5) { clearInterval(t); face.think = 0; render(); } }, 400); murmur("hmm…", null); }
 ];
 function fallAsleep() {
@@ -2296,7 +2639,7 @@ function localCommand(raw, dry) {
     [/^(?:bisou|fais(?:[- ]moi)? un bisou|un bisou|je t'embrasse|bise)$/, kiss],
     [/^(?:fais coucou|dis coucou|fais signe|salue(?:[- ]moi)?|fais bonjour|coucou de la patte)$/, wave],
     [/^(?:chatouille|guili(?:[- ]guili)?|je te chatouille|chatouilles)$/, tickle],
-    [/^(?:rugis|fais peur|fais[- ]moi peur|rawr|grogne)$/, rawr],
+    [/^(?:rugis|fais peur|fais[- ]moi peur|rawr|grogne|fais ton cri|ton cri|crie|aboie|miaule)$/, rawr],
     [/^(?:fais dodo|va dormir|dors|fais (?:une|la) sieste)$/, () => { speak([{ text: "Bon… juste une petite sieste.", mood: "baille" }]); setTimeout(fallAsleep, 2600); }],
     [/^(?:pierre[ ,-]*feuille[ ,-]*ciseaux?|chifoumi|shifumi|on joue a pierre feuille ciseaux)$/, rps],
     [/^(?:pile ou face|lance une piece|tire a pile ou face)$/, coin],
@@ -2327,6 +2670,22 @@ function localCommand(raw, dry) {
     [/^(?:joue a la balle|lance la balle|balle|on joue a la balle)$/, ball],
     [/^(?:fais un voeu|etoile filante|une etoile filante)$/, wish],
     [/^(?:tu as froid|t'?as froid)$/, cold],
+    [/^(?:donne la patte|donne[- ]moi la patte|la patte|patte)$/, givePaw],
+    [/^(?:joue de la guitare|guitare|air guitar|fais de la guitare)$/, guitar],
+    [/^(?:joue du tambour|joue de la batterie|tambour|fais du tambour)$/, drums],
+    [/^(?:prends? un selfie|selfie|fais un selfie|prends une photo)$/, selfie],
+    [/^(?:compte jusqu'?a (?:10|dix)|compte)$/, countTen],
+    [/^(?:raconte(?:[- ]moi)? une histoire|une histoire|histoire)$/, story],
+    [/^(?:fais la toupie|toupie)$/, toupie],
+    [/^(?:fais du karate|karate|fais du kung[- ]fu)$/, karate],
+    [/^(?:fais le fantome|fantome|bouh)$/, ghost],
+    [/^(?:imite un animal|imite(?:[- ]moi)? un animal|fais un bruit d'animal)$/, imitate],
+    [/^(?:fais une crepe|crepe|fais des crepes)$/, crepe],
+    [/^(?:envoie(?:[- ]moi)? des bisous volants|bisous volants|des bisous)$/, flyKisses],
+    [/^(?:fais du trampoline|trampoline|rebondis)$/, trampoline],
+    [/^(?:fais la statue|statue|ne bouge plus)$/, statue],
+    [/^(?:lance des confettis|confettis)$/, confetti],
+    [/^(?:bataille de boules de neige|boules? de neige)$/, snowballs],
     [/^(?:joyeux anniversaire|bon anniversaire|c'?est mon anniversaire|souhaite[- ]moi (?:un )?bon anniversaire)$/, birthday],
     // jeux
     [/^(?:devine le nombre|devine un nombre|jeu du nombre|plus ou moins)$/, gNumber],
@@ -2463,10 +2822,10 @@ function tickle() {
 function rawr() {
   if (busy || cutscene) return;
   const [x, y] = facePoint(32, 8);
-  spark("RAWR !", "rawr", x, y);
+  spark(fill("{CRI} !"), "rawr", x, y);
   restartAnim("shiver");
   if (ac && S.sound !== "muet") { tone(160, 90, 0.5, "sawtooth", 0.07); tone(240, 120, 0.45, "square", 0.03, 0.05); }
-  speak([{ text: "RAWWWR !", mood: "fache" }, pick([{ text: "…Je t'ai fait peur ? Avoue.", mood: "clin" }, { text: "Hihi, je suis terrifiant, hein ?", mood: "rigole" }])]);
+  speak([{ text: "{CRI} !", mood: "fache" }, pick([{ text: "…Je t'ai fait peur ? Avoue.", mood: "clin" }, { text: "Hihi, je fais peur, hein ?", mood: "rigole" }])]);
 }
 let rpsScore = [0, 0];
 const RPS = { pierre: "✊", feuille: "✋", ciseaux: "✌️" };
@@ -2489,7 +2848,7 @@ function rpsPlay(you) {
     let line;
     if (you === me) line = pick([{ text: "Égalité ! On a le même cerveau.", mood: "surpris" }, { text: "Pareil ! On rejoue ?", mood: "clin" }]);
     else if (win[you] === me) { rpsScore[0]++; line = pick([{ text: "Tu as gagné… Bien joué !", mood: "timide" }, { text: "Grrr, tu m'as eu !", mood: "fache" }]); fx("sparkle", 3); }
-    else { rpsScore[1]++; line = pick([{ text: "J'ai gagné ! Hé hé !", mood: "fier" }, { text: "Victoire du panda !", mood: "rigole" }]); }
+    else { rpsScore[1]++; line = pick([{ text: "J'ai gagné ! Hé hé !", mood: "fier" }, { text: "Victoire de {nom} !", mood: "rigole" }]); }
     if (sc) sc.textContent = "Toi " + rpsScore[0] + " – " + rpsScore[1] + " " + S.companionName;
     speak([{ text: "Moi, je fais… " + me + " !", mood: "surpris" }, line]);
   }, 700);
@@ -2566,7 +2925,7 @@ function eat() {
   setMood("gourmand");
   fx("miam", 2); fx("crumbs", 8);
   [0, 0.25, 0.5, 0.75].forEach(t => tone(220, 160, 0.08, "square", 0.03, t));
-  speak([pick([{ text: "Un bambou ? Pour moi ?! Merci !", mood: "gourmand" }, { text: "Miam ! Crunch crunch crunch…", mood: "gourmand" }, { text: "Oh, du bambou tout frais !", mood: "emerveille" }]),
+  speak([pick([{ text: "{Unsnack} ? Pour moi ?! Merci !", mood: "gourmand" }, { text: "Miam ! Crunch crunch crunch…", mood: "gourmand" }, { text: "Oh, du bambou tout frais !", mood: "emerveille" }]),
     { text: "*croque* Mmmh… délicieux !", mood: "gourmand" }, pick([{ text: "J'ai la bedaine pleine.", mood: "content" }, { text: "Merci, chef cuisinier !", mood: "amoureux" }])]);
 }
 function drink() {
@@ -2605,7 +2964,7 @@ function muscles() {
   playFor("bigjump", 950);
   const [x, y] = facePoint(32, 6);
   spark("BIM !", "clac", x, y);
-  speak([{ text: "Regarde ces muscles !", mood: "fier" }, pick([{ text: "Je soulève des bambous de trois kilos.", mood: "fier" }, { text: "Fort comme un panda roux. Enfin… presque.", mood: "rigole" }])]);
+  speak([{ text: "Regarde ces muscles !", mood: "fier" }, pick([{ text: "Je soulève des haltères de trois kilos.", mood: "fier" }, { text: "Fort comme un panda roux. Enfin… presque.", mood: "rigole" }])]);
 }
 function grimace() {
   if (busyNow()) return;
@@ -2622,7 +2981,7 @@ function zen() {
   playFor("float", 5200);
   fx("zen", 3);
   melody([392, 0, 440, 0, 392], 0.6);
-  speak([{ text: "Ommmm…", mood: "zen" }, { text: "Inspire… expire…", mood: "zen" }, { text: "Je suis aussi calme qu'un bambou dans la brise.", mood: "zen" }]);
+  speak([{ text: "Ommmm…", mood: "zen" }, { text: "Inspire… expire…", mood: "zen" }, { text: "Je suis aussi calme qu'une feuille dans la brise.", mood: "zen" }]);
 }
 function bubbles() {
   if (busyNow()) return;
@@ -2647,7 +3006,7 @@ function moonwalk() {
   if (busyNow()) return;
   playFor("moonwalk", 3000);
   melody([330, 0, 330, 392, 330, 294, 262, 0], 0.25);
-  speak([{ text: "Hee-hee !", mood: "fier" }, { text: "Le moonwalk du panda !", mood: "rigole" }]);
+  speak([{ text: "Hee-hee !", mood: "fier" }, { text: "Le moonwalk de {nom} !", mood: "rigole" }]);
 }
 function magic() {
   if (busyNow()) return;
@@ -2661,7 +3020,7 @@ function magic() {
 const COMPLIMENTS = [
   "Tu es quelqu'un de vraiment chouette, tu sais.", "Ton sourire rendrait jaloux le soleil.", "Tu as un super bon goût… la preuve, tu parles avec moi !",
   "Tu es plus fort que tu ne le penses.", "Le monde est plus joli avec toi dedans.", "Tu as des idées géniales.",
-  "Tu es aussi doux qu'un panda roux. C'est le plus beau compliment que je connaisse.", "Je suis fier d'être ton compagnon.",
+  "Tu es aussi doux que moi. C'est le plus beau compliment que je connaisse.", "Je suis fier d'être ton compagnon.",
   "Tu fais de ton mieux, et c'est déjà énorme.", "Tu mérites une journée magnifique.", "Tu es unique, comme mon bandana.", "Tu illumines mon écran."
 ];
 function compliment() {
@@ -2725,6 +3084,128 @@ function birthday() {
   melody([392, 392, 440, 392, 523, 494, 0, 392, 392, 440, 392, 587, 523, 0, 392, 392, 784, 659, 523, 494, 440, 0, 698, 698, 659, 523, 587, 523], 0.32);
   fx("confetti", 20);
   speak([{ text: "Joyeux anniversaire" + who + " !", mood: "emerveille" }, { text: "J'ai fait un gâteau ! Souffle les bougies sur la carte.", mood: "fier" }]);
+}
+
+
+/* ---------- interactions (encore plus) ---------- */
+function givePaw() {
+  if (busyNow()) return;
+  pawMode = "wave";
+  pawEl.classList.remove("hit", "wave"); pawEl.classList.add("up");
+  setTimeout(hidePaw, 2600);
+  speak([{ text: pick(["Voilà ma patte !", "Tiens, ma patte. Toute douce.", "Patte ! Je peux avoir une récompense ?"]), mood: "content" }]);
+}
+function guitar() {
+  if (busyNow()) return;
+  playFor("rock", 3200);
+  [[196, 247, 294], [220, 277, 330], [247, 311, 370], [196, 247, 294]].forEach((ch, i) => ch.forEach(f => tone(f, f, 0.5, "sawtooth", 0.018, i * 0.7)));
+  let k = 0; const t = setInterval(() => { fx("notes", 1); if (++k > 5) clearInterval(t); }, 500);
+  speak([{ text: "*gratte une guitare invisible*", mood: "musique" }, { text: "Yeaaah ! Rock'n'roll !", mood: "rigole" }]);
+}
+function drums() {
+  if (busyNow()) return;
+  [0, 0.25, 0.5, 0.62, 0.75, 1, 1.25, 1.5, 1.62, 1.75].forEach((t, i) => setTimeout(() => {
+    if (i % 2) sfxClap(); else tone(120, 50, 0.18, "sine", 0.12);
+    restartAnim("squish");
+  }, t * 1000));
+  const [x, y] = facePoint(32, 8);
+  spark("boum tchak !", "clac", x, y);
+  speak([{ text: "Boum, tchak, boum-boum, tchak !", mood: "rigole" }, { text: "Je suis le roi du tambour.", mood: "fier" }]);
+}
+function selfie() {
+  if (busyNow()) return;
+  speak([{ text: "Selfie ! Souris… 3… 2… 1…", mood: "clin" }]);
+  setTimeout(() => {
+    flash(); tone(1800, 1800, 0.06, "square", 0.03);
+    const d = new Date();
+    showCard({ type: "game", title: "Selfie", html: `<div class="polaroid"><canvas data-selfie width="64" height="54"></canvas><div>${esc(S.companionName)} · ${d.toLocaleDateString("fr-FR")}</div></div>` }, 20000);
+    const c = cardEl.querySelector("[data-selfie]");
+    if (c) drawPreview(c, activeSkin(), curChar(), "clin");
+    speak([{ text: "Clic ! Pas mal, hein ?", mood: "fier" }]);
+  }, 2600);
+}
+function countTen() {
+  if (busyNow()) return;
+  speak([{ text: "Un, deux, trois, quatre, cinq…", mood: "reflechit" }, { text: "Six, sept, huit, neuf… DIX !", mood: "fier" }, { text: "Je sais compter jusqu'à l'infini. Mais ça prend du temps.", mood: "clin" }]);
+}
+const STORIES = [
+  ["Il était une fois un petit {esp} qui voulait toucher la lune.", "Il grimpa sur l'arbre le plus haut… puis sur un nuage… puis sur une étoile.", "Arrivé en haut, il découvrit que la lune était juste le reflet de ton écran. Fin !"],
+  ["Un jour, {nom} trouva une carte au trésor dans ton téléphone.", "Il suivit les flèches, traversa le dossier « Téléchargements » et évita trois pubs.", "Le trésor ? Une photo de toi en train de sourire. Le plus beau des trésors."],
+  ["Il était une fois un nuage qui avait peur du vide.", "Tous les autres nuages flottaient, mais lui restait collé à la montagne.", "Un oiseau lui dit : « Tu es déjà dans le vide, et tout va bien. » Le nuage s'envola. Fin."],
+  ["Dans une forêt de pixels vivait une luciole qui n'arrivait pas à briller.", "Elle essaya tout : chanter, danser, manger des étoiles.", "Un soir, elle aida un ami perdu… et sa lumière s'alluma d'un coup. Fin !"],
+  ["Une petite crêpe bretonne rêvait de voir la mer.", "Elle roula, roula, depuis Rennes jusqu'à Saint-Malo.", "Arrivée sur la plage, elle salua les vagues… et une mouette la mangea. Bon appétit ! Fin."]
+];
+function story() {
+  if (busyNow()) return;
+  const st = pick(STORIES);
+  speak([{ text: st[0], mood: "reflechit" }, { text: st[1], mood: "emerveille" }, { text: st[2], mood: "content" }]);
+}
+function toupie() {
+  if (busyNow()) return;
+  playFor("spin", 1300);
+  setTimeout(() => playFor("spin", 1300), 1350);
+  tone(300, 1500, 2.4, "sine", 0.03);
+  speak([{ text: "Toupie ! Wiiiiii !", mood: "rigole" }, { text: "Ouh là… tout tourne encore…", mood: "etourdi" }]);
+}
+function karate() {
+  if (busyNow()) return;
+  ["HI-YA !", "HA !", "HOU !"].forEach((w, i) => setTimeout(() => {
+    const [x, y] = facePoint(rand(10, 54), rand(6, 20)); spark(w, "clac", x, y);
+    restartAnim("shiver"); tone(500, 120, 0.12, "square", 0.04);
+  }, i * 450));
+  speak([{ text: "Ceinture noire de karaté-pixel !", mood: "fache" }, { text: "…Bon, en vrai, je n'ai pas de ceinture. Juste un bandana.", mood: "timide" }]);
+}
+function ghost() {
+  if (busyNow()) return;
+  playFor("ghosty", 3200);
+  tone(400, 300, 1.2, "sine", 0.03);
+  speak([{ text: "Bouuuuuh ! Je suis un fantôme !", mood: "surpris" }, { text: "Je t'ai fait peur ? Non ? Bon…", mood: "timide" }]);
+}
+const ANIMALS = [["Meuh !", "une vache"], ["Bêêê !", "un mouton"], ["Coin coin !", "un canard"], ["Aouuuuh !", "un loup"], ["Cot cot codec !", "une poule"],
+  ["Croâ croâ !", "une grenouille"], ["Hi-han !", "un âne"], ["Groin groin !", "un cochon"], ["Hou hou !", "une chouette"]];
+function imitate() {
+  if (busyNow()) return;
+  const [sound, animal] = pick(ANIMALS);
+  speak([{ text: sound, mood: "rigole" }, { text: "Tu as deviné ? C'était " + animal + " !", mood: "clin" }]);
+}
+function crepe() {
+  if (busyNow()) return;
+  stageItem("crepe", "", 2400);
+  [0.4, 1.2].forEach(t => setTimeout(() => tone(700, 400, 0.12, "triangle", 0.04), t * 1000));
+  speak([{ text: "Une crêpe ! Attention… je la fais sauter !", mood: "emerveille" }, { text: "Et hop ! Une crêpe bretonne. Beurre salé ?", mood: "gourmand" }]);
+}
+function flyKisses() {
+  if (busyNow()) return;
+  for (let k = 0; k < 8; k++) { const [x, y] = facePoint(rand(20, 44), rand(30, 40)); spark("♥", "heart", x, y, { dx: rand(-140, 140), dy: rand(-220, -120), delay: k * 140 }); }
+  speak([{ text: "Mwah ! Mwah ! Des bisous volants pour toi !", mood: "amoureux" }]);
+}
+function trampoline() {
+  if (busyNow()) return;
+  [0, 1, 2].forEach(i => setTimeout(() => { playFor("bigjump", 950); tone(250 + i * 120, 900 + i * 120, 0.3, "square", 0.03); }, i * 1000));
+  speak([{ text: "Boing !", mood: "surpris" }, { text: "Boiiing !", mood: "rigole" }, { text: "BOIIIIING ! Je touche le ciel !", mood: "emerveille" }]);
+}
+let statueUntil = 0;
+function statue() {
+  if (busyNow()) return;
+  statueUntil = Date.now() + 5000;
+  face.lookX = 0; setMood("neutre");
+  faceBtn.classList.add("frozen");
+  speak([{ text: "Je fais la statue… Je ne bouge plus !", mood: "neutre" }]);
+  setTimeout(() => {
+    faceBtn.classList.remove("frozen");
+    speak([{ text: "…Raté, j'ai cligné des yeux !", mood: "rigole" }]);
+  }, 5200);
+}
+function confetti() {
+  if (busyNow()) return;
+  fx("confetti", 45); sfxClap();
+  speak([{ text: "Youpiiii ! Des confettis !", mood: "emerveille" }, { text: "C'est la fête dans ton téléphone !", mood: "rigole" }]);
+}
+function snowballs() {
+  if (busyNow()) return;
+  for (let k = 0; k < 6; k++) setTimeout(() => stageItem("snowball " + (k % 2 ? "from-right" : "from-left"), "", 1300), k * 350);
+  setTimeout(() => { setMood("froid"); fx("brr", 2); }, 900);
+  speak([{ text: "Bataille de boules de neige !", mood: "rigole" }, { text: "Hé ! Tu m'as eu ! Brrr…", mood: "froid" }, { text: "Revanche !", mood: "fache" }]);
 }
 
 /* ---------- jeux ---------- */
@@ -3206,6 +3687,7 @@ settingsEl.hidden = !NATIVE;
 
 function renderSheet() {
   try { renderMusicSettings(); } catch (e) {}
+  try { renderChars(); } catch (e) {}
   try { renderSkins(); } catch (e) {}
   pull();
   logEl.replaceChildren();
@@ -3331,7 +3813,6 @@ function renderRank() {
   }[r] || "";
   rankClear.hidden = !info;
   devTools.hidden = !(r === "dev" || r === "owner");
-  document.getElementById("skinsSec").hidden = !skinAllowed();
   applySkin();
   document.body.classList.toggle("vip", r === "vip");
 }
@@ -3559,10 +4040,13 @@ document.getElementById("devBtns").append(...DEV.map(([label, fn]) => button(lab
 /* ---------- skins (gérant et développeurs) ---------- */
 const SKIN_LINES = {
   classique: "Retour au look classique. Le bandana orange, c'est la vie !", neige: "Tout blanc comme la neige ! Brrr…",
-  minuit: "Mode minuit activé. Je suis le panda de la nuit.", dore: "Doré, avec une couronne ! Appelez-moi Votre Majesté.",
+  minuit: "Mode minuit activé. Je suis le roi de la nuit.", dore: "Doré, avec une couronne ! Appelez-moi Votre Majesté.",
   sakura: "Rose sakura, avec une fleur. Tout doux !", menthe: "Vert menthe, frais comme un bonbon !",
   cyber: "Mode cyber : lunettes néon enclenchées.", pirate: "Arrr ! Capitaine Canelle, avec son cache-œil !",
-  fantome: "Hou hou… je suis un fantôme !", magma: "Magma ! Attention, je suis brûlant.", galaxie: "Galaxie : j'ai des étoiles plein le pelage."
+  fantome: "Hou hou… je suis un fantôme !", magma: "Magma ! Attention, je suis brûlant.", galaxie: "Galaxie : j'ai des étoiles plein le pelage.",
+  panda: "Noir et blanc, comme un panda géant !", chocolat: "Chocolat… J'ai envie de me croquer moi-même.", ocean: "Bleu océan ! Je sens les vagues.",
+  citrouille: "Citrouille et chapeau de sorcière : bouh !", noel: "Ho ho ho ! Bonnet de Noël enfilé !", bonbon: "Rose et bleu, comme un bonbon !",
+  chrome: "Chrome brillant : je suis un robot de luxe.", foret: "Vert forêt : je me camoufle dans les feuilles.", aurore: "Aurore boréale ! Je brille de mille couleurs."
 };
 function applySkin() {
   const sk = activeSkin();
@@ -3588,6 +4072,55 @@ function renderSkins() {
     });
     grid.append(b);
   });
+}
+
+/* ---------- personnages ---------- */
+function renderChars() {
+  const grid = document.getElementById("charGrid");
+  if (!grid) return;
+  grid.replaceChildren();
+  CHAR_IDS.forEach(id => {
+    const c = CHARS[id];
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "char" + (curChar().id === id ? " on" : "");
+    b.setAttribute("aria-pressed", curChar().id === id ? "true" : "false");
+    const cv2 = document.createElement("canvas"); cv2.width = W; cv2.height = H;
+    drawPreview(cv2, activeSkin(), c);
+    const t = document.createElement("div");
+    const nm = document.createElement("b"); nm.textContent = c.name + " · " + c.esp;
+    const tr = document.createElement("span"); tr.textContent = c.trait;
+    t.append(nm, tr);
+    b.append(cv2, t);
+    b.addEventListener("click", () => chooseChar(id));
+    grid.append(b);
+  });
+}
+function chooseChar(id) {
+  if (!CHARS[id] || busy || cutscene) return;
+  const c = CHARS[id];
+  const changed = curChar().id !== id;
+  S.character = id;
+  S.companionName = c.name;
+  saveUi(); updateName();
+  closeSheet();
+  if (!changed) return;
+  hideCard();
+  face.reveal = 1;
+  flash(); restartAnim("hop"); fx("sparkle", 6);
+  setMood("content");
+  const hello = {
+    canelle: [{ text: "Coucou, c'est moi, Canelle ! Ton panda roux préféré.", mood: "content" }],
+    raton: [{ text: "Hé hé… Filou, raton laveur, pour vous servir.", mood: "clin" }, { text: "T'aurais pas un biscuit, par hasard ?", mood: "gourmand" }],
+    chat: [{ text: "Miaou. Je suis Mochi.", mood: "fier" }, { text: "Tu peux me caresser. Si je veux bien.", mood: "timide" }],
+    chien: [{ text: "Wouf ! Je suis Biscotte ! Trop content de te voir !", mood: "emerveille" }, { text: "On joue ? Dis oui !", mood: "rigole" }],
+    chauve: [{ text: "Bonsoir… Je suis Nyx.", mood: "zen" }, { text: "La nuit est jeune, et moi aussi. Enfin, presque.", mood: "clin" }]
+  }[id];
+  hello.push({ text: "Et je me souviens de tout ce que tu m'as dit, t'inquiète.", mood: "clin" });
+  speak(hello);
+}
+function openMenuAt(sectionId) {
+  openSheet();
+  setTimeout(() => { const el = document.getElementById(sectionId); if (el) el.scrollIntoView({ block: "start" }); }, 60);
 }
 
 /* ---------- menu : musique ---------- */
@@ -3643,9 +4176,29 @@ function brainStatus() {
   if (!NATIVE) return null;
   try { return JSON.parse(NATIVE.modelStatus()); } catch (e) { return null; }
 }
+const goN = n => (n / 1e9).toFixed(1).replace(".", ",") + " Go";
+const MODEL_INFO = {
+  e2b: { label: "Gemma 4 E2B", free: "3,3 Go" },
+  e4b: { label: "Gemma 4 E4B", free: "4,5 Go" }
+};
+function downloadError(err, model) {
+  if (err === "place") { brainStateEl.textContent = "Pas assez de place sur le téléphone."; brainDetail.textContent = "Il faut environ " + (MODEL_INFO[model] || MODEL_INFO.e2b).free + " libres. Libère de la place, puis réessaie."; return true; }
+  if (err === "faible") { brainStateEl.textContent = "Ton téléphone n'a pas assez de mémoire pour mon cerveau."; brainDetail.textContent = "Toutes mes autres fonctions marchent quand même."; return true; }
+  if (err) { brainStateEl.textContent = "Impossible de lancer le téléchargement."; brainDetail.textContent = "Le gestionnaire de téléchargements d'Android est peut-être désactivé."; return true; }
+  return false;
+}
+function switchModel(id) {
+  const err = NATIVE.switchModel(id, !!allowMobile.checked);
+  if (!downloadError(err, id)) { brainKey = ""; pollBrain(); }
+}
+function forceDownload() {
+  const err = NATIVE.forceDownload(!!allowMobile.checked);
+  if (!downloadError(err, "e2b")) { brainKey = ""; pollBrain(); }
+}
 function startDownload() {
   const err = NATIVE.startDownload(!!allowMobile.checked);
-  if (err === "place") { brainStateEl.textContent = "Pas assez de place sur le téléphone."; brainDetail.textContent = "Il faut environ 3,3 Go libres. Libère de la place, puis réessaie."; return; }
+  if (downloadError(err, lastBrain && lastBrain.recommended)) return;
+  if (err === "place") { brainStateEl.textContent = "Pas assez de place sur le téléphone."; brainDetail.textContent = "Libère de la place, puis réessaie."; return; }
   if (err) { brainStateEl.textContent = "Impossible de lancer le téléchargement."; brainDetail.textContent = "Le gestionnaire de téléchargements d'Android est peut-être désactivé."; return; }
   brainKey = ""; pollBrain();
 }
@@ -3653,22 +4206,34 @@ function renderBrain(st) {
   if (!st) return;
   lastBrain = st;
   S.hasModel = HAS.includes(st.state);
-  const pct = st.total ? Math.min(100, Math.floor(100 * st.done / st.total)) : 0;
-  brainTrack.hidden = !(st.state === "downloading" || st.state === "paused");
+  const sw = st.switch;
+  const prog = sw || st;
+  const pct = prog.total ? Math.min(100, Math.floor(100 * prog.done / prog.total)) : 0;
+  brainTrack.hidden = !(st.state === "downloading" || st.state === "paused" || (sw && (sw.state === "downloading" || sw.state === "paused")));
   brainFill.style.width = pct + "%";
-  const low = st.ramGb && st.ramGb < 5.5;
+  const low = st.ramGb && st.ramGb < 7.2 && st.recommended !== "none" && st.model !== "e4b";
   brainWarn.hidden = !low;
-  if (low) brainWarn.textContent = "Ton téléphone a " + st.ramGb.toFixed(1).replace(".", ",") + " Go de mémoire : je risque d'être lent, voire de ne pas démarrer.";
-  mobileRow.hidden = !["absent", "failed", "paused"].includes(st.state);
+  if (low) brainWarn.textContent = "Ton téléphone a " + st.ramGb.toFixed(1).replace(".", ",") + " Go de mémoire : c'est juste assez. Je répondrai plus lentement, et en mode économe si besoin.";
+  mobileRow.hidden = !["absent", "failed", "paused"].includes(st.state) && !st.canUpgrade && !st.canDowngrade;
   let title = "", detail = "", btns = [];
   switch (st.state) {
-    case "absent":
+    case "absent": {
+      const big = st.recommended === "e4b";
       title = "Pas encore installé.";
-      detail = "2,6 Go à télécharger, une seule fois. En wifi, ça prend en général de 5 à 30 minutes, et ça continue même si tu fermes l'appli.";
+      detail = (big ? "Ton téléphone est puissant : je vais prendre mon cerveau le plus intelligent, Gemma 4 E4B (" + goN(st.e4bBytes) + ")."
+        : "Je vais prendre Gemma 4 E2B (" + goN(st.e2bBytes) + "), le meilleur compromis pour ton téléphone.") +
+        " À télécharger une seule fois : en wifi, ça prend en général de 5 à 30 minutes, et ça continue même si tu fermes l'appli.";
       btns = [["Télécharger mon cerveau", true, startDownload]];
       break;
+    }
+    case "weak":
+      title = "Mon cerveau ne tient pas dans ce téléphone.";
+      detail = "Ton téléphone a " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, et mon cerveau a besoin d'un téléphone de 6 Go au moins. " +
+        "Plutôt qu'un petit cerveau qui répondrait n'importe quoi, je fais sans : la batterie, la météo, les réveils, la musique, les jeux et nos petites phrases marchent quand même.";
+      if (S.rank === "dev" || S.rank === "owner") btns = [["Essayer quand même (tests)", false, forceDownload]];
+      break;
     case "downloading":
-      title = "Téléchargement : " + pct + " %";
+      title = "Téléchargement" + (st.modelLabel ? " de " + st.modelLabel : "") + " : " + pct + " %";
       detail = go(st.done) + " sur " + go(st.total) + ". Tu peux fermer l'appli, ça continue.";
       btns = [["Annuler", false, () => { NATIVE.cancelDownload(); brainKey = ""; pollBrain(); }]];
       break;
@@ -3686,7 +4251,7 @@ function renderBrain(st) {
       btns = [["Réessayer", true, startDownload]];
       break;
     case "ready":
-      title = "Cerveau installé ✓";
+      title = (st.modelLabel || "Cerveau") + " installé ✓";
       detail = "Il se réveillera à ta première question.";
       btns = [["Le réveiller maintenant", true, wakeBrain]];
       break;
@@ -3695,7 +4260,7 @@ function renderBrain(st) {
       detail = "Ça peut prendre jusqu'à une minute, surtout la première fois.";
       break;
     case "loaded":
-      title = "Cerveau prêt ✓";
+      title = (st.modelLabel || "Cerveau") + " prêt ✓";
       detail = "Il tourne sur " + (st.backend === "gpu" ? "la puce graphique" : "le processeur") + " de ton téléphone, sans internet." +
         (st.tier === 2 ? " Mode économe : il retient des conversations plus courtes, pour ménager la mémoire du téléphone." : "");
       break;
@@ -3710,10 +4275,20 @@ function renderBrain(st) {
       btns = [["Réessayer en mode économe", true, wakeBrain]];
       break;
   }
+  // changer de cerveau (l'ancien reste utilisable pendant le téléchargement)
+  if (sw && (sw.state === "downloading" || sw.state === "paused")) {
+    detail += " Téléchargement de " + sw.modelLabel + " : " + pct + " %" + (sw.state === "paused" ? " (en pause)" : "") + ". Je garde mon cerveau actuel en attendant.";
+    btns.push(["Annuler le changement", false, () => { NATIVE.cancelDownload(); brainKey = ""; pollBrain(); }]);
+  } else if (sw && sw.state === "failed") {
+    detail += " Le téléchargement du nouveau cerveau a échoué, je garde l'actuel.";
+  } else {
+    if (st.canUpgrade) btns.push(["Passer au cerveau E4B (plus intelligent, " + goN(st.e4bBytes) + ")", false, () => switchModel("e4b")]);
+    if (st.canDowngrade) btns.push(["Revenir au cerveau E2B (plus léger, " + goN(st.e2bBytes) + ")", st.state === "blocked", () => switchModel("e2b")]);
+  }
   if (HAS.includes(st.state)) btns.push(["Supprimer le cerveau", false, armDelete, "danger small"]);
   brainStateEl.textContent = title;
   brainDetail.textContent = detail;
-  const key = st.state + "|" + btns.map(b => b[0]).join();
+  const key = st.state + "|" + (sw ? sw.state : "") + "|" + btns.map(b => b[0]).join();
   if (key !== brainKey) {
     brainKey = key;
     brainBtns.replaceChildren(...btns.map(([label, primary, fn, cls]) => {
@@ -3758,7 +4333,10 @@ function brainArrived() {
   S.hasModel = true;
   if (busy) return;
   if (!brainSheet.hidden) closeBrain();
-  const lines = [
+  const lines = lastBrain && lastBrain.switched ? [
+    { text: "Ça y est ! Mon nouveau cerveau, " + (lastBrain.modelLabel || "") + ", est installé.", mood: "emerveille" },
+    { text: "Pose-moi une question pour l'essayer !", mood: "clin" }
+  ] : [
     { text: "Ça y est ! Mon cerveau est installé.", mood: "surpris" },
     { text: "Je réfléchis maintenant directement dans ton téléphone.", mood: "content" },
     { text: "Pose-moi ta première question : je me réveillerai en quelques secondes.", mood: "clin" }
@@ -3809,7 +4387,12 @@ const bootEl = document.getElementById("boot");
 const bootMsg = document.getElementById("bootMsg");
 const crtEl = document.getElementById("crt");
 const BOOT_MSGS = ["Allumage de l'écran…", "Réveil du petit panda…", "Rangement des souvenirs…", "Brossage du bandana…", "Chargement des câlins…", "Presque prêt !"];
+function drawBootCanelle() {
+  const c = document.getElementById("bootCv");
+  if (c) drawPreview(c, SKINS[0], CHARS.canelle, "content");
+}
 function showLoader(ms, then) {
+  drawBootCanelle();
   bootEl.hidden = false; bootEl.classList.remove("out");
   bootEl.querySelectorAll(".boot-bar i").forEach(i => { i.style.animationName = "none"; void i.offsetWidth; i.style.animationName = ""; });
   let k = 0; bootMsg.textContent = BOOT_MSGS[0];
@@ -3832,7 +4415,7 @@ function greet() {
     lines = [
       { text: "Bzzt… transfert terminé !", mood: "surpris" },
       { text: "Oh ! Coucou, toi !", mood: "content" },
-      { text: "Moi, c'est " + N + ", un petit panda roux en pixels.", mood: "fier" },
+      { text: "Moi, c'est " + N + ", {unesp} en pixels.", mood: "fier" },
       { text: "Je me suis fait un coin douillet dans ton téléphone.", mood: "clin" },
       { text: "Tu peux me caresser la tête ou toucher mon nez, tu verras !", mood: "amoureux" }
     ];
@@ -3848,10 +4431,10 @@ function greet() {
       : S.rank === "dev" ? { text: pick(["Salut, dev ! Pas trop de bugs aujourd'hui ?", "Hey, dev ! Tout compile ?"]), mood: "clin" }
       : (() => { const w = h < 12 ? pick(["Bonjour", "Coucou", "Bien dormi"]) : h < 18 ? pick(["Salut", "Coucou", "Re-bonjour"]) : pick(["Bonsoir", "Coucou", "Hello"]);
           return { text: w + who + (w === "Bien dormi" ? " ?" : " !"), mood: "content" }; })();
-    const extra = pick([
+    const extra = charPick([
       { text: "Je t'attendais, enroulé dans ma grosse queue.", mood: "clin" },
       { text: "Raconte, quoi de neuf ?", mood: "neutre" },
-      { text: "J'ai grignoté un peu de bambou en t'attendant.", mood: "content" },
+      { text: "J'ai grignoté {grignote} en t'attendant.", mood: "content" },
       { text: "Ça me fait plaisir de te revoir.", mood: "amoureux" },
       { text: "J'ai astiqué mon bandana rien que pour toi.", mood: "fier" },
       { text: "Tu m'as manqué, tu sais.", mood: "timide" },
@@ -3861,7 +4444,7 @@ function greet() {
     ]);
     lines = [hello, extra];
     if (st && st.state === "downloading") lines.push({ text: "Mon cerveau se télécharge : " + Math.floor(100 * st.done / (st.total || 1)) + " %.", mood: "content" });
-    else if (st && !S.hasModel) lines.push({ text: "Mon cerveau n'est pas encore installé : menu, puis « Mon cerveau ».", mood: "reflechit" });
+    else if (st && !S.hasModel && st.state !== "weak") lines.push({ text: "Mon cerveau n'est pas encore installé : menu, puis « Mon cerveau ».", mood: "reflechit" });
   }
   if (st && st.crashNotice) {
     lines.push(st.tier >= 3
