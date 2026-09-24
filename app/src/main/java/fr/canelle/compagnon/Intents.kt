@@ -383,6 +383,108 @@ object Intents {
         return n.lowercase(Locale.FRENCH).replaceFirstChar { it.titlecase(Locale.FRENCH) }
     }
 
+    // ---------------------------------------------------------------- souvenirs automatiques
+
+    private fun rx(re: String) = Regex(re, RegexOption.IGNORE_CASE)
+
+    /** Coupe un complément à la fin de la première idée : « les chats, et toi ? » → « les chats ». */
+    private fun clip(s: String, maxWords: Int = 8): String? {
+        val t = s.split(rx("[.!?;:]|,|\\s(mais|et toi|et puis|parce que|car|donc|alors|lol|mdr|haha)\\b")).first()
+            .trim().trimEnd('.', '!', '?', ',', ' ')
+        if (t.length < 2 || t.length > 60 || t.split(' ').size > maxWords) return null
+        if (rx("\\b(tu|te|toi|t'|ton|ta|tes)\\b").containsMatchIn(t)) return null // ça parle de Canelle, pas de l'utilisateur
+        return t
+    }
+
+    private fun cap(s: String) = s.replaceFirstChar { it.titlecase(Locale.FRENCH) }
+
+    private val KIN = "chat|chatte|chaton|chien|chienne|chiot|lapin|lapine|hamster|cochon d'inde|poisson|oiseau|perroquet|perruche|" +
+        "cheval|jument|poney|tortue|furet|serpent|lézard|lezard|rat|souris|frère|frere|soeur|sœur|grand frère|grande soeur|" +
+        "grande sœur|petit frère|petite soeur|petite sœur|mère|mere|père|pere|maman|papa|copain|copine|mec|meuf|femme|mari|" +
+        "fils|fille|meilleur ami|meilleure amie|meilleur pote|pote|cousin|cousine|oncle|tante|grand-mère|grand-mere|" +
+        "grand-père|grand-pere|mamie|papi|prof|professeur|professeure|patron|patronne|chef|voisin|voisine|bébé|bebe"
+
+    /** Ce que l'utilisateur dit de lui, reformulé en le tutoyant. Paire = (sujet à remplacer, souvenir). */
+    fun aboutMe(raw: String): List<Pair<String?, String>> {
+        val t = " " + raw.replace('’', '\'').replace(Regex("\\s+"), " ").trim() + " "
+        val out = mutableListOf<Pair<String?, String>>()
+
+        rx("\\b(?:je n'aime pas|j'aime pas|je n'aime vraiment pas|je déteste|je deteste|j'ai horreur de|j'ai horreur des|j'ai horreur du)\\s+(?:trop\\s+|du tout\\s+)?(.+)")
+            .find(t)?.let { m -> clip(m.groupValues[1])?.let { out.add(null to "Tu n'aimes pas $it.") } }
+        if (out.isEmpty()) {
+            rx("\\bj'(aime|adore|kiffe)\\s+(?:bien\\s+|beaucoup\\s+|trop\\s+|vraiment\\s+|grave\\s+|énormément\\s+|enormement\\s+)?(?!pas\\b|que\\b|quand\\b|bien\\b)(.+)")
+                .find(t)?.let { m ->
+                    val verb = when (m.groupValues[1].lowercase(Locale.FRENCH)) { "adore" -> "adores"; "kiffe" -> "adores"; else -> "aimes" }
+                    clip(m.groupValues[2])?.let { out.add(null to "Tu $verb $it.") }
+                }
+        }
+        rx("\\bj'ai (\\d{1,3}) ans\\b").find(t)?.let { m ->
+            val age = m.groupValues[1].toInt()
+            if (age in 3..110) out.add("Tu as " to "Tu as $age ans.")
+        }
+        (rx("\\b(?:j'habite|je réside|je reside)\\s+(à|a|en|au|aux|dans|près de|pres de|sur)\\s+(.+)").find(t)
+            ?: rx("\\bje vis\\s+(à|a|au|aux|dans|près de|pres de)\\s+(.+)").find(t))
+            ?.let { m ->
+                val prep = m.groupValues[1].lowercase(Locale.FRENCH).let { if (it == "a") "à" else it }
+                clip(m.groupValues[2], 5)?.let { out.add("Tu habites" to "Tu habites $prep ${it.split(' ').joinToString(" ") { w -> if (w.length > 2) cap(w) else w }}.") }
+            }
+        rx("\\bje travaille\\s+(comme|chez|dans|en tant que|à|a|au|pour)\\s+(.+)").find(t)?.let { m ->
+            val prep = m.groupValues[1].lowercase(Locale.FRENCH).let { if (it == "a") "à" else it }
+            clip(m.groupValues[2], 6)?.let { out.add("Tu travailles" to "Tu travailles $prep $it.") }
+        }
+        rx("\\bje (?:fais des études|fais des etudes|suis en études|suis en etudes|étudie|etudie|suis étudiante?|suis etudiante?)\\s+(?:de |d'|en |la |le |l')?(.+)")
+            .find(t)?.let { m -> clip(m.groupValues[1], 5)?.let { out.add("Tu étudies" to "Tu étudies $it.") } }
+        rx("\\b(mon|ma)\\s+($KIN)\\s+(?:s'appelle|se nomme|c'est)\\s+([\\p{L}][\\p{L}'-]{1,24})").find(t)?.let { m ->
+            val who = m.groupValues[2].lowercase(Locale.FRENCH)
+            val det = if (m.groupValues[1].equals("ma", true)) "Ta" else "Ton"
+            out.add("$det $who s'appelle" to "$det $who s'appelle ${cap(m.groupValues[3])}.")
+        }
+        rx("\\bj'ai une? ($KIN)\\s+(?:qui s'appelle|nommée?|appelée?|qui se nomme)\\s+([\\p{L}][\\p{L}'-]{1,24})").find(t)?.let { m ->
+            val who = m.groupValues[1].lowercase(Locale.FRENCH)
+            out.add("Ton $who s'appelle" to "Tu as un(e) $who qui s'appelle ${cap(m.groupValues[2])}.")
+        }
+        rx("\\b(mon|ma)\\s+([\\p{L}' -]{2,25}?)\\s+(?:préférée?|preferee?|favorie?)\\s+(?:c'est|est|ce sont|sont|:)\\s+(.+)").find(t)?.let { m ->
+            val det = if (m.groupValues[1].equals("ma", true)) "Ta" else "Ton"
+            val adj = if (det == "Ta") "préférée" else "préféré"
+            val what = m.groupValues[2].trim().lowercase(Locale.FRENCH)
+            clip(m.groupValues[3], 6)?.let { out.add("$det $what $adj" to "$det $what $adj : $it.") }
+        }
+        rx("\\bmon anniversaire\\s+(?:c'est|est|tombe)\\s+(?:le\\s+)?(.+)").find(t)?.let { m ->
+            clip(m.groupValues[1], 5)?.let { out.add("Ton anniversaire" to "Ton anniversaire : le $it.") }
+        }
+        rx("\\bje joue\\s+(au|aux|à la|a la|à l'|a l'|à|a|du|de la|de l'|des)\\s*(.+)").find(t)?.let { m ->
+            val prep = m.groupValues[1].lowercase(Locale.FRENCH).replace("a la", "à la").replace("a l'", "à l'").let { if (it == "a") "à" else it }
+            clip(m.groupValues[2], 4)?.let { out.add(null to "Tu joues $prep${if (prep.endsWith("'")) "" else " "}$it.") }
+        }
+        rx("\\bje fais\\s+(du|de la|de l')\\s*(.+)").find(t)?.let { m ->
+            val prep = m.groupValues[1].lowercase(Locale.FRENCH)
+            clip(m.groupValues[2], 3)?.takeIf { !rx("^(bruit|mal|rien|peine|tort|mieux|plus|moins|souci|soucis|stress)\\b").containsMatchIn(it) }
+                ?.let { out.add(null to "Tu fais $prep${if (prep.endsWith("'")) "" else " "}$it.") }
+        }
+        rx("\\bje suis (?:fan|fana|passionnée?) (?:de |d'|du |des )(.+)").find(t)?.let { m ->
+            clip(m.groupValues[1], 5)?.let { out.add(null to "Tu es fan de $it.") }
+        }
+        rx("\\bje suis allergique (au|aux|à la|a la|à l'|a l'|à|a)\\s*(.+)").find(t)?.let { m ->
+            val prep = m.groupValues[1].lowercase(Locale.FRENCH).replace("a la", "à la").replace("a l'", "à l'").let { if (it == "a") "à" else it }
+            clip(m.groupValues[2], 5)?.let { out.add(null to "Tu es allergique $prep${if (prep.endsWith("'")) "" else " "}$it.") }
+        }
+        return out
+    }
+
+    /** Remet une phrase à la 2e personne : « je suis allergique aux noix » → « Tu es allergique aux noix. » */
+    fun you(s: String): String {
+        var t = " " + s.trim().trimEnd('.', '!', ' ') + " "
+        val rules = listOf(
+            "je n'aime pas " to "tu n'aimes pas ", "je ne suis pas " to "tu n'es pas ", "j'ai " to "tu as ", "je suis " to "tu es ",
+            "j'aime " to "tu aimes ", "j'adore " to "tu adores ", "je vais " to "tu vas ", "je peux " to "tu peux ",
+            "je veux " to "tu veux ", "je dois " to "tu dois ", "je fais " to "tu fais ", "mon " to "ton ", "ma " to "ta ",
+            "mes " to "tes ", "moi " to "toi ", "me " to "te ", "m'" to "t'", "je " to "tu ", "j'" to "tu "
+        )
+        for ((a, b) in rules) t = t.replace(Regex("(?<=[\\s(«\"])" + Regex.escape(a), RegexOption.IGNORE_CASE), b)
+        t = t.replace(Regex("\\btu ([\\p{L}]{3,}e)(?=\\s)")) { "tu " + it.groupValues[1] + "s" }
+        return cap(t.trim()) + "."
+    }
+
     /** « Retiens que… », « souviens-toi que… » : un fait à garder en mémoire. */
     fun fact(raw: String): String? {
         val m = Regex(

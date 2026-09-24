@@ -44,6 +44,17 @@ object Store {
         get() = p.getBoolean("brainIntroShown", false)
         set(v) = putBool("brainIntroShown", v)
 
+    // --- rang donné par un code d'accès ("dev" ou "owner") et avertissement de confidentialité
+    var rank: String
+        get() = str("rank")
+        set(v) = putStr("rank", v)
+    var ownerName: String
+        get() = str("ownerName")
+        set(v) = putStr("ownerName", v)
+    var hidePrivacy: Boolean
+        get() = p.getBoolean("hidePrivacy", false)
+        set(v) = putBool("hidePrivacy", v)
+
     // --- réglages
     var companionName: String
         get() = str("companionName", "Canelle")
@@ -123,6 +134,25 @@ object Store {
         putStr("facts", JSONArray(list.takeLast(40)).toString())
     }
 
+    /** Ajoute un souvenir. [key] : début de phrase qui remplace l'ancien souvenir du même sujet (« Tu as », « Tu habites »…). */
+    @Synchronized
+    fun upsertFact(key: String?, text: String) {
+        val list = facts()
+        val t = text.trim().take(140)
+        if (t.isEmpty()) return
+        if (key != null) list.removeAll { it.startsWith(key, ignoreCase = true) }
+        list.removeAll { it.equals(t, ignoreCase = true) }
+        list.add(t)
+        putStr("facts", JSONArray(list.takeLast(40)).toString())
+    }
+
+    @Synchronized
+    fun removeFact(text: String) {
+        val list = facts()
+        list.removeAll { it == text }
+        putStr("facts", JSONArray(list).toString())
+    }
+
     // --- historique de la discussion (donné au cerveau local)
     @Synchronized
     fun turns(): JSONArray = JSONArray(str("turns", "[]"))
@@ -176,6 +206,9 @@ object Store {
         .put("visits", visits)
         .put("lastSeen", lastSeen)
         .put("hasModel", hasModel)
+        .put("rank", rank)
+        .put("ownerName", ownerName)
+        .put("hidePrivacy", hidePrivacy)
 
     private fun tail(a: JSONArray, n: Int): JSONArray {
         if (a.length() <= n) return a

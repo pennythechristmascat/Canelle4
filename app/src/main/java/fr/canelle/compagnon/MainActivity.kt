@@ -255,6 +255,7 @@ class MainActivity : ComponentActivity(), ToolHost {
                 Store.sound = o.optString("sound", Store.sound)
                 Store.visits = o.optInt("visits", Store.visits)
                 Store.lastSeen = o.optLong("lastSeen", Store.lastSeen)
+                if (o.has("hidePrivacy")) Store.hidePrivacy = o.optBoolean("hidePrivacy", Store.hidePrivacy)
             }
         }
 
@@ -271,6 +272,27 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         @JavascriptInterface
         fun forget() = Store.forget()
+
+        @JavascriptInterface
+        fun removeFact(text: String) {
+            Store.removeFact(text)
+            LocalModel.markDirty()
+        }
+
+        // ------------------------------------------------ codes d'accès
+
+        /** "dev", "owner_name" (Canelle doit demander le nom) ou "invalid". */
+        @JavascriptInterface
+        fun checkCode(code: String): String = Access.check(code).also { LocalModel.markDirty() }
+
+        @JavascriptInterface
+        fun confirmOwner(name: String): Boolean = Access.confirmOwner(name).also { LocalModel.markDirty() }
+
+        @JavascriptInterface
+        fun clearRank() {
+            Access.clear()
+            LocalModel.markDirty()
+        }
 
         @JavascriptInterface
         fun send(id: String, text: String) {

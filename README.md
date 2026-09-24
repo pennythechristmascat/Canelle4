@@ -24,11 +24,35 @@ Ces demandes sont reconnues directement, sans IA : c'est instantané et fiable.
 | Lieux et Google Maps | « Une pharmacie près d'ici », « Où est le McDo le plus proche ? », « Emmène-moi à la gare », « Itinéraire vers Saint-Brieuc » |
 | Réveils et minuteurs | « Réveille-moi à 7 h 30 », « Réveil à 6 h tous les jours », « Minuteur de 10 minutes », « Mes réveils » |
 | Calculs | « 12 fois 4 », « 15 % de 80 », « Racine carrée de 144 » |
-| Mémoire | « Je m'appelle Léa », « Retiens que j'adore les chats » |
+| Mémoire | « Je m'appelle Léa », « J'adore les chats », « J'ai 17 ans », « Mon chat s'appelle Mimi », « Retiens que mon anniversaire est le 12 mars » |
 
 Des **raccourcis** au-dessus de la zone de texte permettent de tout faire d'un toucher. La météo et les lieux utilisent internet (Open-Meteo et OpenStreetMap, gratuits et sans clé).
 
 Et aussi : **prises de nouvelles** par notification (tu réponds directement dans la notification), **micro** pour parler, **voix** pour que Canelle lise ses réponses, affichage **plein écran**.
+
+Les réponses météo, batterie, heure, réveil, minuteur et calcul s'affichent avec une **carte animée** : Canelle se pousse sur le côté et la carte apparaît (soleil qui tourne, pluie qui tombe, éclairs, horloge qui avance, minuteur qui décompte…). Touche la carte pour la fermer.
+
+## Jouer avec Canelle
+
+- **Boop** : touche son nez. Cinq boops d'affilée et il voit des étoiles.
+- **Caresse** : fais glisser ton doigt sur lui. Il ronronne et des cœurs s'envolent.
+- **Toucher** : une petite tape ailleurs sur lui, et il réagit.
+- **15 expressions** : content, clin d'œil, amoureux, rigole, timide, fâché, fier, inquiet, triste, surpris, pensif, endormi, étourdi, bâille, neutre.
+- **Quand tu ne fais rien**, il vit sa vie : il regarde autour de lui, chantonne, s'étire, bâille, se parle tout seul… et après 3 minutes, il s'endort. Touche l'écran pour le réveiller.
+- **Après minuit**, il te rappelle gentiment que se coucher tard n'est pas bon et te conseille d'aller dormir (au plus une fois toutes les 30 minutes).
+
+## Ce qu'il retient de toi
+
+Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas, ton âge, ta ville, ton travail ou tes études, le nom de ton animal ou de tes proches, tes préférés, ton anniversaire, tes sports… Tout apparaît dans **Menu → Ce qu'il retient de toi**, et le bouton × efface un souvenir. Si tu redonnes une information (ton âge, ta ville…), l'ancienne est remplacée.
+
+## Démarrage
+
+- À chaque ouverture : un **écran de chargement**, puis l'avertissement de confidentialité (case **Ne plus montrer** pour ne plus le voir).
+- Au tout premier lancement, Canelle **se matérialise** : faisceau lumineux, pixels qui apparaissent un à un, étincelles.
+
+## Code d'accès
+
+Menu → Réglages → **Code d'accès**, réservé à l'équipe. Un code développeur ou gérant donne un badge dans l'en-tête, un accueil personnalisé et une section **Outils développeur** pour tester chaque animation (matérialisation, cartes, expressions, rappel de nuit, sommeil…). Les codes ne sont pas écrits en clair dans l'application : seule leur empreinte est vérifiée. « Retirer mon rang » annule.
 
 ## Mettre à jour ton dépôt GitHub
 
@@ -40,7 +64,9 @@ Et aussi : **prises de nouvelles** par notification (tu réponds directement dan
 
 ## Installer
 
-**Important, une seule fois :** désinstalle l'ancienne version de Canelle avant d'installer celle-ci. L'ancienne était signée avec une clé temporaire différente à chaque construction ; cette version a une signature fixe (`app/canelle.keystore`), donc **les prochaines mises à jour s'installeront par-dessus**, sans rien perdre.
+Si tu as déjà installé la version 0.2 (celle avec le cerveau local), installe simplement celle-ci **par-dessus** : tu gardes tes souvenirs et le cerveau déjà téléchargé.
+
+Si tu viens d'une version plus ancienne (0.1, avec la clé API), désinstalle-la **une seule fois** avant : elle avait une signature différente. Depuis la 0.2, la signature est fixe (`app/canelle.keystore`).
 
 Ensuite, ouvre l'APK sur le téléphone et accepte l'installation depuis cette source si Android le demande.
 
@@ -50,7 +76,7 @@ Ouvre la construction en rouge dans l'onglet **Actions**, clique sur l'étape en
 
 ## Vie privée
 
-- Les discussions, les souvenirs et les réglages restent sur le téléphone.
+- Canelle ne collecte aucune information personnelle. Les discussions, les souvenirs et les réglages restent sur le téléphone.
 - Le cerveau tourne hors ligne : aucun message n'est envoyé à un serveur.
 - Seules la météo et la recherche de lieux utilisent internet : ta position est alors envoyée à Open-Meteo et à OpenStreetMap.
 

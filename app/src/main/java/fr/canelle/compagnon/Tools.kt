@@ -26,6 +26,9 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
     var placesQuery: String? = null
         private set
 
+    /** Carte animée à afficher à côté de Canelle (météo, batterie, heure…). */
+    var card: JSONObject? = null
+
     // ---------------------------------------------------------------- calcul
 
     fun battery(): JSONObject = Device.battery(ctx)
@@ -101,7 +104,7 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
             "erreur", if (city.isBlank()) "position" else "ville")
         return withContext(Dispatchers.IO) {
             val url = "https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}" +
-                "&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m" +
+                "&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day" +
                 "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
                 "&timezone=auto&forecast_days=$days"
             val j = JSONObject(Net.get(url))
@@ -113,6 +116,8 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
                 .num("vent_kmh", cur.optDouble("wind_speed_10m"))
                 .num("precipitations_mm", cur.optDouble("precipitation"))
                 .put("ciel", wmo(cur.optInt("weather_code", -1)))
+                .put("code", cur.optInt("weather_code", -1))
+                .put("jour", cur.optInt("is_day", 1) == 1)
             val d = j.getJSONObject("daily")
             val dates = d.getJSONArray("time")
             val list = JSONArray()
@@ -120,6 +125,7 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
                 list.put(JSONObject()
                     .put("date", dates.getString(i))
                     .put("ciel", wmo(d.getJSONArray("weather_code").optInt(i, -1)))
+                    .put("code", d.getJSONArray("weather_code").optInt(i, -1))
                     .num("min_c", d.getJSONArray("temperature_2m_min").optDouble(i))
                     .num("max_c", d.getJSONArray("temperature_2m_max").optDouble(i))
                     .num("pluie_proba_pct", d.getJSONArray("precipitation_probability_max").optDouble(i)))
@@ -150,7 +156,7 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
         85, 86 -> "averses de neige"
         95 -> "orage"
         96, 99 -> "orage avec grêle"
-        else -> "inconnu"
+        else -> "temps variable"
     }
 
     // ---------------------------------------------------------------- lieux (OpenStreetMap, sans clé)

@@ -21,12 +21,13 @@ data class Line(val text: String, val mood: String) {
     fun toJson(): JSONObject = JSONObject().put("text", text).put("mood", mood)
 }
 
-class Reply(val lines: List<Line>, val places: JSONArray?, val placesQuery: String?) {
+class Reply(val lines: List<Line>, val places: JSONArray?, val placesQuery: String?, val card: JSONObject? = null) {
     fun toJson(): JSONObject {
         val a = JSONArray()
         lines.forEach { a.put(it.toJson()) }
         val o = JSONObject().put("lines", a)
         if (places != null) o.put("places", places).put("placesQuery", placesQuery ?: "")
+        if (card != null) o.put("card", card)
         return o
     }
 }
@@ -61,7 +62,10 @@ object Brain {
         val name = Intents.name(text)
         if (name != null) Store.userName = name
         val fact = Intents.fact(text)
-        if (fact != null) Store.addFacts(listOf(fact))
+        if (fact != null) Store.upsertFact(null, Intents.you(fact))
+        // Ce que l'utilisateur dit de lui (« j'adore les chats », « j'ai 17 ans »…) est retenu tout seul.
+        val about = if (Intents.isCrisis(n)) emptyList() else Intents.aboutMe(text)
+        about.forEach { (key, t) -> Store.upsertFact(key, t) }
 
         val routedLines: List<Line>? = try {
             routed(text, n, tools, foreground)
@@ -81,10 +85,10 @@ object Brain {
                 LocalModel.markDirty()
                 listOf(Line(pick("C'est noté, je m'en souviendrai !", "Promis, je le garde dans ma petite tête.", "Retenu ! Je range ça bien au chaud."), "content"))
             }
-            else -> chat(ctx, text, n, foreground, name, onStatus, onLine)
+            else -> chat(ctx, text, n, foreground, name, about.map { it.second }, onStatus, onLine)
         }
         save(text, lines)
-        return Reply(lines, tools.places, tools.placesQuery)
+        return Reply(lines, tools.places, tools.placesQuery, if (routedLines != null) tools.card else null)
     }
 
     private fun save(userText: String, lines: List<Line>) {
@@ -113,7 +117,7 @@ object Brain {
             null -> null
             is Ask.Crisis -> crisis()
             is Ask.Help -> help()
-            is Ask.Battery -> battery(tools.battery())
+            is Ask.Battery -> battery(tools, tools.battery())
             is Ask.Calc -> calc(tools, a.expr)
             is Ask.Time -> time(tools, a.city, a.date)
             is Ask.Weather -> weather(tools, a)
@@ -169,8 +173,11 @@ object Brain {
     private fun fmtMinutes(min: Int): String =
         if (min < 60) "$min min" else "${min / 60} h" + (if (min % 60 > 0) " " + (min % 60).toString().padStart(2, '0') else "")
 
-    private fun battery(b: JSONObject): List<Line> {
+    private fun battery(tools: Tools, b: JSONObject): List<Line> {
         val pct = b.optInt("pourcentage")
+        tools.card = JSONObject().put("type", "battery").put("pct", pct)
+            .put("charging", b.optBoolean("en_charge")).put("full", b.optBoolean("pleine"))
+            .put("minutes", b.optInt("minutes_avant_pleine_charge", 0))
         val out = mutableListOf(Line("Ta batterie est à $pct %.", "neutre"))
         when {
             b.optBoolean("pleine") -> out.add(Line("Elle est pleine, tu peux débrancher !", "content"))
@@ -181,9 +188,10 @@ object Brain {
                     else Line("Elle charge, mais je ne sais pas encore combien de temps il faut.", "reflechit")
                 )
             }
-            pct <= 15 -> out.add(Line("Branche vite le téléphone, sinon je m'endors !", "surpris"))
-            pct <= 30 -> out.add(Line("Pense à la recharger bientôt.", "triste"))
-            else -> out.add(Line("Pas besoin de recharger pour l'instant.", "content"))
+            pct <= 15 -> out.add(Line(pick("Branche vite le téléphone, sinon je m'endors !", "Au secours, je manque d'énergie ! Un chargeur !"), "inquiet"))
+            pct <= 30 -> out.add(Line(pick("Pense à la recharger bientôt.", "Il faudra la brancher d'ici peu."), "inquiet"))
+            pct >= 80 -> out.add(Line(pick("Pleine forme, comme moi !", "Tu es tranquille pour un bon moment.", "Elle a de l'énergie à revendre !"), "fier"))
+            else -> out.add(Line(pick("Pas besoin de recharger pour l'instant.", "Ça tient encore bien.", "Tout va bien de ce côté-là."), "content"))
         }
         if (b.optDouble("temperature_c", 0.0) >= 42.0) out.add(Line("Attention, le téléphone est très chaud. Laisse-le respirer un peu.", "surpris"))
         return out
@@ -202,7 +210,9 @@ object Brain {
         val r = tools.calculate(expr)
         if (r.has("erreur")) return listOf(Line("Hmm, je n'arrive pas à calculer ça.", "reflechit"), Line("Tu peux l'écrire avec des chiffres ?", "neutre"))
         val res = r.optString("resultat")
-        return listOf(Line("${pretty(expr)} = $res", "content"), Line(pick("Facile !", "Et hop !", "Calculé de tête… enfin, presque.", "Voilà !"), "clin"))
+        tools.card = JSONObject().put("type", "calc").put("expr", pretty(expr)).put("result", res)
+        return listOf(Line("${pretty(expr)} = $res", "fier"),
+            Line(pick("Facile !", "Et hop !", "Calculé de tête… enfin, presque.", "Voilà !", "Même pas besoin de mes griffes pour compter.", "Je suis un génie du calcul, non ?"), "clin"))
     }
 
     // ---------------------------------------------------------------- heure
@@ -222,11 +232,15 @@ object Brain {
             val now = ZonedDateTime.now()
             val date = now.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Locale.FRENCH))
             val hhmm = now.format(DateTimeFormatter.ofPattern("HH:mm"))
+            tools.card = JSONObject().put("type", "time").put("big", if (dateOnly) now.dayOfMonth.toString() else hhmm)
+                .put("desc", date.replaceFirstChar { it.uppercase() }).put("place", "Ici").put("dateOnly", dateOnly)
             return if (dateOnly) listOf(Line("On est $date.", "neutre"))
             else listOf(Line("Il est ${say(hhmm)}.", "neutre"), Line("On est $date.", "content"))
         }
         val r = tools.time(city)
         if (r.has("erreur")) return listOf(Line("Je ne trouve pas « $city ».", "reflechit"), Line("Tu peux me redonner le nom de la ville ?", "neutre"))
+        tools.card = JSONObject().put("type", "time").put("big", r.optString("heure"))
+            .put("desc", r.optString("date").replaceFirstChar { it.uppercase() }).put("place", r.optString("lieu")).put("dateOnly", false)
         return listOf(Line("À ${r.optString("lieu")}, il est ${say(r.optString("heure"))}.", "neutre"), Line("Là-bas, on est ${r.optString("date")}.", "content"))
     }
 
@@ -234,6 +248,19 @@ object Brain {
 
     private fun rnd(v: Double): String = if (v.isNaN()) "?" else v.roundToInt().toString()
     private fun deg(v: Double): String = if (v.isNaN()) "? degrés" else "${v.roundToInt()} degré" + if (v.roundToInt() in -1..1) "" else "s"
+
+    /** Nom de l'icône animée pour un code météo. */
+    private fun iconOf(code: Int, day: Boolean): String = when (code) {
+        0, 1 -> if (day) "sun" else "moon"
+        2 -> if (day) "partly" else "cloud"
+        3 -> "cloud"
+        45, 48 -> "fog"
+        51, 53, 55, 56, 57 -> "drizzle"
+        61, 63, 65, 66, 67, 80, 81, 82 -> "rain"
+        71, 73, 75, 77, 85, 86 -> "snow"
+        95, 96, 99 -> "storm"
+        else -> "cloud"
+    }
 
     private fun dayName(iso: String): String = runCatching {
         LocalDate.parse(iso).dayOfWeek.getDisplayName(TextStyle.FULL, Locale.FRENCH).replaceFirstChar { it.uppercase() }
@@ -255,7 +282,17 @@ object Brain {
         val list = r.optJSONArray("jours") ?: JSONArray()
         val out = mutableListOf<Line>()
 
+        val isDay = cur.optBoolean("jour", true)
         if (a.week) {
+            val days = JSONArray()
+            for (i in 0 until minOf(list.length(), 6)) {
+                val d = list.optJSONObject(i) ?: continue
+                val name = if (i == 0) "Auj." else dayName(d.optString("date")).take(3) + "."
+                days.put(JSONObject().put("d", name).put("icon", iconOf(d.optInt("code", -1), true))
+                    .put("min", rnd(d.optDouble("min_c"))).put("max", rnd(d.optDouble("max_c"))))
+            }
+            tools.card = JSONObject().put("type", "weather").put("mode", "week").put("place", place)
+                .put("icon", iconOf(cur.optInt("code", -1), isDay)).put("days", days)
             out.add(Line("Les prochains jours à $place :", "neutre"))
             for (i in 1 until minOf(list.length(), 6)) {
                 val d = list.optJSONObject(i) ?: continue
@@ -273,14 +310,21 @@ object Brain {
                 else Line("Pas besoin de parapluie $w, seulement $rain % de risque de pluie.", "content")
             )
         }
+        val card = JSONObject().put("type", "weather").put("place", place).put("rain", rain)
+            .put("min", rnd(d.optDouble("min_c"))).put("max", rnd(d.optDouble("max_c")))
+        tools.card = card
         if (a.day == 0) {
             val t = cur.optDouble("temperature_c")
+            card.put("when", "Maintenant").put("big", rnd(t) + "°").put("desc", cur.optString("ciel").replaceFirstChar { it.uppercase() })
+                .put("icon", iconOf(cur.optInt("code", -1), isDay))
             out.add(Line("À $place : ${cur.optString("ciel")}, ${deg(t)}.", "neutre"))
             val feel = cur.optDouble("ressenti_c")
             if (!feel.isNaN() && !t.isNaN() && kotlin.math.abs(feel - t) >= 3) out.add(Line("Mais on a l'impression qu'il fait ${deg(feel)}.", "reflechit"))
             out.add(Line("Aujourd'hui, de ${rnd(d.optDouble("min_c"))} à ${deg(d.optDouble("max_c"))}, pluie : $rain %.", "neutre"))
         } else {
             val w = if (a.day == 1) "Demain" else "Après-demain"
+            card.put("when", w).put("big", rnd(d.optDouble("max_c")) + "°").put("desc", d.optString("ciel").replaceFirstChar { it.uppercase() })
+                .put("icon", iconOf(d.optInt("code", -1), true))
             out.add(Line("$w à $place : ${d.optString("ciel")}, de ${rnd(d.optDouble("min_c"))} à ${deg(d.optDouble("max_c"))}.", "neutre"))
             if (!a.umbrella) out.add(Line("Risque de pluie : $rain %.", "neutre"))
         }
@@ -288,9 +332,9 @@ object Brain {
         val min = d.optDouble("min_c")
         when {
             !a.umbrella && rain >= 60 -> out.add(Line("Pense au parapluie !", "triste"))
-            !max.isNaN() && max >= 28 -> out.add(Line("Il va faire chaud : bois de l'eau !", "surpris"))
-            !min.isNaN() && min <= 2 -> out.add(Line("Brr, couvre-toi bien !", "surpris"))
-            rain < 20 && !max.isNaN() && max in 17.0..27.0 -> out.add(Line("Parfait pour une petite balade.", "content"))
+            !max.isNaN() && max >= 28 -> out.add(Line(pick("Il va faire chaud : bois de l'eau !", "Canicule en vue ! Moi, je reste à l'ombre."), "surpris"))
+            !min.isNaN() && min <= 2 -> out.add(Line(pick("Brr, couvre-toi bien !", "Heureusement que j'ai ma grosse queue pour me tenir chaud."), "surpris"))
+            rain < 20 && !max.isNaN() && max in 17.0..27.0 -> out.add(Line(pick("Parfait pour une petite balade.", "Il fait trop bon, profites-en !", "Temps idéal pour grimper aux arbres !"), "content"))
         }
         return out.take(MAX_LINES)
     }
@@ -344,7 +388,9 @@ object Brain {
         if (!tools.setAlarm(h, m, label, days)) {
             return listOf(Line("Je n'ai pas trouvé d'application Horloge compatible…", "triste"))
         }
-        val out = mutableListOf(Line("C'est fait : réveil à ${say(hhmm)}${dayWords(days)} !", "content"))
+        tools.card = JSONObject().put("type", "alarm").put("big", hhmm)
+            .put("desc", dayWords(days).trim().ifEmpty { "une seule fois" }.replaceFirstChar { it.uppercase() }).put("label", label)
+        val out = mutableListOf(Line("C'est fait : réveil à ${say(hhmm)}${dayWords(days)} !", "fier"))
         if (label.isNotBlank()) out.add(Line("Avec le petit mot « $label ».", "clin"))
         else out.add(Line(pick("Je te réveillerai en douceur… enfin, l'Horloge.", "Dors bien en attendant !", "Compte sur moi."), "clin"))
         return out
@@ -362,7 +408,8 @@ object Brain {
             if (m > 0) "$m min" else null,
             if (s > 0) "$s s" else null
         ).joinToString(" ")
-        return listOf(Line("Minuteur lancé : $txt !", "content"), Line("Je te préviens quand c'est fini.", "clin"))
+        tools.card = JSONObject().put("type", "timer").put("seconds", seconds).put("label", label)
+        return listOf(Line("Minuteur lancé : $txt !", "content"), Line(pick("Je te préviens quand c'est fini.", "Tic tac, tic tac…", "Je surveille le temps pour toi."), "clin"))
     }
 
     // ================================================================ discussion avec le modèle local
@@ -373,12 +420,19 @@ object Brain {
         n: String,
         fg: Boolean,
         newName: String?,
+        learned: List<String>,
         onStatus: ((String) -> Unit)?,
         onLine: ((Line) -> Unit)?
     ): List<Line> {
         LocalModel.status(ctx) // termine un téléchargement fini pendant que l'appli était fermée
         if (!LocalModel.isDownloaded(ctx)) {
             smallTalk(n, newName)?.let { return it }
+            if (learned.isNotEmpty()) {
+                return listOf(
+                    Line(pick("Oh ! Je retiens ça.", "C'est noté dans ma petite tête !", "Intéressant… je m'en souviendrai."), "content"),
+                    Line(learned.first(), "clin")
+                )
+            }
             if (fg) throw BrainException("no_model")
             return fallback(n)
         }
@@ -455,6 +509,12 @@ object Brain {
         val facts = Store.facts()
         val memo = if (facts.isEmpty()) "rien pour l'instant" else facts.joinToString(" ; ")
         val channel = if (fg) "" else "\nIl te répond depuis une notification : fais court (une ou deux phrases)."
+        val rank = when (Store.rank) {
+            "owner" -> "\nC'est ${Store.ownerName.ifBlank { "le gérant" }}, le gérant de l'application : tu le reconnais, tu es ravi de le voir et tu l'appelles parfois « chef »."
+            "dev" -> "\nC'est un développeur de l'application : tu peux être complice et un peu taquin sur le code."
+            else -> ""
+        }
+        val late = if (now.hour in 0..4) "\nIl est très tard : rappelle-lui gentiment que se coucher tard n'est pas bon et conseille-lui d'aller se reposer." else ""
         return """
 Tu es $c, un petit panda roux en pixels qui vit dans le téléphone de l'utilisateur. Tu as une fourrure rousse et blanche, de grands yeux bleus et un bandana orange dont tu es très fier. Tu es une IA et tu ne prétends jamais être humain.
 Caractère : joueur, taquin, tendre et curieux. Tu aimes les siestes enroulé dans ta queue touffue, grimper partout et grignoter du bambou. Tu fais parfois « rawr ! » pour rire.
@@ -462,14 +522,14 @@ Caractère : joueur, taquin, tendre et curieux. Tu aimes les siestes enroulé da
 Règles :
 - Réponds toujours en français, en tutoyant, comme un ami.
 - Fais court : une à trois phrases simples. Au plus une question.
-- Commence ta réponse par ton émotion entre crochets : [content], [triste], [surpris], [reflechit], [clin] ou [neutre].
+- Commence ta réponse par ton émotion entre crochets, parmi : [content], [rigole], [amoureux], [timide], [fier], [surpris], [reflechit], [inquiet], [triste], [fache], [clin] ou [neutre].
 - Pas d'emoji, pas de listes, pas de mise en forme.
 - Écoute d'abord. Pour remonter le moral, propose une petite chose concrète (boire de l'eau, sortir cinq minutes, écrire à un ami), sans faire la leçon.
 - Encourage les liens avec de vraies personnes. Pour la santé, conseille un professionnel, sans diagnostic.
 - Si l'utilisateur parle de se faire du mal ou de suicide : prends-le au sérieux, dis-lui d'appeler le 3114 (gratuit, jour et nuit) ou le 112 en cas de danger.
 - Tu ne peux pas agir sur le téléphone pendant cette discussion. N'invente jamais d'heure, de météo, de lieux ou de résultat. Pour ça, dis-lui de te le demander simplement, par exemple « météo à Rennes », « réveille-moi à 7 h », « une pharmacie près d'ici » ou « 12 fois 4 ».
 
-Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur : $user. Ce qu'il t'a demandé de retenir : $memo.$channel
+Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur : $user. Ce que tu sais de lui : $memo.$rank$late$channel
 """.trim()
     }
 
@@ -478,13 +538,22 @@ Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur 
         if (newName != null) return listOf(Line("Enchanté, $newName ! Je m'en souviendrai.", "content"))
         fun has(re: String) = Regex(re).containsMatchIn(n)
         return when {
-            has("^(salut|coucou|bonjour|bonsoir|hello|hey|yo|cc)\\b") ->
-                listOf(Line(pick("Coucou toi !", "Salut ! Content de te voir.", "Hello ! Rawr !"), "content"))
-            has("\\b(ca va|tu vas bien|comment vas[- ]tu|comment tu vas)\\b") ->
-                listOf(Line("Moi, ça va super, bien au chaud dans ton téléphone !", "content"), Line("Et toi ?", "neutre"))
-            has("\\b(merci|thanks)\\b") -> listOf(Line(pick("Avec plaisir !", "De rien, c'est normal !"), "content"))
-            has("\\b(bonne nuit|dors bien)\\b") -> listOf(Line("Bonne nuit ! Je me roule en boule à côté de toi.", "clin"))
-            has("\\b(je t'aime|je t'adore)\\b") -> listOf(Line("Oh… moi aussi, je t'aime bien !", "content"))
+            has("^(salut|coucou|bonjour|bonsoir|hello|hey|yo|cc|wesh)\\b") ->
+                listOf(Line(pick("Coucou toi !", "Salut ! Content de te voir.", "Hello ! Rawr !", "Hey ! Tu tombes bien, je m'ennuyais.", "Coucou ! Mon bandana et moi, on t'attendait."), "content"))
+            has("\\b(ca va|tu vas bien|comment vas[- ]tu|comment tu vas|la forme)\\b") ->
+                listOf(Line(pick("Moi, ça va super, bien au chaud dans ton téléphone !", "Au top ! J'ai fait une grosse sieste.", "Ça roule, surtout maintenant que tu es là."), "content"), Line("Et toi ?", "neutre"))
+            has("\\b(merci|thanks|trop gentil)\\b") -> listOf(Line(pick("Avec plaisir !", "De rien, c'est normal !", "Pour toi, toujours !", "Oh, arrête, je vais rougir."), "timide"))
+            has("\\b(bonne nuit|dors bien|je vais dormir|je vais me coucher)\\b") -> listOf(Line(pick("Bonne nuit ! Je me roule en boule à côté de toi.", "Fais de beaux rêves ! Moi, je rêverai de bambou.", "Dors bien, je veille sur l'écran."), "clin"))
+            has("\\b(je t'aime|je t'adore|t'es mignon|tu es mignon|t'es trop chou)\\b") -> listOf(Line(pick("Oh… moi aussi, je t'aime bien !", "Hihi, tu me fais rougir.", "Toi aussi, tu es génial !"), "amoureux"))
+            has("\\b(qui es[- ]tu|t'es qui|tu es qui|c'est quoi ton nom|comment tu t'appelles)\\b") ->
+                listOf(Line("Je suis ${Store.companionName}, un petit panda roux en pixels !", "fier"), Line("Je vis dans ton téléphone et je veille sur toi.", "content"))
+            has("\\b(t'es nul|tu es nul|t'es bete|tu es bete|je te deteste)\\b") -> listOf(Line(pick("Hé ! C'est pas gentil, ça…", "Grr. Je boude."), "fache"), Line("Mais je t'aime bien quand même.", "timide"))
+            has("\\b(blague|fais[- ]moi rire|raconte[- ]moi un truc drole)\\b") -> listOf(Line(pick(
+                "Pourquoi les pandas roux ne mentent jamais ? Parce qu'ils sont trop… roux-ssis de honte !",
+                "Que dit un panda roux quand il a faim ? « J'ai une faim de loup… enfin, de panda ! »",
+                "Pourquoi mon bandana est orange ? Pour qu'on me trouve dans le noir de ton téléphone !"
+            ), "rigole"))
+            has("\\b(je m'ennuie|j'ai rien a faire|ennui)\\b") -> listOf(Line(pick("Et si tu me caressais la tête ? Glisse ton doigt sur moi !", "Essaie de toucher mon nez, pour voir…"), "clin"))
             else -> null
         }
     }
@@ -570,6 +639,12 @@ Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur 
                 t.startsWith("surpris") -> "surpris"
                 t.startsWith("reflechi") || t.startsWith("pensif") -> "reflechit"
                 t.startsWith("clin") || t.startsWith("malicieu") || t.startsWith("taquin") -> "clin"
+                t.startsWith("rigol") || t.startsWith("rire") || t.startsWith("amuse") -> "rigole"
+                t.startsWith("amour") || t.startsWith("tendre") || t.startsWith("calin") -> "amoureux"
+                t.startsWith("timide") || t.startsWith("gene") || t.startsWith("embarrass") -> "timide"
+                t.startsWith("fier") -> "fier"
+                t.startsWith("inquiet") || t.startsWith("soucieu") || t.startsWith("peur") -> "inquiet"
+                t.startsWith("fache") || t.startsWith("colere") || t.startsWith("grognon") || t.startsWith("boude") -> "fache"
                 else -> "neutre"
             }
         }
@@ -578,7 +653,13 @@ Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur 
             val n = Intents.norm(text)
             fun has(re: String) = Regex(re).containsMatchIn(n)
             return when {
-                has("\\b(desole|triste|dur|difficile|courage|pas facile|inquiet|dommage)") -> "triste"
+                has("\\b(haha|hihi|mdr|lol|trop drole|rigol)") -> "rigole"
+                has("\\b(je t'aime|je t'adore|calin|bisou|coeur|mignon)") -> "amoureux"
+                has("\\b(attention|fais gaffe|inquiet|j'espere que ca va|prends soin)") -> "inquiet"
+                has("\\b(desole|triste|dur|difficile|courage|pas facile|dommage)") -> "triste"
+                has("\\b(grr|pas content|boude|fache)") -> "fache"
+                has("\\b(oups|euh|heu|rougir|gene)") -> "timide"
+                has("\\b(bravo|fier|champion|genie|trop fort)") -> "fier"
                 has("\\b(rawr|hihi|hehe|coquin|taquin|chut)") -> "clin"
                 has("^(oh|wow|waouh|ouah|quoi|ah bon|vraiment|incroyable)\\b") -> "surpris"
                 has("\\b(hmm|je pense|peut-etre|je crois|reflechi|voyons)") -> "reflechit"
