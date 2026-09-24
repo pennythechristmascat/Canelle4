@@ -1,4 +1,4 @@
-# Canelle — compagnon de poche (Android)
+# Canelle — compagnon de poche (Android) · V5.0.0
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -18,8 +18,10 @@ Ces demandes sont reconnues directement, sans IA : c'est instantané et fiable.
 
 | Fonction | Exemples |
 |---|---|
-| Batterie | « Ma batterie ? », « Je dois recharger ? » — et le temps restant avant la charge complète quand le téléphone est branché. |
+| Batterie | « Ma batterie ? », « Je dois recharger ? » — temps de charge mesuré sur ton téléphone, puissance, vitesse, température, santé, autonomie restante. |
 | Météo | « Météo », « Météo à Rennes demain », « Je prends un parapluie ? », « La météo de la semaine » |
+| Musique | « Mets de la musique », « Joue Daft Punk sur Spotify », « Ouvre Deezer », « Pause », « Suivante », « Précédente », « C'est quoi cette musique ? » |
+| Jeux et interactions | « High five », « Check », « Danse », « Fais un tour », « Saute », « Câlin », « Bisou », « Fais coucou », « Chatouille », « Rawr », « Chante », « Fais le mort », « Roulade », « Prends la pose », « Applaudis », « Fais dodo », « Chifoumi », « Pile ou face », « Lance un dé » |
 | Heure et date | « Quelle heure est-il ? », « Quelle heure est-il à Tokyo ? », « On est quel jour ? » |
 | Lieux et Google Maps | « Une pharmacie près d'ici », « Où est le McDo le plus proche ? », « Emmène-moi à la gare », « Itinéraire vers Saint-Brieuc » |
 | Réveils et minuteurs | « Réveille-moi à 7 h 30 », « Réveil à 6 h tous les jours », « Minuteur de 10 minutes », « Mes réveils » |
@@ -32,12 +34,33 @@ Et aussi : **prises de nouvelles** par notification (tu réponds directement dan
 
 Les réponses météo, batterie, heure, réveil, minuteur et calcul s'affichent avec une **carte animée** : Canelle se pousse sur le côté et la carte apparaît (soleil qui tourne, pluie qui tombe, éclairs, horloge qui avance, minuteur qui décompte…). Touche la carte pour la fermer.
 
+## Météo précise
+
+« Maintenant » vient du modèle **AROME de Météo-France** (maille de 1,5 km, un point toutes les 15 minutes, recalculé chaque heure), via Open-Meteo, gratuit et sans clé, en France et autour. Le ciel affiché est corrigé avec la pluie qui tombe vraiment et la couverture nuageuse du moment. Les prévisions des jours suivants viennent du meilleur modèle Open-Meteo. La carte indique le ressenti, le vent, l'humidité, la source et l'heure des données. Si Météo-France ne répond pas, Canelle se rabat automatiquement sur Open-Meteo.
+
+Quand l'appli est ouverte, la **position est actualisée toutes les 2 minutes** (et s'arrête en arrière-plan). Elle reste sur le téléphone : le nom de la ville n'est demandé à internet que quand tu demandes la météo ou un lieu.
+
+## Batterie surveillée
+
+- **Temps de charge mesuré** : Canelle note l'heure de chaque pourcent gagné et en déduit la vraie vitesse de ton téléphone avec ton chargeur, en tenant compte du ralentissement après 80 %. Sinon : estimation d'Android, puis calcul d'après le courant.
+- **Alertes** : à 20 % (prévoir de charger), 15 % (brancher maintenant) et 5 % (le téléphone va s'éteindre). Appli ouverte : Canelle le dit tout de suite avec la carte batterie. Appli en arrière-plan : notification. Si Android a fermé l'appli, vérification toutes les 15 minutes.
+- **Toutes les 30 secondes**, Canelle vérifie son état (batterie, branchement, charge pleine, heure). Ses annonces attendent qu'il ait fini de parler, et il ne répète pas la même chose d'affilée.
+
+## Musique
+
+- Canelle lance la musique dans **Spotify** ou **Deezer** (Menu → Musique pour choisir l'appli préférée). Deezer peut s'ouvrir sur les résultats de recherche au lieu de lancer directement la lecture.
+- **Quand de la musique joue** (n'importe quelle appli), il met un **casque**, ferme les yeux, bouge et chante. Quand elle s'arrête, il retire son casque.
+- Il suit le **rythme réel** si le téléphone le permet (autorisation micro, rien n'est enregistré), sinon un tempo régulier.
+- **Titre en cours** et boutons précédent / pause / suivant : autorisation facultative dans Menu → Musique (« Afficher le titre en cours »). Canelle ne lit ni ne garde aucune notification.
+
 ## Jouer avec Canelle
 
 - **Boop** : touche son nez. Cinq boops d'affilée et il voit des étoiles.
 - **Caresse** : fais glisser ton doigt sur lui. Il ronronne et des cœurs s'envolent.
 - **Toucher** : une petite tape ailleurs sur lui, et il réagit.
-- **15 expressions** : content, clin d'œil, amoureux, rigole, timide, fâché, fier, inquiet, triste, surpris, pensif, endormi, étourdi, bâille, neutre.
+- **High five** : dis « high five » ou « check », une patte apparaît : tape dedans !
+- **Jeux** : chifoumi (avec le score), pile ou face, lancer de dé, directement dans une carte.
+- **17 expressions** : content, clin d'œil, amoureux, rigole, timide, fâché, fier, inquiet, triste, surpris, pensif, endormi, étourdi, bâille, soupçonneux, musique, neutre.
 - **Quand tu ne fais rien**, il vit sa vie : il regarde autour de lui, chantonne, s'étire, bâille, se parle tout seul… et après 3 minutes, il s'endort. Touche l'écran pour le réveiller.
 - **Après minuit**, il te rappelle gentiment que se coucher tard n'est pas bon et te conseille d'aller dormir (au plus une fois toutes les 30 minutes).
 
@@ -52,7 +75,7 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 ## Code d'accès
 
-Menu → Réglages → **Code d'accès**, réservé à l'équipe. Un code développeur ou gérant donne un badge dans l'en-tête, un accueil personnalisé et une section **Outils développeur** pour tester chaque animation (matérialisation, cartes, expressions, rappel de nuit, sommeil…). Les codes ne sont pas écrits en clair dans l'application : seule leur empreinte est vérifiée. « Retirer mon rang » annule.
+Menu → Réglages → **Code d'accès**, réservé à l'équipe. Rangs : développeur, gérant, fille du patron (confirmée par son prénom, avec la même cinématique que le gérant) et VIP. Le rang **VIP est en développement** : ses avantages vont changer régulièrement. Un code développeur ou gérant donne un badge dans l'en-tête, un accueil personnalisé et une section **Outils développeur** pour tester chaque animation (matérialisation, cartes, expressions, rappel de nuit, sommeil…). Les codes ne sont pas écrits en clair dans l'application : seule leur empreinte est vérifiée. « Retirer mon rang » annule.
 
 Avec le code gérant, Canelle lance une **cinématique** : bandes noires, il se penche vers toi en plissant les yeux et la musique `question.mp3` démarre (elle s'arrête dès que tu réponds). Tu écris ton nom, `verification.mp3` se joue pendant qu'il vérifie. Bon nom : `verifie.mp3`, et il salue le gérant. Mauvais nom : il s'énerve, te traite de menteur et **ferme l'application**. Au 2e mensonge, il prévient. Au **3e mensonge** (le compte continue même après avoir relancé l'appli), il **refuse de te parler pendant 24 heures** : il boude, regarde ailleurs, et on ne peut plus lui écrire ni ouvrir le menu jusqu'à la fin de la punition (le temps restant s'affiche). Le bon nom remet le compteur à zéro. Reculer l'heure du téléphone ne lève pas la punition ; seul l'effacement des données de l'appli la supprime. Le bouton retour pendant la question annule la cinématique. Les sons sont dans `app/src/main/assets/sounds/` ; ils suivent le réglage du son (rien en mode muet).
 
@@ -81,9 +104,11 @@ Ouvre la construction en rouge dans l'onglet **Actions**, clique sur l'étape en
 - Canelle ne collecte aucune information personnelle. Les discussions, les souvenirs et les réglages restent sur le téléphone.
 - Le cerveau tourne hors ligne : aucun message n'est envoyé à un serveur.
 - Seules la météo et la recherche de lieux utilisent internet : ta position est alors envoyée à Open-Meteo et à OpenStreetMap.
+- La position actualisée toutes les 2 minutes, le titre de la musique et la mesure du rythme restent sur le téléphone.
 
 ## Détails techniques
 
 - Kotlin 2.4, Android Gradle Plugin 8.13, Gradle 8.14.3, compileSdk 36, minSdk 31.
 - IA locale : `com.google.ai.edge.litertlm:litertlm-android:0.17.1`, modèle `gemma-4-E2B-it.litertlm` (litert-community sur Hugging Face).
+- Écran bloqué en portrait. Optimisé : Canelle est dessiné en une seule image, une seule minuterie pour la page, et tout se met en pause en arrière-plan.
 - Interface : page web locale (`app/src/main/assets/index.html`) dans une WebView, reliée au code Kotlin par un pont JavaScript.

@@ -180,6 +180,61 @@ select.field{appearance:auto}
 .face.petting canvas{animation:nuzzle .45s ease-in-out infinite}
 @keyframes nuzzle{50%{transform:rotate(2.5deg) translateY(2px)}}
 
+/* ---------- interactions ---------- */
+.face.dance{animation:danceAnim .8s ease-in-out infinite}
+@keyframes danceAnim{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-14px) translateY(-8px) rotate(-8deg)}50%{transform:translateX(0) translateY(0) rotate(0)}75%{transform:translateX(14px) translateY(-8px) rotate(8deg)}}
+.face.spin{animation:spinAnim 1.2s cubic-bezier(.4,0,.2,1)}
+@keyframes spinAnim{to{transform:rotateY(720deg)}}
+.face.bigjump{animation:bigJump .9s cubic-bezier(.3,0,.3,1)}
+@keyframes bigJump{0%{transform:translateY(0) scale(1)}15%{transform:translateY(6px) scale(1.08,.9)}50%{transform:translateY(-70px) scale(.95,1.06)}85%{transform:translateY(4px) scale(1.06,.93)}100%{transform:translateY(0) scale(1)}}
+.face.hug{animation:hugAnim 1.6s ease-in-out}
+@keyframes hugAnim{20%,80%{transform:scale(1.12,.92)}50%{transform:scale(1.16,.9) rotate(2deg)}}
+.face.roll{animation:rollAnim 1.1s ease-in-out}
+@keyframes rollAnim{50%{transform:translateX(-30px) rotate(-180deg)}100%{transform:translateX(0) rotate(-360deg)}}
+.face.dead{animation:none;transform:rotate(-80deg) translateY(30px);transition:transform .5s cubic-bezier(.5,0,.8,.4)}
+.face.shiver{animation:shake .08s linear 10}
+.face.music{animation:none}
+.face.music.groove{animation:groove .52s ease-in-out infinite alternate}
+@keyframes groove{from{transform:translateY(0) rotate(-2.5deg)}to{transform:translateY(-7px) rotate(2.5deg)}}
+.paw{position:absolute;right:-6%;top:42%;width:26%;aspect-ratio:1;z-index:2;display:grid;place-items:center;background:none;border:0;padding:0;cursor:pointer;
+  opacity:0;transform:translateY(40px) rotate(20deg);transition:opacity .3s, transform .45s cubic-bezier(.3,1.6,.6,1);touch-action:manipulation}
+.paw.up{opacity:1;transform:translateY(0) rotate(-8deg)}
+.paw.wave{animation:waveAnim .45s ease-in-out 5 alternate}
+@keyframes waveAnim{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
+.paw.hit{transform:translateX(-18px) scale(1.25) rotate(-20deg)!important;transition:transform .12s}
+.paw svg{width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(232,116,59,.55))}
+.p.clac{color:#fff;font-size:28px;animation:pop .9s ease-out forwards}
+.p.rawr{color:#ff6b5a;font-size:40px;animation:pop 1.2s ease-out forwards}
+.p.mwah{color:#ff7aa2;font-size:22px}
+/* cartes : musique et jeux */
+.eq{display:flex;justify-content:center;align-items:flex-end;gap:5px;height:44px;margin:10px 0 6px}
+.eq i{width:8px;border-radius:3px;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:eqAnim .9s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}.eq i:nth-child(5){animation-delay:-.45s}
+@keyframes eqAnim{from{height:15%}to{height:100%}}
+.ctl{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.ctl button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(236,232,220,.06);color:var(--phosphor);cursor:pointer;display:grid;place-items:center;font-size:1.3rem}
+.ctl button svg{width:18px;height:18px;fill:currentColor}
+.ctl button:active{transform:scale(.92)}
+.vs{display:flex;justify-content:center;align-items:center;gap:12px;font-size:2.4rem;margin:10px 0}
+.vs b{font:500 .9rem var(--f-px);color:var(--accent)}
+.vs span{min-width:1.3em}
+.vs .pop{animation:pop2 .5s cubic-bezier(.3,1.6,.6,1)}
+@keyframes pop2{from{transform:scale(.2)}}
+.coin{width:84px;height:84px;margin:10px auto 6px;border-radius:50%;display:grid;place-items:center;font:500 1.05rem var(--f-px);color:#3b2a06;
+  background:radial-gradient(circle at 35% 30%, #fff1b8, #ffcf5a 55%, #c9901c);box-shadow:0 0 18px rgba(255,207,90,.5), inset 0 0 0 4px rgba(120,80,0,.35)}
+.coin.flip{animation:coinFlip 1.5s cubic-bezier(.3,0,.2,1)}
+@keyframes coinFlip{0%{transform:translateY(0) rotateX(0)}50%{transform:translateY(-60px) rotateX(1440deg)}100%{transform:translateY(0) rotateX(2880deg)}}
+.die{width:78px;height:78px;margin:12px auto 6px;border-radius:16px;background:#fdf8f3;color:#3b1a14;display:grid;place-items:center;font:500 2.6rem var(--f-px);box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.die.roll{animation:dieRoll 1.2s cubic-bezier(.3,0,.2,1)}
+@keyframes dieRoll{0%{transform:rotate(0) translateY(0)}30%{transform:rotate(300deg) translateY(-40px)}60%{transform:rotate(560deg) translateY(0)}80%{transform:rotate(700deg) translateY(-10px)}100%{transform:rotate(720deg)}}
+.card .foot{margin-top:8px;font-size:.72rem;color:var(--phosphor-dim);opacity:.8}
+/* rangs */
+.badge .short{display:none}
+.badge.daughter{background:#ff9ec7;box-shadow:0 0 10px rgba(255,158,199,.5)}
+.badge.vip{background:linear-gradient(90deg,#c9a4ff,#ffd166);box-shadow:0 0 10px rgba(201,164,255,.5)}
+@media (max-width:400px){.badge .full{display:none}.badge .short{display:inline}}
+body.vip .halo{background:radial-gradient(closest-side, rgba(255,209,102,.3), transparent 72%)}
+
 /* ---------- cinématique du code gérant ---------- */
 .lb{position:absolute;left:0;right:0;height:9%;background:#000;z-index:6;pointer-events:none;transform:scaleY(0);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
 .lb.top{top:0;transform-origin:top}
@@ -217,7 +272,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 .stage.with-card .card > :nth-child(6){animation-delay:.5s}
 .stage.with-card .card > :nth-child(7){animation-delay:.58s}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px)}}
-.card-x{position:absolute;top:6px;right:6px;width:30px;height:30px;border:0;background:transparent;color:var(--phosphor-dim);border-radius:50%;cursor:pointer;font-size:1.1rem;line-height:1}
+.card-x{position:absolute;z-index:3;top:6px;right:6px;width:30px;height:30px;border:0;background:transparent;color:var(--phosphor-dim);border-radius:50%;cursor:pointer;font-size:1.1rem;line-height:1}
 .card .when{font:500 .78rem var(--f-px);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .card .ico{width:92px;height:92px;display:block;margin:6px auto 2px;overflow:visible}
 .card .big{font:500 2.7rem/1.05 var(--f-px);color:var(--phosphor);text-shadow:0 0 16px rgba(236,232,220,.25)}
@@ -375,6 +430,12 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
             <canvas id="cv" width="64" height="54"></canvas>
           </button>
           <div class="shadow" id="shadow" aria-hidden="true"></div>
+          <button class="paw" id="paw" type="button" aria-label="Taper dans la patte de Canelle" tabindex="-1">
+            <svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
+              <g fill="#e8743b"><rect x="1" y="5" width="3" height="4"/><rect x="4" y="1" width="3" height="4"/><rect x="9" y="1" width="3" height="4"/><rect x="12" y="5" width="3" height="4"/><rect x="5" y="7" width="6" height="1"/><rect x="4" y="8" width="8" height="2"/><rect x="3" y="10" width="10" height="3"/><rect x="4" y="13" width="3" height="1"/><rect x="9" y="13" width="3" height="1"/></g>
+              <g fill="#fbb98a"><rect x="2" y="6" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="5" y="9" width="2" height="1"/></g>
+            </svg>
+          </button>
         </div>
         <div class="card" id="card" role="status" aria-live="polite"></div>
         <div class="vig" aria-hidden="true"></div>
@@ -445,6 +506,14 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         <select id="quietEnd" aria-label="Fin des heures calmes"></select>
         <span>h</span>
       </div>
+      <label class="lab" for="musicAppSel">Musique</label>
+      <p class="note" id="musicNote"></p>
+      <select class="field" id="musicAppSel" aria-label="Appli de musique préférée">
+        <option value="">Appli de musique : automatique</option>
+        <option value="spotify">Appli de musique : Spotify</option>
+        <option value="deezer">Appli de musique : Deezer</option>
+      </select>
+      <button class="btn" id="musicAccessBtn" type="button" style="margin-top:8px">Afficher le titre en cours (facultatif)</button>
       <label class="lab" for="codeIn">Code d'accès</label>
       <div class="code-row">
         <input class="field" id="codeIn" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Entre un code">
@@ -510,8 +579,23 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0 };
-const pick = a => a[Math.floor(Math.random() * a.length)];
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "" };
+// Choisit au hasard en évitant ce qui vient d'être dit dans la même liste (pas deux fois la même chose d'affilée).
+const PICKED = new Map();
+function pick(a) {
+  if (!a || !a.length) return undefined;
+  if (a.length === 1) return a[0];
+  const key = a.length + "|" + (typeof a[0] === "string" ? a[0] : a[0] && a[0].text);
+  const recent = PICKED.get(key) || [];
+  const avoid = recent.slice(-Math.min(recent.length, Math.ceil(a.length / 2)));
+  const free = [];
+  for (let i = 0; i < a.length; i++) if (!avoid.includes(i)) free.push(i);
+  const idx = free.length ? free[Math.floor(Math.random() * free.length)] : Math.floor(Math.random() * a.length);
+  recent.push(idx);
+  if (recent.length > 12) recent.shift();
+  PICKED.set(key, recent);
+  return a[idx];
+}
 var lockEnd = 0, locked = false;
 function pull() {
   try {
@@ -525,7 +609,7 @@ function pull() {
 }
 function saveUi() {
   try {
-    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy }));
+    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy, musicApp: S.musicApp || "" }));
     else localStorage.setItem("canelle-web", JSON.stringify(S));
   } catch (e) {}
 }
@@ -533,18 +617,18 @@ pull();
 
 /* ---------- visage pixel : le panda roux ---------- */
 const W = 64, H = 54;
-const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille", "soupconneux"];
+const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille", "soupconneux", "musique"];
 const ACCENT = { neutre: "#8fe3ff", content: "#ffd166", clin: "#ffd166", reflechit: "#b9a8ff", triste: "#8fb4ff", surpris: "#ff7b4a",
   amoureux: "#ff7aa2", rigole: "#ffd166", timide: "#ffb3c6", fache: "#ff6b5a", fier: "#ffcf5a", inquiet: "#a8c5ff",
-  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0", soupconneux: "#ff9b4a" };
+  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0", soupconneux: "#ff9b4a", musique: "#7ee2c0" };
 const PITCH = { neutre: 600, content: 680, clin: 650, reflechit: 520, triste: 450, surpris: 780,
-  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430, soupconneux: 470 };
+  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430, soupconneux: 470, musique: 660 };
 // O trait, F pelage, f pelage ombré, H reflet, W blanc, D intérieur d'oreille, t marques rousses, B/b cou,
 // N/n truffe, Q/q/Z bandana, I/i/j iris, P pupille, x blanc brillant, M bouche, T langue, K/k joues
 const PAL = { O: "#3b1a14", F: "#e8743b", f: "#c9552c", H: "#fbb98a", W: "#fdf8f3", D: "#5a2a22", t: "#a3452f",
   B: "#6b332b", b: "#552520", N: "#3a3436", n: "#8a8385", Q: "#ff9b2f", q: "#d9741a", Z: "#ffc36e",
   I: "#1d4fa8", i: "#3f82e0", j: "#8cc6ff", P: "#0d1733", x: "#ffffff", M: "#7a2533", T: "#f2849a", K: "#f9b3b6", k: "#e9707f",
-  R: "#ff4f73", r: "#ffc2cf" };
+  R: "#ff4f73", r: "#ffc2cf", G: "#3a4560", g: "#9fb0d6", A: "#ff9b4a" };
 const BASE = [
   "................................................................",
   "................................................................",
@@ -636,7 +720,8 @@ const MOUTH = {
   endormi:   [["........", "...OO...", "...OO..."], ["...OO...", "..OMMO..", "...OO..."]],
   etourdi:   [[".O.OO.O.", "O.O..O.O"], OPEN],
   baille:    [YAWN, YAWN],
-  soupconneux: [["........", "...OO...", "..O..O.."], OPEN]
+  soupconneux: [["........", "...OO...", "..O..O.."], OPEN],
+  musique: [["...OO...", ".OO..OO."], OPEN]
 };
 // yeux, sourcils et joues de chaque expression
 const EXPR = {
@@ -654,7 +739,8 @@ const EXPR = {
   endormi: { L: "closed", R: "closed" },
   etourdi: { L: "dizzy", R: "dizzy" },
   baille: { L: "blink", R: "blink" },
-  soupconneux: { L: "squint", R: "squint", brows: "suspect" }
+  soupconneux: { L: "squint", R: "squint", brows: "suspect" },
+  musique: { L: "happy", R: "happy", blush: 1 }
 };
 // petites marques d'émotion, dessinées dans la couleur de l'humeur
 const MARKS = {
@@ -663,7 +749,7 @@ const MARKS = {
   clin:    [[58, 17], [57, 18], [58, 18], [59, 18], [58, 19]],
   triste:  [[57, 12], [56, 13], [57, 13], [55, 14], [56, 14], [57, 14], [58, 14], [55, 15], [56, 15], [57, 15], [58, 15], [56, 16], [57, 16]]
 };
-const face = { mood: "neutre", blink: false, talk: false, lookX: 0, think: 0, reveal: 1 };
+const face = { mood: "neutre", blink: false, talk: false, lookX: 0, think: 0, reveal: 1, phones: false };
 // ordre d'apparition des pixels pendant la matérialisation (du bas vers le haut, avec un peu de hasard)
 const REVEAL = new Float32Array(W * H);
 for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) REVEAL[y * W + x] = 0.55 * (1 - y / H) + 0.45 * Math.random();
@@ -678,17 +764,31 @@ const NOSE = (() => {
 
 const cv = document.getElementById("cv");
 const ctx = cv.getContext("2d");
+const IMG = ctx.createImageData(W, H);
+const PIX = new Uint32Array(IMG.data.buffer);
+const RGBA = {};
+const toRGBA = hex => { const n = parseInt(hex.slice(1), 16); return ((255 << 24) | ((n & 255) << 16) | ((n >> 8 & 255) << 8) | (n >> 16)) >>> 0; };
+Object.keys(PAL).forEach(k => { RGBA[k] = toRGBA(PAL[k]); });
+const GLOW_PX = toRGBA("#c9f7ff");
+const BASE_FLAT = BASE.join("").split("");
 function stamp(g, sprite, ox, oy) {
   for (let r = 0; r < sprite.length; r++) for (let c = 0; c < sprite[r].length; c++) {
     const ch = sprite[r][c];
     if (ch === ".") continue;
     const x = ox + c, y = oy + r;
-    if (x >= 0 && y >= 0 && x < W && y < H) g[y][x] = ch;
+    if (x >= 0 && y >= 0 && x < W && y < H) g[y * W + x] = ch;
   }
 }
+// casque : l'arceau passe derrière les oreilles, les écouteurs sur les joues
+const PHONES_BAND = [];
+for (let x = 7; x <= 56; x++) PHONES_BAND.push([x, Math.round(15 + ((x - 31.5) / 24.5) ** 2 * 11)]);
+const CUP_L = ["..GGG.", ".GgggG", "GgAAgG", "GgAAgG", "GgAAgG", "GgAAgG", "GgAAgG", "GgAAgG", ".GgggG", "..GGG."];
+const CUP_R = CUP_L.map(r => [...r].reverse().join(""));
+const BEHIND = new Set(["D", "W", "O"]);
 const OUTLINED = ["open", "sad", "wide", "half"];
+let lastAccent = "";
 function render() {
-  const g = BASE.map(r => r.split(""));
+  const g = BASE_FLAT.slice();
   const m = face.mood;
   const e = EXPR[m] || {};
   let L = e.L || "open", R = e.R || "open";
@@ -705,34 +805,40 @@ function render() {
   if (e.blush > 1) { stamp(g, ["kKkK"], 19, 39); stamp(g, ["KkKk"], 41, 39); }
   const mo = face.think ? MOUTH.reflechit : (MOUTH[m] || MOUTH.neutre);
   stamp(g, face.talk && !face.think ? mo[1] : mo[0], MO[0], MO[1]);
+  if (face.phones) {
+    for (const [x, y] of PHONES_BAND) for (let k = 0; k < 2; k++) {
+      const i = (y + k) * W + x;
+      if (!BEHIND.has(BASE_FLAT[i])) g[i] = k ? "G" : "g";
+    }
+    stamp(g, CUP_L, 3, 25); stamp(g, CUP_R, 55, 25);
+  }
+  const rv = face.reveal;
+  for (let i = 0; i < W * H; i++) {
+    const ch = g[i];
+    if (ch === ".") { PIX[i] = 0; continue; }
+    if (rv < 1) {
+      const t = REVEAL[i];
+      if (t > rv) { PIX[i] = 0; continue; }
+      if (rv - t < 0.1) { PIX[i] = GLOW_PX; continue; }
+    }
+    PIX[i] = RGBA[ch] || RGBA.F;
+  }
+  ctx.putImageData(IMG, 0, 0);
   const glow = [];
-  if (face.reveal >= 1) (MARKS[m] || []).forEach(p => glow.push(p));
+  if (rv >= 1) (MARKS[m] || []).forEach(p => glow.push(p));
   const dots = [[55, 9, 1], [57, 5, 2], [60, 1, 2]];
   for (let i = 0; i < face.think; i++) {
     const [x, y, sz] = dots[i];
     for (let a = 0; a < sz; a++) for (let b = 0; b < sz; b++) glow.push([x + a, y + b]);
   }
   const accent = ACCENT[m] || ACCENT.neutre;
-  const rv = face.reveal;
-  ctx.clearRect(0, 0, W, H);
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    const ch = g[y][x];
-    if (ch === ".") continue;
-    if (rv < 1) {
-      const t = REVEAL[y * W + x];
-      if (t > rv) continue;
-      if (rv - t < 0.1) { ctx.fillStyle = "#c9f7ff"; ctx.fillRect(x, y, 1, 1); continue; }
-    }
-    ctx.fillStyle = PAL[ch] || PAL.F;
-    ctx.fillRect(x, y, 1, 1);
-  }
   if (glow.length) {
     ctx.save();
     ctx.shadowColor = accent; ctx.shadowBlur = 3; ctx.fillStyle = accent;
     glow.forEach(([x, y]) => ctx.fillRect(x, y, 1, 1));
     ctx.restore();
   }
-  document.documentElement.style.setProperty("--accent", accent);
+  if (accent !== lastAccent) { lastAccent = accent; document.documentElement.style.setProperty("--accent", accent); }
 }
 const MOOD_FX = {
   amoureux: () => fx("hearts", 3), rigole: () => fx("ha", 2), timide: () => fx("sweat"), inquiet: () => fx("sweat"),
@@ -980,6 +1086,11 @@ async function send(preset) {
   ensureAudio(); hidePlaces(); hideCard();
   if (awaitingOwner) { confirmOwnerName(text); return; }
   if (cutscene || locked) return;
+  if (localCommand(text)) {
+    if (typeof preset !== "string") msgEl.value = "";
+    updateSend(); renderChips(false);
+    return;
+  }
   if (!NATIVE) {
     speak([{ text: "Installe-moi sur ton téléphone pour qu'on discute.", mood: "triste" }]);
     return;
@@ -1034,6 +1145,11 @@ const CHIPS = [
   { t: "Réveil", say: "Mets un réveil" },
   { t: "Minuteur", say: "Lance un minuteur" },
   { t: "Calcul", fill: "Calcule " },
+  { t: "Musique", say: "Mets de la musique" },
+  { t: "High five", say: "High five" },
+  { t: "Danse", say: "Danse" },
+  { t: "Chifoumi", say: "Chifoumi" },
+  { t: "Pile ou face", say: "Pile ou face" },
   { t: "Que sais-tu faire ?", say: "Qu'est-ce que tu sais faire ?" }
 ];
 const AROUND = [
@@ -1124,16 +1240,25 @@ function fmtMinutes(min) {
   const h = Math.floor(min / 60), m = min % 60;
   return h + " h" + (m ? " " + String(m).padStart(2, "0") : "");
 }
+function batteryCard(b) {
+  return { type: "battery", pct: b.pourcentage, charging: !!b.en_charge, full: !!b.pleine, minutes: b.minutes_avant_pleine_charge || 0,
+    method: b.methode_estimation || "", autonomy: b.autonomie_minutes || 0, watts: b.puissance_w || 0, temp: b.temperature_c || 0,
+    source: b.source || "", rate: b.vitesse_pct_heure || 0, health: b.sante || "" };
+}
 function batteryLines(b) {
   const lines = [{ text: "Ta batterie est à " + b.pourcentage + " %.", mood: "neutre" }];
   if (b.pleine) lines.push({ text: "Elle est pleine, tu peux débrancher !", mood: "content" });
   else if (b.en_charge) {
     const m = b.minutes_avant_pleine_charge;
     lines.push(m ? { text: (b.estimation_approximative ? "Pleine dans environ " : "Pleine dans ") + fmtMinutes(m) + ".", mood: "content" }
-                 : { text: "Elle charge, mais je ne sais pas encore combien de temps il faut.", mood: "reflechit" });
-  } else if (b.pourcentage <= 15) lines.push({ text: "Branche vite le téléphone, sinon je m'endors !", mood: "surpris" });
-  else if (b.pourcentage <= 30) lines.push({ text: "Pense à la recharger bientôt.", mood: "triste" });
-  else lines.push({ text: "Pas besoin de recharger pour l'instant.", mood: "content" });
+                 : { text: "Elle charge. Je mesure sa vitesse : redemande-moi dans quelques minutes.", mood: "reflechit" });
+  } else if (b.pourcentage <= 5) lines.push({ text: "Branche-le tout de suite, sinon le téléphone va s'éteindre !", mood: "inquiet" });
+  else if (b.pourcentage <= 15) lines.push({ text: "Branche vite le téléphone, sinon je m'endors !", mood: "inquiet" });
+  else if (b.pourcentage <= 20) lines.push({ text: "Prévois de la recharger bientôt.", mood: "inquiet" });
+  else {
+    lines.push(pick([{ text: "Pas besoin de recharger pour l'instant.", mood: "content" }, { text: "Ça tient encore bien.", mood: "content" }]));
+    if (b.autonomie_minutes) lines.push({ text: "À ce rythme, elle tiendra encore environ " + fmtMinutes(b.autonomie_minutes) + ".", mood: "reflechit" });
+  }
   return lines;
 }
 battEl.addEventListener("click", () => {
@@ -1143,7 +1268,7 @@ battEl.addEventListener("click", () => {
   const b = refreshBattery();
   if (!b) return;
   hidePlaces();
-  showCard({ type: "battery", pct: b.pourcentage, charging: !!b.en_charge, full: !!b.pleine, minutes: b.minutes_avant_pleine_charge || 0 });
+  showCard(batteryCard(b));
   speak(batteryLines(b));
 });
 
@@ -1449,11 +1574,36 @@ function buildCard(c) {
       }
       return `${x}<div class="when">${esc(c.when || "Maintenant")}</div>${wxIcon(c.icon)}<div class="big">${esc(c.big)}</div>
         <div class="desc">${esc(c.desc)}</div>${place}
-        <div class="row"><span>min <b>${esc(c.min)}°</b></span><span>max <b>${esc(c.max)}°</b></span><span>pluie <b>${esc(c.rain)} %</b></span></div>`;
+        <div class="row"><span>min <b>${esc(c.min)}°</b></span><span>max <b>${esc(c.max)}°</b></span><span>pluie <b>${esc(c.rain)} %</b></span></div>
+        ${c.feel != null && c.feel !== "" ? `<div class="row"><span>ressenti <b>${esc(c.feel)}°</b></span>${c.wind !== "" && c.wind != null ? `<span>vent <b>${esc(c.wind)} km/h</b></span>` : ""}${c.humidity !== "" && c.humidity != null ? `<span>humidité <b>${esc(c.humidity)} %</b></span>` : ""}</div>` : ""}
+        ${c.source ? `<div class="foot">${esc(c.source)}${c.updated ? " · données de " + esc(c.updated) : ""}</div>` : ""}`;
     case "battery": {
-      const sub = c.full ? "Pleine !" : c.charging ? (c.minutes ? "En charge · pleine dans " + fmtMinutes(c.minutes) : "En charge") : c.pct <= 20 ? "Pense à la brancher" : "Sur batterie";
-      return `${x}<div class="when">Batterie</div>${battIcon(c.pct, c.charging)}<div class="big">${esc(c.pct)} %</div><div class="desc">${esc(sub)}</div>`;
+      const at = c.minutes ? new Date(Date.now() + c.minutes * 60000).toTimeString().slice(0, 5).replace(/^0/, "") : "";
+      const sub = c.full ? "Pleine !" : c.charging ? (c.minutes ? "Pleine dans " + fmtMinutes(c.minutes) + " (vers " + at + ")" : "En charge · je mesure la vitesse…")
+        : c.pct <= 5 ? "Branche-le tout de suite !" : c.pct <= 15 ? "Branche-le maintenant" : c.pct <= 20 ? "Prévois de le charger" : c.autonomy ? "Tient encore ~" + fmtMinutes(c.autonomy) : "Sur batterie";
+      const bits = [];
+      const fr = v => String(Math.round(v * 10) / 10).replace(".", ",");
+      if (c.charging && c.watts > 0) bits.push("<b>" + fr(c.watts) + " W</b>");
+      if (c.charging && c.source) bits.push(esc(c.source));
+      if (c.rate > 0) bits.push("<b>" + (c.charging ? "+" : "−") + fr(c.rate) + " %/h</b>");
+      if (c.temp > 0) bits.push("<b>" + Math.round(c.temp) + " °C</b>");
+      const how = { mesure: "mesurée sur ton téléphone", android: "donnée par Android", courant: "calculée d'après le courant" }[c.method];
+      return `${x}<div class="when">Batterie</div>${battIcon(c.pct, c.charging)}<div class="big">${esc(c.pct)} %</div><div class="desc">${esc(sub)}</div>
+        ${bits.length ? `<div class="row">${bits.map(b => "<span>" + b + "</span>").join("")}</div>` : ""}
+        ${how && c.charging && c.minutes ? `<div class="foot">Estimation ${how}${c.health ? " · santé " + esc(c.health) : ""}</div>` : c.health ? `<div class="foot">Santé : ${esc(c.health)}</div>` : ""}`;
     }
+    case "music":
+      return `${x}<div class="when">En écoute${c.app ? " · " + esc(c.app) : ""}</div><div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="desc">${esc(c.title || "Musique en cours")}</div>${c.artist ? `<div class="sub">${esc(c.artist)}</div>` : ""}
+        <div class="ctl"><button type="button" data-act="previous" aria-label="Précédente">${ICON.previous}</button><button type="button" data-act="toggle" aria-label="Pause ou lecture">${ICON.toggle}</button><button type="button" data-act="next" aria-label="Suivante">${ICON.next}</button></div>`;
+    case "rps":
+      return `${x}<div class="when">Chifoumi</div><div class="vs"><span data-you>?</span><b>VS</b><span data-me>?</span></div>
+        <div class="ctl"><button type="button" data-rps="pierre" aria-label="Pierre">✊</button><button type="button" data-rps="feuille" aria-label="Feuille">✋</button><button type="button" data-rps="ciseaux" aria-label="Ciseaux">✌️</button></div>
+        <div class="sub" data-score>Toi ${rpsScore[0]} – ${rpsScore[1]} ${esc(S.companionName)}</div>`;
+    case "coin":
+      return `${x}<div class="when">Pile ou face</div><div class="coin">?</div><div class="ctl"><button type="button" data-again="coin" aria-label="Relancer">↻</button></div>`;
+    case "dice":
+      return `${x}<div class="when">Lancer de dé</div><div class="die">?</div><div class="ctl"><button type="button" data-again="dice" aria-label="Relancer">↻</button></div>`;
     case "time":
       return `${x}<div class="when">${c.dateOnly ? "Aujourd'hui" : "Heure"}</div>${clockIcon()}<div class="big${sizeClass(c.big)}">${esc(c.big)}</div><div class="desc">${esc(c.desc)}</div>${place}`;
     case "alarm":
@@ -1465,11 +1615,12 @@ function buildCard(c) {
     default: return "";
   }
 }
-function showCard(c) {
+function showCard(c, ms) {
   const html = c && buildCard(c);
   if (!html) return;
   hideCard();
   cardEl.innerHTML = html;
+  cardEl.dataset.type = c.type;
   stageEl.classList.add("with-card");
   cardShown = true;
   requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1504,7 +1655,7 @@ function showCard(c) {
     tick(); cardTick = setInterval(tick, 1000);
   }
   clearTimeout(cardTimer);
-  if (c.type !== "timer") cardTimer = setTimeout(hideCard, 40000);
+  if (c.type !== "timer") cardTimer = setTimeout(hideCard, ms || 40000);
 }
 function hideCard() {
   clearTimeout(cardTimer); clearInterval(cardTick); cardTick = null;
@@ -1512,7 +1663,17 @@ function hideCard() {
   stageEl.classList.remove("with-card");
   cardShown = false;
 }
-cardEl.addEventListener("click", e => { e.stopPropagation(); hideCard(); });
+cardEl.addEventListener("click", e => {
+  e.stopPropagation();
+  const b = e.target.closest("button:not(.card-x)");
+  if (!b) { hideCard(); return; }
+  ensureAudio();
+  if (b.dataset.act) musicControl(b.dataset.act);
+  else if (b.dataset.rps) rpsPlay(b.dataset.rps);
+  else if (b.dataset.again === "coin") coin();
+  else if (b.dataset.again === "dice") dice();
+  clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 40000);
+});
 
 /* ---------- toucher Canelle : tape, boop, caresse ---------- */
 const touch = { id: null, x: 0, y: 0, dist: 0, petting: false };
@@ -1607,7 +1768,7 @@ document.addEventListener("pointerdown", ensureAudio, { once: true });
 let lastActive = Date.now(), lastIdleAct = 0, idleGap = 14000, asleep = false, zzzTimer = null;
 const privacyEl = document.getElementById("privacy");
 function calm() {
-  return ready && !cutscene && !locked && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
+  return ready && !cutscene && !locked && !music.on && !pawMode && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
@@ -1619,6 +1780,7 @@ function idleMood(m, ms) {
   setTimeout(() => { if (calm() && !asleep && face.mood === m) setMood("neutre"); }, ms);
 }
 const IDLE_ACTIONS = [
+  () => { playFor("dance", 1600); fx("notes", 2); murmur(pick(["*danse toute seule*", "*se dandine*"]), "rigole", 1800); },
   () => { face.lookX = -1; render(); setTimeout(() => { face.lookX = 1; render(); }, 800); setTimeout(() => { face.lookX = 0; render(); }, 1700); },
   () => idleMood("content", 2600),
   () => { restartAnim("hop"); if (S.sound === "bips") squeak(); },
@@ -1648,7 +1810,7 @@ function wake() {
 function poke() { lastActive = Date.now(); if (asleep) wake(); }
 document.addEventListener("pointerdown", poke, true);
 document.addEventListener("keydown", poke, true);
-setInterval(() => {
+function idleCheck() {
   if (asleep || !calm()) return;
   const idle = Date.now() - lastActive;
   if (idle > 180000) { fallAsleep(); return; }
@@ -1656,19 +1818,480 @@ setInterval(() => {
     lastIdleAct = Date.now();
     idleGap = 12000 + Math.random() * 16000;
     const hour = new Date().getHours();
-    (hour < 5 && Math.random() < 0.4 ? IDLE_ACTIONS[3] : pick(IDLE_ACTIONS))();
+    (hour < 5 && Math.random() < 0.4 ? IDLE_ACTIONS[4] : pick(IDLE_ACTIONS))();
   }
-}, 1500);
+}
 
 /* ---------- rappel de nuit (à partir de minuit) ---------- */
 let lastNight = 0;
-setInterval(() => {
+function nightCheck() {
   const h = new Date().getHours();
   if (h >= 5 || !ready || asleep || !calm()) return;
   if (Date.now() - lastNight < 30 * 60000) return;
   lastNight = Date.now();
   speak(nightLines(h));
-}, 30000);
+}
+
+/* ---------- état de Canelle, vérifié toutes les 30 secondes ---------- */
+// Les annonces automatiques passent par une petite file : jamais deux fois la même d'affilée,
+// et elles attendent que Canelle ait fini de parler.
+const statusQueue = [];
+let lastStatusKey = "", lastStatusAt = 0;
+function announce(key, lines, urgent) {
+  if (key === lastStatusKey && Date.now() - lastStatusAt < 10 * 60000) return; // déjà dit il y a peu
+  const i = statusQueue.findIndex(q => q.key === key);
+  if (i >= 0) statusQueue.splice(i, 1);
+  statusQueue[urgent ? "unshift" : "push"]({ key, lines, urgent });
+  flushStatus();
+}
+function flushStatus() {
+  if (!statusQueue.length || !ready || busy || listening || cutscene || materializing || !privacyEl.hidden) return;
+  const q = statusQueue[0];
+  if (!q.urgent && speech.state !== "idle") return;
+  statusQueue.shift();
+  lastStatusKey = q.key; lastStatusAt = Date.now();
+  if (asleep) wake();
+  speak(q.lines);
+}
+const PLUG_IN = [
+  { text: "Miam, de l'énergie !", mood: "content" },
+  { text: "Ah, ça fait du bien, ce chargeur !", mood: "content" },
+  { text: "Branché ! Je recharge mes batteries… enfin, les tiennes.", mood: "rigole" }
+];
+const PLUG_OUT = [
+  { text: "Débranché ! On part à l'aventure ?", mood: "content" },
+  { text: "Plus de câble ? J'économise mes forces, alors.", mood: "clin" }
+];
+const FULL = [
+  { text: "Batterie pleine ! Tu peux débrancher.", mood: "fier" },
+  { text: "100 % ! Tu peux enlever le chargeur.", mood: "content" }
+];
+let lastPlug = null, saidFull = false;
+function batteryAlertLines(th, level) {
+  const sulk = locked ? [{ text: "Je boude toujours… mais c'est important.", mood: "fache" }] : [];
+  if (th >= 20) return sulk.concat([{ text: "Ta batterie est à " + level + " %.", mood: "inquiet" },
+    { text: pick(["Pense à prévoir de charger ton téléphone bientôt.", "Prévois un chargeur pas trop loin, d'accord ?"]), mood: "inquiet" }]);
+  if (th >= 15) return sulk.concat([{ text: "Batterie à " + level + " % !", mood: "inquiet" },
+    { text: pick(["Il est temps de brancher ton téléphone.", "Branche-le maintenant, s'il te plaît !"]), mood: "inquiet" }]);
+  return sulk.concat([{ text: "Alerte ! Plus que " + level + " % de batterie !", mood: "surpris" },
+    { text: "Ton téléphone va s'éteindre si tu ne le charges pas tout de suite !", mood: "inquiet" }]);
+}
+// appelé par Android dès que la batterie passe sous 20 %, 15 % ou 5 %
+window.onBatteryAlert = (th, level) => {
+  const b = refreshBattery();
+  if (th <= 5) { restartAnim("shiver"); flash(); }
+  if (b && !locked && !cutscene) showCard(batteryCard(b));
+  announce("batt" + th, batteryAlertLines(th, level), true);
+};
+function statusCheck() {
+  const b = refreshBattery();
+  if (!b) return;
+  if (lastPlug !== null && b.en_charge !== lastPlug && !locked) announce(b.en_charge ? "plug" : "unplug", [pick(b.en_charge ? PLUG_IN : PLUG_OUT)]);
+  lastPlug = b.en_charge;
+  if (b.en_charge && b.pleine && !saidFull) { saidFull = true; if (!locked) announce("full", [pick(FULL)]); }
+  if (!b.en_charge) saidFull = false;
+}
+
+/* ---------- battement unique (au lieu de plusieurs minuteries) ---------- */
+let beatN = 0;
+setInterval(() => {
+  if (document.hidden) return;
+  beatN++;
+  if (beatN % 2 === 0) { idleCheck(); musicPoll(); }
+  if (beatN % 30 === 0) { statusCheck(); nightCheck(); }
+  flushStatus();
+  if (music.on && speech.state === "idle" && !busy && !cutscene && face.mood !== "musique" && !faceBtn.classList.contains("dance")) setMood("musique");
+}, 1000);
+
+/* ---------- musique : casque, yeux fermés, et Canelle bouge en rythme ---------- */
+const music = { on: false, pos: 0, neg: 0, title: "", artist: "", app: "", access: false, timer: null, prev: 0, lastNote: 0, sway: 0, synthetic: false };
+const MUSIC_ON = [
+  { text: "Oh ! De la musique ! *met son casque*", mood: "musique" },
+  { text: "Ooh, j'adore ce son ! *enfile son casque*", mood: "musique" },
+  { text: "Musique ! Attends, je mets mon casque…", mood: "musique" }
+];
+const MUSIC_OFF = [
+  { text: "*retire son casque* Ah, c'est fini ?", mood: "content" },
+  { text: "*range son casque* C'était bien, ça !", mood: "content" },
+  { text: "*enlève son casque* On remet ça quand tu veux.", mood: "clin" }
+];
+function ownAudioBusy() {
+  try { return Object.values(SND).some(a => !a.paused) || (NATIVE && NATIVE.ttsSpeaking && NATIVE.ttsSpeaking()); } catch (e) { return false; }
+}
+function musicPoll() {
+  if (!NATIVE || !NATIVE.musicState || cutscene || !ready) return;
+  let st;
+  try { st = JSON.parse(NATIVE.musicState()); } catch (e) { return; }
+  music.access = !!st.access;
+  if (ownAudioBusy()) return; // la voix ou les sons de Canelle ne comptent pas comme de la musique
+  const playing = !!st.active && st.playing !== false;
+  if (playing) { music.pos++; music.neg = 0; } else { music.neg++; music.pos = 0; }
+  if (!music.on && music.pos >= 2) enterMusic(st);
+  else if (music.on && music.neg >= 2) exitMusic();
+  else if (music.on && st.title && st.title !== music.title) {
+    music.title = st.title; music.artist = st.artist || ""; music.app = st.app || music.app;
+    if (speech.state === "idle" && !busy) murmur("♪ " + st.title + (st.artist ? " — " + st.artist : ""), null);
+    if (cardShown && cardEl.dataset.type === "music") showCard(musicCard(), 15000);
+  }
+}
+function enterMusic(st) {
+  music.on = true;
+  music.title = st.title || ""; music.artist = st.artist || ""; music.app = st.app || "";
+  if (asleep) { asleep = false; clearInterval(zzzTimer); }
+  face.phones = true;
+  faceBtn.classList.add("music");
+  setMood("musique");
+  fx("notes", 3);
+  const lines = [pick(MUSIC_ON)];
+  if (music.title) lines.push({ text: pick(["« " + music.title + " »" + (music.artist ? " de " + music.artist : "") + " ! J'adore !",
+    "Tu écoutes « " + music.title + " » ? Bon choix !"]), mood: "musique" });
+  if (!busy && !cutscene && !locked) {
+    speak(lines);
+    if (music.title) showCard(musicCard(), 12000);
+  }
+  music.synthetic = false; music.prev = 0;
+  clearInterval(music.timer);
+  music.timer = setInterval(musicTick, 90);
+}
+function exitMusic() {
+  music.on = false; music.pos = 0;
+  clearInterval(music.timer); music.timer = null;
+  face.phones = false; face.talk = false;
+  faceBtn.classList.remove("music", "groove");
+  faceBtn.style.transform = "";
+  if (cardShown && cardEl.dataset.type === "music") hideCard();
+  setMood("neutre");
+  if (!busy && !cutscene && !locked) speak([pick(MUSIC_OFF)]);
+}
+function musicTick() {
+  if (document.hidden || !music.on) return;
+  if (faceBtn.classList.contains("dance")) return;
+  let l = -1;
+  try { l = NATIVE.musicLevel(); } catch (e) {}
+  if (l < 0) {
+    // pas de mesure possible : tempo régulier
+    if (!music.synthetic) { music.synthetic = true; faceBtn.classList.add("groove"); faceBtn.style.transform = ""; }
+    const t = Date.now();
+    if (t - music.lastNote > 1200) { music.lastNote = t; fx("notes", 1); }
+    const open = Math.floor(t / 520) % 2 === 0;
+    if (open !== face.talk && speech.state === "idle") { face.talk = open; render(); }
+    return;
+  }
+  if (music.synthetic) { music.synthetic = false; faceBtn.classList.remove("groove"); }
+  music.sway += 0.35;
+  faceBtn.style.transform = "translateY(" + (-l * 8).toFixed(1) + "px) scale(" + (1 + l * 0.05).toFixed(3) + "," + (1 - l * 0.03).toFixed(3) + ") rotate(" + (Math.sin(music.sway) * 3 * (0.4 + l)).toFixed(2) + "deg)";
+  const open = l > 0.62;
+  if (open !== face.talk && speech.state === "idle") { face.talk = open; render(); }
+  const now = Date.now();
+  if (l - music.prev > 0.3 && now - music.lastNote > 380) { music.lastNote = now; fx("notes", 1); }
+  music.prev = l;
+}
+const ICON = {
+  previous: '<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>',
+  toggle: '<svg viewBox="0 0 24 24"><path d="M5 4l9 8-9 8zM15 5h2v14h-2zM19 5h2v14h-2z"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>'
+};
+function musicCard() {
+  return { type: "music", app: music.app, title: music.title, artist: music.artist, playing: music.on };
+}
+function musicActive() {
+  try { return !!JSON.parse(NATIVE.musicState()).active; } catch (e) { return false; }
+}
+const NO_MUSIC = [{ text: "Aucune musique ne joue pour l'instant.", mood: "reflechit" }];
+function musicControl(act) {
+  if (!NATIVE || !NATIVE.musicControl) return;
+  NATIVE.musicControl(act);
+  setTimeout(musicPoll, 800);
+}
+function playMusic(app, query) {
+  if (!NATIVE || !NATIVE.musicPlay) { speak([{ text: "La musique ne marche que dans l'application.", mood: "triste" }]); return; }
+  const r = NATIVE.musicPlay(app || "", query || "");
+  const label = r.split(":")[1] || "";
+  if (r.startsWith("ok:")) {
+    speak([{ text: query ? "C'est parti : « " + query + " » sur " + label + " !" : "J'ouvre " + label + " et je relance la musique !", mood: "content" },
+      { text: "*prépare son casque*", mood: "musique" }]);
+  } else if (r.startsWith("absent:")) {
+    speak([{ text: "Tu n'as pas " + label + " sur ton téléphone.", mood: "reflechit" }, { text: "Je t'ouvre sa page sur le Play Store.", mood: "content" }]);
+  } else {
+    speak([{ text: "Je n'ai trouvé ni Spotify ni Deezer sur ton téléphone.", mood: "triste" },
+      { text: "Installe l'une des deux, et je pourrai lancer ta musique !", mood: "content" }]);
+  }
+}
+function whatPlaying() {
+  if (!NATIVE || !NATIVE.musicState) return;
+  let st = {};
+  try { st = JSON.parse(NATIVE.musicState()); } catch (e) {}
+  if (!st.active) { speak([{ text: "Aucune musique ne joue pour l'instant.", mood: "reflechit" }, { text: "Tu veux que j'en mette ? Dis « mets de la musique ».", mood: "clin" }]); return; }
+  if (!st.title) {
+    speak([{ text: "J'entends de la musique, mais je ne vois pas son titre.", mood: "reflechit" },
+      { text: "Pour que je le voie : menu, puis « Afficher le titre en cours ».", mood: "content" }]);
+    return;
+  }
+  music.title = st.title; music.artist = st.artist || ""; music.app = st.app || "";
+  showCard(musicCard(), 20000);
+  speak([{ text: "Tu écoutes « " + st.title + " »" + (st.artist ? " de " + st.artist : "") + (st.app ? ", sur " + st.app : "") + ".", mood: "musique" }]);
+}
+
+/* ---------- commandes locales : musique et jeux (réponse immédiate, sans passer par le cerveau) ---------- */
+const deaccent = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+function localCommand(raw) {
+  const low = raw.trim().replace(/[\s!?.…]+$/g, "");
+  const n = deaccent(low.toLowerCase()).replace(/[’]/g, "'");
+  const cut = (m, g) => low.slice(m.indices[g][0], m.indices[g][1]).trim();
+  let m;
+  // --- musique
+  if ((m = n.match(/^(?:mets?|joue|lance|ecoute|passe|balance)(?:[- ]moi)?\s+(.+?)\s+(?:sur|avec|dans)\s+(spotify|deezer)$/d))) {
+    const q = cut(m, 1);
+    playMusic(m[2], /^(?:de la |du |un peu de |une )?(?:musique|son|chanson|playlist)$/.test(deaccent(q.toLowerCase())) ? "" : q);
+    return true;
+  }
+  if ((m = n.match(/^(?:mets?|joue|lance|passe|balance)(?:[- ]moi)?\s+(?:de la |du |un peu de |une |la )?(?:musique|son|zik|chanson|playlist)$/))) { playMusic("", ""); return true; }
+  if ((m = n.match(/^(?:joue|mets?|lance|balance)(?:[- ]moi)?\s+(?:la chanson|le morceau|le titre|l'album|la playlist|la musique de|les chansons de|du|de la musique de)\s+(.+)$/d))) { playMusic("", cut(m, 1)); return true; }
+  if ((m = n.match(/^(?:ouvre|lance|demarre)\s+(spotify|deezer)$/))) { playMusic(m[1], ""); return true; }
+  if (/^(?:pause|mets? (?:en )?pause(?: la musique)?|stop(?:pe)?(?: la musique)?|arrete (?:la musique|le son|la chanson)|coupe (?:la musique|le son|la chanson))$/.test(n)) {
+    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    musicControl("pause"); speak([{ text: pick(["Pause !", "Et… pause.", "Musique en pause."]), mood: "content" }]); return true;
+  }
+  if (/^(?:reprends?|remets?|relance)(?: la)? (?:musique|lecture|chanson)$/.test(n)) { musicControl("play"); speak([{ text: "Et c'est reparti !", mood: "musique" }]); return true; }
+  if (/^(?:(?:musique|chanson|titre|piste|morceau) suivante?|suivante?|passe(?: a la)? (?:suivante|chanson suivante|musique suivante)|skip|zappe)$/.test(n)) {
+    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    musicControl("next"); speak([{ text: pick(["Suivante !", "Allez, on zappe !", "Au suivant !"]), mood: "clin" }]); return true;
+  }
+  if (/^(?:(?:musique|chanson|titre|piste|morceau) precedente?|precedente?|reviens? (?:a la chanson )?(?:d'avant|precedente))$/.test(n)) {
+    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    musicControl("previous"); speak([{ text: "On revient en arrière !", mood: "clin" }]); return true;
+  }
+  if (/(?:c'?est quoi|quelle est|qu'?est[- ]ce que c'?est|c'?est quel(?:le)?)\s+(?:cette|la|le|ce)?\s*(?:musique|chanson|son|morceau|titre)|qu'?est[- ]ce que j'?ecoute|j'?ecoute quoi/.test(n)) { whatPlaying(); return true; }
+  // --- interactions (commandes courtes seulement)
+  const c = n.replace(/\b(?:canelle|stp|s'?il te plait|s'?il te plais|allez|vas[- ]y|hey|eh|oh|dis|tu peux|tu veux|peux[- ]tu|encore|avec moi|pour moi|un peu)\b/g, " ").replace(/\s+/g, " ").trim();
+  if (c.length > 40) return false;
+  const A = [
+    [/^(?:high[- ]?five|tape[- ]m'?en (?:cinq|5)|tope[- ]la|give me five|tape dans ma main)$/, () => highFive(false)],
+    [/^(?:check|fais(?:[- ]moi)? un check|un check|fist bump|tape mon poing)$/, () => highFive(true)],
+    [/^(?:danse|dance|fais (?:une|la) danse|bouge|fais la fete|on danse)$/, dance],
+    [/^(?:fais un tour|tourne(?: sur toi)?|fais une pirouette|pirouette)$/, spin],
+    [/^(?:saute|fais un saut|fais un bond|jump)$/, jump],
+    [/^(?:calin|fais(?:[- ]moi)? un calin|je te fais un calin|hug|serre[- ]moi(?: fort)?|un calin)$/, hug],
+    [/^(?:bisou|fais(?:[- ]moi)? un bisou|un bisou|je t'embrasse|bise)$/, kiss],
+    [/^(?:fais coucou|dis coucou|fais signe|salue(?:[- ]moi)?|fais bonjour|coucou de la patte)$/, wave],
+    [/^(?:chatouille|guili(?:[- ]guili)?|je te chatouille|chatouilles)$/, tickle],
+    [/^(?:rugis|fais peur|fais[- ]moi peur|rawr|grogne)$/, rawr],
+    [/^(?:fais dodo|va dormir|dors|fais (?:une|la) sieste)$/, () => { speak([{ text: "Bon… juste une petite sieste.", mood: "baille" }]); setTimeout(fallAsleep, 2600); }],
+    [/^(?:pierre[ ,-]*feuille[ ,-]*ciseaux?|chifoumi|shifumi|on joue a pierre feuille ciseaux)$/, rps],
+    [/^(?:pile ou face|lance une piece|tire a pile ou face)$/, coin],
+    [/^(?:lance (?:un|le|les) des?|jette (?:un|le) de|un de|lance un de a six faces)$/, dice],
+    [/^(?:applaudis|applaudissements|clap|bravo toi)$/, applause],
+    [/^(?:prends la pose|fais le beau|pose pour (?:moi|la photo)|souris|cheese|fais une photo)$/, pose],
+    [/^(?:fais une roulade|roule|roulade)$/, roll],
+    [/^(?:fais le mort|mort)$/, playDead],
+    [/^(?:chante|chante(?:[- ]moi)? (?:une chanson|quelque chose)|une chanson)$/, sing]
+  ];
+  for (const [re, fn] of A) if (re.test(c)) { fn(); return true; }
+  return false;
+}
+
+/* ---------- interactions ---------- */
+const pawEl = document.getElementById("paw");
+let pawWait = null, pawMode = "";
+const HF_OK = [
+  { text: "Yeaaah ! Joli high five !", mood: "rigole" },
+  { text: "Clac ! On est trop forts !", mood: "fier" },
+  { text: "Parfait ! Ma patte chauffe encore !", mood: "rigole" },
+  { text: "Boum ! Ça, c'est de l'amitié.", mood: "content" }
+];
+const CHECK_OK = [
+  { text: "Check ! Respect, l'ami.", mood: "fier" },
+  { text: "Poing contre patte ! Boum !", mood: "rigole" }
+];
+const HF_MISS = [
+  { text: "…Tu m'as laissé la patte en l'air.", mood: "timide" },
+  { text: "Bon. Je vais faire semblant que c'était voulu.", mood: "timide" },
+  { text: "Personne ? Je me tape la patte tout seul, alors.", mood: "triste" }
+];
+function sfxClap() {
+  if (!ac || S.sound === "muet") return;
+  const len = Math.floor(ac.sampleRate * 0.08), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+  const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = buf; f.type = "bandpass"; f.frequency.value = 1500; g.gain.value = 0.5;
+  src.connect(f).connect(g).connect(ac.destination); src.start();
+}
+function melody(notes, step = 0.2) { notes.forEach((f, i) => f && tone(f, f * 1.005, step * 0.9, "triangle", 0.035, i * step)); }
+function showPaw(mode) {
+  pawMode = mode;
+  pawEl.classList.remove("hit", "wave");
+  pawEl.style.visibility = "visible";
+  requestAnimationFrame(() => pawEl.classList.add("up"));
+}
+function hidePaw() {
+  clearTimeout(pawWait); pawWait = null; pawMode = "";
+  pawEl.classList.remove("up", "wave", "hit");
+}
+function highFive(isCheck) {
+  if (busy || cutscene) return;
+  hideCard(); showPaw(isCheck ? "check" : "five");
+  speak([{ text: isCheck ? "Check ! Tape dans ma patte !" : "Tope là ! Tape dans ma patte !", mood: "content" }]);
+  clearTimeout(pawWait);
+  pawWait = setTimeout(() => { hidePaw(); react([pick(HF_MISS)]); }, 5500);
+}
+pawEl.addEventListener("click", e => {
+  e.stopPropagation();
+  ensureAudio();
+  if (!pawMode || pawMode === "wave") return;
+  const wasCheck = pawMode === "check";
+  clearTimeout(pawWait); pawWait = null; pawMode = "";
+  pawEl.classList.add("hit");
+  sfxClap();
+  const r = pawEl.getBoundingClientRect(), s0 = stageEl.getBoundingClientRect();
+  spark(wasCheck ? "BOUM !" : "CLAC !", "clac", r.left - s0.left + r.width / 2, r.top - s0.top);
+  fx("sparkle", 5);
+  restartAnim("hop");
+  setTimeout(hidePaw, 650);
+  speak([pick(wasCheck ? CHECK_OK : HF_OK)]);
+});
+function playFor(cls, ms) {
+  faceBtn.classList.remove(cls); void faceBtn.offsetWidth; faceBtn.classList.add(cls);
+  setTimeout(() => faceBtn.classList.remove(cls), ms);
+}
+function dance() {
+  if (busy || cutscene) return;
+  hideCard();
+  playFor("dance", 6400);
+  melody([523, 659, 784, 659, 523, 659, 784, 1047, 880, 784, 659, 784, 659, 523, 587, 523], 0.4);
+  let k = 0;
+  const t = setInterval(() => { fx("notes", 1); if (++k >= 8) clearInterval(t); }, 800);
+  speak([pick([{ text: "Musique, maestro ! *se déhanche*", mood: "rigole" }, { text: "Regarde mes pas de danse !", mood: "fier" }, { text: "Un, deux, cha-cha-cha !", mood: "rigole" }]),
+    { text: "Gauche… droite… et on tourne !", mood: "content" }, { text: "Ta-daa !", mood: "fier" }]);
+}
+function spin() {
+  if (busy || cutscene) return;
+  playFor("spin", 1300);
+  tone(400, 1200, 0.9, "sine", 0.04);
+  speak([{ text: "Wiiiiiii !", mood: "rigole" }, pick([{ text: "Ouh… la tête me tourne un peu.", mood: "etourdi" }, { text: "Double pirouette ! Dix sur dix ?", mood: "fier" }])]);
+}
+function jump() {
+  if (busy || cutscene) return;
+  playFor("bigjump", 950);
+  tone(250, 900, 0.35, "square", 0.03);
+  speak([{ text: pick(["Hop !", "Boing !", "Youpi !"]), mood: "surpris" }, pick([{ text: "Plus haut que les arbres !", mood: "fier" }, { text: "Tu as vu ce saut ?", mood: "content" }])]);
+}
+function hug() {
+  if (busy || cutscene) return;
+  playFor("hug", 1700);
+  fx("hearts", 6);
+  startPurr(); setTimeout(stopPurr, 1800);
+  speak([{ text: pick(["Un gros câlin !", "Viens là !", "Câliiiin !"]), mood: "amoureux" }, pick([{ text: "Ça fait du bien, hein ?", mood: "amoureux" }, { text: "Tu es tout doux… comme moi.", mood: "timide" }])]);
+}
+function kiss() {
+  if (busy || cutscene) return;
+  const [x, y] = facePoint(40, 38);
+  spark("mwah !", "mwah", x, y, { dx: 20, dy: -60 });
+  fx("hearts", 2);
+  speak([pick([{ text: "Oh… *rougit*", mood: "timide" }, { text: "Mwah ! Un bisou pour toi aussi !", mood: "amoureux" }, { text: "Hihi, tu me fais rougir !", mood: "timide" }])]);
+}
+function wave() {
+  if (busy || cutscene) return;
+  pawMode = "wave";
+  pawEl.classList.remove("hit"); pawEl.classList.add("up");
+  requestAnimationFrame(() => pawEl.classList.add("wave"));
+  setTimeout(hidePaw, 2600);
+  speak([pick([{ text: "Coucou ! *agite la patte*", mood: "content" }, { text: "Hello hello !", mood: "rigole" }, { text: "Salut, toi !", mood: "clin" }])]);
+}
+function tickle() {
+  if (busy || cutscene) return;
+  fx("ha", 4);
+  speak([{ text: "Hihihi ! Non, pas là !", mood: "rigole" }, { text: "Ahahah ! Arrête, j'en peux plus !", mood: "rigole" }, pick([{ text: "Pfiou… Tu es impitoyable.", mood: "timide" }, { text: "À mon tour de te chatouiller !", mood: "clin" }])]);
+}
+function rawr() {
+  if (busy || cutscene) return;
+  const [x, y] = facePoint(32, 8);
+  spark("RAWR !", "rawr", x, y);
+  restartAnim("shiver");
+  if (ac && S.sound !== "muet") { tone(160, 90, 0.5, "sawtooth", 0.07); tone(240, 120, 0.45, "square", 0.03, 0.05); }
+  speak([{ text: "RAWWWR !", mood: "fache" }, pick([{ text: "…Je t'ai fait peur ? Avoue.", mood: "clin" }, { text: "Hihi, je suis terrifiant, hein ?", mood: "rigole" }])]);
+}
+let rpsScore = [0, 0];
+const RPS = { pierre: "✊", feuille: "✋", ciseaux: "✌️" };
+const RPS_KEYS = ["pierre", "feuille", "ciseaux"];
+function rps() {
+  if (busy || cutscene) return;
+  showCard({ type: "rps" }, 60000);
+  speak([{ text: "Chifoumi ! Choisis sur la carte.", mood: "clin" }]);
+}
+function rpsPlay(you) {
+  const me = pick(RPS_KEYS);
+  const youEl = cardEl.querySelector("[data-you]"), meEl = cardEl.querySelector("[data-me]"), sc = cardEl.querySelector("[data-score]");
+  if (!youEl) return;
+  youEl.textContent = RPS[you]; meEl.textContent = "…";
+  youEl.classList.remove("pop"); void youEl.offsetWidth; youEl.classList.add("pop");
+  setTimeout(() => {
+    meEl.textContent = RPS[me];
+    meEl.classList.remove("pop"); void meEl.offsetWidth; meEl.classList.add("pop");
+    const win = { pierre: "ciseaux", feuille: "pierre", ciseaux: "feuille" };
+    let line;
+    if (you === me) line = pick([{ text: "Égalité ! On a le même cerveau.", mood: "surpris" }, { text: "Pareil ! On rejoue ?", mood: "clin" }]);
+    else if (win[you] === me) { rpsScore[0]++; line = pick([{ text: "Tu as gagné… Bien joué !", mood: "timide" }, { text: "Grrr, tu m'as eu !", mood: "fache" }]); fx("sparkle", 3); }
+    else { rpsScore[1]++; line = pick([{ text: "J'ai gagné ! Hé hé !", mood: "fier" }, { text: "Victoire du panda !", mood: "rigole" }]); }
+    if (sc) sc.textContent = "Toi " + rpsScore[0] + " – " + rpsScore[1] + " " + S.companionName;
+    speak([{ text: "Moi, je fais… " + me + " !", mood: "surpris" }, line]);
+  }, 700);
+}
+function coin() {
+  if (busy || cutscene) return;
+  showCard({ type: "coin" }, 20000);
+  const el = cardEl.querySelector(".coin");
+  const res = Math.random() < 0.5 ? "PILE" : "FACE";
+  if (el) { el.textContent = "?"; el.classList.add("flip"); }
+  tone(900, 1400, 0.1, "sine", 0.04);
+  speak([{ text: "Je lance la pièce… *pling*", mood: "reflechit" }]);
+  setTimeout(() => {
+    if (el) { el.classList.remove("flip"); el.textContent = res; }
+    speak([{ text: "C'est… " + res.toLowerCase() + " !", mood: "surpris" }]);
+  }, 1550);
+}
+function dice() {
+  if (busy || cutscene) return;
+  showCard({ type: "dice" }, 20000);
+  const el = cardEl.querySelector(".die");
+  const res = 1 + Math.floor(Math.random() * 6);
+  if (el) { el.classList.add("roll"); let k = 0; const t = setInterval(() => { el.textContent = 1 + Math.floor(Math.random() * 6); if (++k > 9) clearInterval(t); }, 110); }
+  speak([{ text: "Je lance le dé…", mood: "reflechit" }]);
+  setTimeout(() => {
+    if (el) { el.classList.remove("roll"); el.textContent = res; }
+    speak([{ text: res === 6 ? "Six ! Le jackpot !" : res === 1 ? "Un… pas de chance !" : "C'est un " + res + " !", mood: res === 6 ? "fier" : res === 1 ? "triste" : "content" }]);
+  }, 1300);
+}
+function applause() {
+  if (busy || cutscene) return;
+  for (let i = 0; i < 5; i++) setTimeout(() => { sfxClap(); const [x, y] = facePoint(rand(8, 56), rand(10, 40)); spark("clap", "ha", x, y, { dy: -50 }); }, i * 220);
+  speak([{ text: pick(["Bravo ! Bravo !", "Clap clap clap !", "Standing ovation !"]), mood: "fier" }]);
+}
+function pose() {
+  if (busy || cutscene) return;
+  setTimeout(() => { flash(); tone(1800, 1800, 0.05, "square", 0.03); fx("sparkle", 5); }, 700);
+  speak([{ text: "Attends, je prends la pose…", mood: "fier" }, { text: "Clic ! Je suis photogénique, non ?", mood: "clin" }]);
+}
+function roll() {
+  if (busy || cutscene) return;
+  playFor("roll", 1150);
+  speak([{ text: "Roulé-boulé !", mood: "rigole" }, { text: "Ta-daa ! Un vrai acrobate.", mood: "fier" }]);
+}
+function playDead() {
+  if (busy || cutscene) return;
+  speak([{ text: "Argh… je suis… touché…", mood: "etourdi" }]);
+  setTimeout(() => { faceBtn.classList.add("dead"); setMood("endormi"); }, 900);
+  setTimeout(() => {
+    faceBtn.classList.remove("dead"); restartAnim("hop");
+    speak([{ text: "Ha ! Je t'ai eu !", mood: "rigole" }]);
+  }, 3800);
+}
+function sing() {
+  if (busy || cutscene) return;
+  fx("notes", 5);
+  melody([659, 587, 523, 587, 659, 659, 659, 0, 587, 587, 587, 0, 659, 784, 784], 0.3);
+  speak([{ text: "La la la… ♪", mood: "musique" }, { text: "Mon bandana est orange, ma queue est touffue… ♪", mood: "musique" }, { text: "Merci, merci ! Pas d'autographes.", mood: "fier" }]);
+}
+
 
 const soundBtn = document.getElementById("soundBtn");
 const MODES = HAS_TTS ? ["bips", "voix", "muet"] : ["bips", "muet"];
@@ -1710,6 +2333,7 @@ for (let h = 0; h < 24; h++) { qsEl.add(new Option(String(h), String(h))); qeEl.
 settingsEl.hidden = !NATIVE;
 
 function renderSheet() {
+  try { renderMusicSettings(); } catch (e) {}
   pull();
   logEl.replaceChildren();
   const entries = S.log.slice(-120);
@@ -1815,14 +2439,26 @@ const rankClear = document.getElementById("rankClear");
 const rankBadge = document.getElementById("rankBadge");
 const devTools = document.getElementById("devTools");
 let awaitingOwner = false;
+const RANKS = {
+  owner: { full: "GÉRANT", short: "GÉRANT", cls: "" },
+  dev: { full: "DEV", short: "DEV", cls: "dev" },
+  daughter: { full: "FILLE DU PATRON", short: "HÉRITIÈRE", cls: "daughter" },
+  vip: { full: "VIP", short: "VIP", cls: "vip" }
+};
 function renderRank() {
-  const r = S.rank;
-  rankBadge.hidden = !r;
-  rankBadge.textContent = r === "owner" ? "GÉRANT" : r === "dev" ? "DEV" : "";
-  rankBadge.className = "badge" + (r === "dev" ? " dev" : "");
-  rankNote.textContent = r === "owner" ? "Ton rang : gérant (" + (S.ownerName || "?") + ")." : r === "dev" ? "Ton rang : développeur." : "";
-  rankClear.hidden = !r;
-  devTools.hidden = !r;
+  const r = S.rank, info = RANKS[r];
+  rankBadge.hidden = !info;
+  rankBadge.innerHTML = info ? '<span class="full">' + info.full + '</span><span class="short">' + info.short + "</span>" : "";
+  rankBadge.className = "badge" + (info && info.cls ? " " + info.cls : "");
+  rankNote.textContent = {
+    owner: "Ton rang : gérant (" + (S.ownerName || "?") + ").",
+    dev: "Ton rang : développeur.",
+    daughter: "Ton rang : fille du patron (" + (S.ownerName || "?") + ").",
+    vip: "Ton rang : VIP. Ce rang est en développement : ses avantages vont changer régulièrement."
+  }[r] || "";
+  rankClear.hidden = !info;
+  devTools.hidden = !(r === "dev" || r === "owner");
+  document.body.classList.toggle("vip", r === "vip");
 }
 document.getElementById("codeBtn").addEventListener("click", () => {
   if (!NATIVE || !codeIn.value.trim()) return;
@@ -1834,8 +2470,14 @@ document.getElementById("codeBtn").addEventListener("click", () => {
     speak([{ text: "Bip bip… code développeur accepté !", mood: "surpris" },
       { text: "Salut, dev ! Je t'ai reconnu.", mood: "fier" },
       { text: "Tes outils de test sont dans le menu.", mood: "clin" }]);
-  } else if (res === "owner_name") {
-    startOwnerCutscene();
+  } else if (res === "owner_name" || res === "daughter_name") {
+    startOwnerCutscene(res === "daughter_name" ? "daughter" : "owner");
+  } else if (res === "vip") {
+    pull(); renderRank(); closeSheet();
+    flash(); fx("sparkle", 8);
+    speak([{ text: "Code VIP accepté ! *déroule le tapis rouge*", mood: "surpris" },
+      { text: "Bienvenue parmi les VIP !", mood: "fier" },
+      { text: "Attention : le rang VIP est encore en développement. Ses avantages vont changer régulièrement.", mood: "clin" }]);
   } else if (res === "locked") {
     closeSheet(); pull(); enterLocked();
   } else {
@@ -1876,7 +2518,9 @@ function stopSnd(name) {
   setTimeout(() => { if (a._stop && !a.paused) a.pause(); }, 600);
 }
 let cutscene = null; // "question", "verify", "liar"
-function startOwnerCutscene() {
+let cutsceneRole = "owner";
+function startOwnerCutscene(role) {
+  cutsceneRole = role || "owner";
   closeSheet(); hideCard(); hidePlaces();
   cutscene = "question";
   awaitingOwner = true;
@@ -1884,7 +2528,11 @@ function startOwnerCutscene() {
   setMood("soupconneux");
   snd("verification"); snd("verifie"); // préchargés pour la suite
   playSnd("question", 30000);
-  speak([
+  speak(cutsceneRole === "daughter" ? [
+    { text: "…", mood: "soupconneux" },
+    { text: "Un code de la famille du patron, hein ?", mood: "soupconneux" },
+    { text: "Si tu es vraiment sa fille… dis-moi ton prénom.", mood: "soupconneux" }
+  ] : [
     { text: "…", mood: "soupconneux" },
     { text: "Un code gérant, hein ?", mood: "soupconneux" },
     { text: "Si tu es vraiment le gérant… dis-moi ton nom.", mood: "soupconneux" }
@@ -1919,7 +2567,11 @@ function ownerAccepted() {
   endCutscene();
   pull(); renderRank(); updateName();
   flash(); fx("sparkle", 8); fx("hearts", 3);
-  speak([{ text: "Accès gérant confirmé !", mood: "surpris" },
+  speak(S.rank === "daughter" ? [
+    { text: "Accès confirmé !", mood: "surpris" },
+    { text: "Bienvenue, " + (S.ownerName || "toi") + " ! La fille du patron en personne !", mood: "fier" },
+    { text: "Je vais bien m'occuper de toi, promis.", mood: "amoureux" }
+  ] : [{ text: "Accès gérant confirmé !", mood: "surpris" },
     { text: "Bienvenue, " + (S.ownerName || "chef") + ". C'est un honneur de te servir, patron !", mood: "fier" },
     { text: "Je suis tout à toi.", mood: "amoureux" }]);
 }
@@ -2028,6 +2680,24 @@ const DEV = [
   ["Avertissement vie privée", () => { closeSheet(); askPrivacy(() => {}, true); }]
 ];
 document.getElementById("devBtns").append(...DEV.map(([label, fn]) => button(label, false, fn)));
+
+/* ---------- menu : musique ---------- */
+const musicSel = document.getElementById("musicAppSel");
+function renderMusicSettings() {
+  let apps = [];
+  try { apps = NATIVE && NATIVE.musicApps ? JSON.parse(NATIVE.musicApps()) : []; } catch (e) {}
+  let access = false;
+  try { access = NATIVE && NATIVE.musicState ? !!JSON.parse(NATIVE.musicState()).access : false; } catch (e) {}
+  const names = apps.map(a => a === "spotify" ? "Spotify" : "Deezer");
+  document.getElementById("musicNote").textContent =
+    (names.length ? "Installée" + (names.length > 1 ? "s" : "") + " : " + names.join(" et ") + ". " : "Ni Spotify ni Deezer ne sont installés. ") +
+    "Dis « mets de la musique » ou « joue Daft Punk sur Spotify ». " +
+    (access ? "Canelle voit le titre en cours." : "Pour qu'il voie le titre en cours, autorise-le ci-dessous (facultatif, tout reste sur le téléphone).");
+  musicSel.value = S.musicApp || "";
+  document.getElementById("musicAccessBtn").hidden = access;
+}
+musicSel.addEventListener("change", () => { S.musicApp = musicSel.value; saveUi(); });
+document.getElementById("musicAccessBtn").addEventListener("click", () => { if (NATIVE && NATIVE.openMusicAccess) NATIVE.openMusicAccess(); });
 
 /* ---------- avertissement vie privée ---------- */
 function askPrivacy(next, force) {
@@ -2196,7 +2866,8 @@ window.onBack = () => {
   return false;
 };
 window.onResumeApp = () => {
-  refreshBattery(); pull(); pollBrain(); lastActive = Date.now();
+  pull(); pollBrain(); lastActive = Date.now();
+  statusCheck(); musicPoll();
   if (locked && lockEnd <= Date.now()) { location.reload(); return; }
   if (cutscene === "question" && S.sound !== "muet" && SND.question && SND.question.currentTime > 0 && !SND.question.ended) SND.question.play().catch(() => {});
 };
@@ -2223,7 +2894,7 @@ function greet() {
   if (st) S.hasModel = HAS.includes(st.state);
   const b = lastBattery;
   const N = S.companionName, h = new Date().getHours();
-  const who = S.rank === "owner" ? ", " + (S.ownerName || "chef") : S.userName ? ", " + S.userName : "";
+  const who = S.rank === "owner" ? ", " + (S.ownerName || "chef") : (S.rank === "daughter" && S.ownerName) ? ", " + S.ownerName : S.userName ? ", " + S.userName : "";
   let lines;
   if (!S.visits) {
     lines = [
@@ -2239,7 +2910,9 @@ function greet() {
     lines = [{ text: "Oh… tu es encore debout" + who + " ?", mood: "surpris" }].concat(nightLines(h).slice(1));
     lastNight = Date.now();
   } else {
-    const hello = S.rank === "owner" ? { text: pick(["Bonjour chef ! Ravi de te revoir" + who + ".", "Le gérant est dans la place ! Salut" + who + " !"]), mood: "fier" }
+    const hello = S.rank === "daughter" ? { text: pick(["Coucou" + who + " ! Ça me fait trop plaisir de te voir !", "La fille du patron est là ! Salut" + who + " !"]), mood: "amoureux" }
+      : S.rank === "vip" ? { text: pick(["Salut" + who + ", VIP ! Tapis rouge déroulé.", "Un VIP ! Bienvenue" + who + " !"]), mood: "fier" }
+      : S.rank === "owner" ? { text: pick(["Bonjour chef ! Ravi de te revoir" + who + ".", "Le gérant est dans la place ! Salut" + who + " !"]), mood: "fier" }
       : S.rank === "dev" ? { text: pick(["Salut, dev ! Pas trop de bugs aujourd'hui ?", "Hey, dev ! Tout compile ?"]), mood: "clin" }
       : (() => { const w = h < 12 ? pick(["Bonjour", "Coucou", "Bien dormi"]) : h < 18 ? pick(["Salut", "Coucou", "Re-bonjour"]) : pick(["Bonsoir", "Coucou", "Hello"]);
           return { text: w + who + (w === "Bien dormi" ? " ?" : " !"), mood: "content" }; })();
@@ -2280,7 +2953,6 @@ function boot() {
   render();
   scheduleBlink(); scheduleLook();
   refreshBattery();
-  setInterval(refreshBattery, 60000);
   const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   showLoader(reduced ? 500 : 2100, () => {
     crtEl.classList.add("on");

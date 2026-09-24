@@ -56,25 +56,9 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
         }
     }
 
-    /** Nom de la ville où se trouve l'utilisateur (OpenStreetMap), gardé en mémoire tant qu'il ne bouge pas beaucoup. */
-    private suspend fun placeName(pos: Pair<Double, Double>): String {
-        val d = FloatArray(1)
-        Location.distanceBetween(pos.first, pos.second, Store.placeLat, Store.placeLon, d)
-        if (Store.placeName.isNotBlank() && d[0] < 3000f) return Store.placeName
-        val name = withContext(Dispatchers.IO) {
-            runCatching {
-                val url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=fr" +
-                    "&lat=${pos.first}&lon=${pos.second}"
-                val a = JSONObject(Net.get(url)).optJSONObject("address")
-                listOf("city", "town", "village", "municipality").map { a?.optString(it).orEmpty() }.firstOrNull { it.isNotBlank() }
-            }.getOrNull()
-        }
-        if (name.isNullOrBlank()) return "chez toi"
-        Store.placeName = name
-        Store.placeLat = pos.first
-        Store.placeLon = pos.second
-        return name
-    }
+    /** Nom de la ville où se trouve l'utilisateur (mis à jour dès qu'il bouge de plus d'un kilomètre). */
+    private suspend fun placeName(pos: Pair<Double, Double>): String =
+        LocationKeeper.updateCity(pos.first, pos.second) ?: Store.placeName.ifBlank { "chez toi" }
 
     suspend fun time(city: String): JSONObject {
         val zone: ZoneId
@@ -97,27 +81,71 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
     }
 
     // ---------------------------------------------------------------- météo (Open-Meteo, sans clé)
+    //
+    // « Maintenant » : modèle AROME de Météo-France (maille de 1,5 km, pas de 15 minutes, recalculé chaque heure)
+    // quand on est en France ou autour ; ailleurs, le meilleur modèle local choisi par Open-Meteo.
+    // Prévisions des jours suivants : meilleur modèle Open-Meteo (avec la probabilité de pluie).
+
+    private fun inAromeZone(lat: Double, lon: Double) = lat in 37.5..55.4 && lon in -12.0..16.0
+
+    private val CURRENT_VARS = "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,rain,showers,snowfall," +
+        "weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m,is_day"
+
+    /** Corrige le code du ciel avec ce qui tombe vraiment et la couverture nuageuse du moment. */
+    private fun realCode(cur: JSONObject): Int {
+        var code = cur.optInt("weather_code", -1)
+        val precip = cur.optDouble("precipitation", 0.0).let { if (it.isNaN()) 0.0 else it }
+        val snow = cur.optDouble("snowfall", 0.0).let { if (it.isNaN()) 0.0 else it }
+        val cloud = cur.optDouble("cloud_cover", Double.NaN)
+        if (code in 0..3 && !cloud.isNaN()) code = when {
+            cloud < 15 -> 0
+            cloud < 40 -> 1
+            cloud < 75 -> 2
+            else -> 3
+        }
+        if (code < 50 && snow >= 0.1) code = 71
+        else if (code < 50 && precip >= 0.3) code = if (precip >= 2.0) 63 else 61
+        else if (code < 50 && precip >= 0.1) code = 51
+        return code
+    }
 
     suspend fun weather(city: String, daysAsked: Int): JSONObject {
         val days = daysAsked.coerceIn(1, 7)
         val place = resolve(city) ?: return JSONObject().put(
             "erreur", if (city.isBlank()) "position" else "ville")
         return withContext(Dispatchers.IO) {
-            val url = "https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}" +
-                "&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day" +
-                "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
-                "&timezone=auto&forecast_days=$days"
-            val j = JSONObject(Net.get(url))
-            val cur = j.getJSONObject("current")
+            val base = "https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}&timezone=auto"
+            // 1) prévisions jour par jour + « maintenant » de secours
+            val j = JSONObject(Net.get(base + "&current=$CURRENT_VARS" +
+                "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum" +
+                "&forecast_days=$days"))
+            var cur = j.getJSONObject("current")
+            var source = "Open-Meteo"
+            // 2) « maintenant » précis : AROME Météo-France
+            if (inAromeZone(place.lat, place.lon)) {
+                runCatching {
+                    val a = JSONObject(Net.get(base + "&current=$CURRENT_VARS&models=meteofrance_seamless&forecast_days=1"))
+                    val c = a.getJSONObject("current")
+                    if (!c.optDouble("temperature_2m").isNaN()) {
+                        cur = c
+                        source = "Météo-France (AROME)"
+                    }
+                }
+            }
+            val code = realCode(cur)
             val now = JSONObject()
                 .num("temperature_c", cur.optDouble("temperature_2m"))
                 .num("ressenti_c", cur.optDouble("apparent_temperature"))
                 .num("humidite_pct", cur.optDouble("relative_humidity_2m"))
                 .num("vent_kmh", cur.optDouble("wind_speed_10m"))
+                .num("rafales_kmh", cur.optDouble("wind_gusts_10m"))
+                .num("nuages_pct", cur.optDouble("cloud_cover"))
                 .num("precipitations_mm", cur.optDouble("precipitation"))
-                .put("ciel", wmo(cur.optInt("weather_code", -1)))
-                .put("code", cur.optInt("weather_code", -1))
+                .put("ciel", wmo(code))
+                .put("code", code)
                 .put("jour", cur.optInt("is_day", 1) == 1)
+                .put("heure_donnees", cur.optString("time").substringAfter('T'))
+                .put("source", source)
             val d = j.getJSONObject("daily")
             val dates = d.getJSONArray("time")
             val list = JSONArray()
@@ -128,7 +156,8 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
                     .put("code", d.getJSONArray("weather_code").optInt(i, -1))
                     .num("min_c", d.getJSONArray("temperature_2m_min").optDouble(i))
                     .num("max_c", d.getJSONArray("temperature_2m_max").optDouble(i))
-                    .num("pluie_proba_pct", d.getJSONArray("precipitation_probability_max").optDouble(i)))
+                    .num("pluie_proba_pct", d.getJSONArray("precipitation_probability_max").optDouble(i))
+                    .num("pluie_mm", d.getJSONArray("precipitation_sum").optDouble(i)))
             }
             JSONObject().put("lieu", place.label).put("maintenant", now).put("jours", list)
         }

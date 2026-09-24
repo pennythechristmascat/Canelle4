@@ -101,7 +101,17 @@ object Brain {
         lines.forEach { Store.addLog("bip", it.text) }
     }
 
-    private fun pick(vararg options: String): String = options.random()
+    private val recentPicks = ArrayDeque<String>()
+
+    /** Choisit une phrase au hasard, en évitant celles dites récemment. */
+    @Synchronized
+    private fun pick(vararg options: String): String {
+        val fresh = options.filter { it !in recentPicks }
+        val choice = (fresh.ifEmpty { options.toList() }).random()
+        recentPicks.addLast(choice)
+        while (recentPicks.size > 24) recentPicks.removeFirst()
+        return choice
+    }
 
     // ================================================================ demandes pratiques
 
@@ -181,6 +191,10 @@ object Brain {
         tools.card = JSONObject().put("type", "battery").put("pct", pct)
             .put("charging", b.optBoolean("en_charge")).put("full", b.optBoolean("pleine"))
             .put("minutes", b.optInt("minutes_avant_pleine_charge", 0))
+            .put("method", b.optString("methode_estimation")).put("autonomy", b.optInt("autonomie_minutes", 0))
+            .put("watts", b.optDouble("puissance_w", 0.0)).put("temp", b.optDouble("temperature_c", 0.0))
+            .put("source", b.optString("source")).put("rate", b.optDouble("vitesse_pct_heure", 0.0))
+            .put("health", b.optString("sante"))
         val out = mutableListOf(Line("Ta batterie est à $pct %.", "neutre"))
         when {
             b.optBoolean("pleine") -> out.add(Line("Elle est pleine, tu peux débrancher !", "content"))
@@ -188,14 +202,19 @@ object Brain {
                 val m = b.optInt("minutes_avant_pleine_charge", 0)
                 out.add(
                     if (m > 0) Line((if (b.optBoolean("estimation_approximative")) "Pleine dans environ " else "Pleine dans ") + fmtMinutes(m) + ".", "content")
-                    else Line("Elle charge, mais je ne sais pas encore combien de temps il faut.", "reflechit")
+                    else Line("Elle charge. Je mesure sa vitesse : redemande-moi dans quelques minutes pour le temps exact.", "reflechit")
                 )
+                val w = b.optDouble("puissance_w", 0.0)
+                if (w >= 15) out.add(Line(pick("Charge rapide : ${w.roundToInt()} watts, ça file !", "Ça charge vite, ${w.roundToInt()} watts !"), "fier"))
             }
+            pct <= 5 -> out.add(Line("Branche-le tout de suite, sinon le téléphone va s'éteindre !", "inquiet"))
             pct <= 15 -> out.add(Line(pick("Branche vite le téléphone, sinon je m'endors !", "Au secours, je manque d'énergie ! Un chargeur !"), "inquiet"))
-            pct <= 30 -> out.add(Line(pick("Pense à la recharger bientôt.", "Il faudra la brancher d'ici peu."), "inquiet"))
+            pct <= 20 -> out.add(Line(pick("Prévois de la recharger bientôt.", "Il faudra la brancher d'ici peu."), "inquiet"))
             pct >= 80 -> out.add(Line(pick("Pleine forme, comme moi !", "Tu es tranquille pour un bon moment.", "Elle a de l'énergie à revendre !"), "fier"))
             else -> out.add(Line(pick("Pas besoin de recharger pour l'instant.", "Ça tient encore bien.", "Tout va bien de ce côté-là."), "content"))
         }
+        val auto = b.optInt("autonomie_minutes", 0)
+        if (!b.optBoolean("en_charge") && auto > 0) out.add(Line("À ce rythme, elle tiendra encore environ ${fmtMinutes(auto)}.", "reflechit"))
         if (b.optDouble("temperature_c", 0.0) >= 42.0) out.add(Line("Attention, le téléphone est très chaud. Laisse-le respirer un peu.", "surpris"))
         return out
     }
@@ -320,6 +339,9 @@ object Brain {
             val t = cur.optDouble("temperature_c")
             card.put("when", "Maintenant").put("big", rnd(t) + "°").put("desc", cur.optString("ciel").replaceFirstChar { it.uppercase() })
                 .put("icon", iconOf(cur.optInt("code", -1), isDay))
+                .put("feel", rnd(cur.optDouble("ressenti_c"))).put("wind", rnd(cur.optDouble("vent_kmh")))
+                .put("humidity", rnd(cur.optDouble("humidite_pct")))
+                .put("source", cur.optString("source")).put("updated", cur.optString("heure_donnees"))
             out.add(Line("À $place : ${cur.optString("ciel")}, ${deg(t)}.", "neutre"))
             val feel = cur.optDouble("ressenti_c")
             if (!feel.isNaN() && !t.isNaN() && kotlin.math.abs(feel - t) >= 3) out.add(Line("Mais on a l'impression qu'il fait ${deg(feel)}.", "reflechit"))
@@ -515,6 +537,8 @@ object Brain {
         val rank = when (Store.rank) {
             "owner" -> "\nC'est ${Store.ownerName.ifBlank { "le gérant" }}, le gérant de l'application : tu le reconnais, tu es ravi de le voir et tu l'appelles parfois « chef »."
             "dev" -> "\nC'est un développeur de l'application : tu peux être complice et un peu taquin sur le code."
+            "daughter" -> "\nC'est ${Store.ownerName.ifBlank { "la fille du patron" }}, la fille du patron (le gérant) : tu la reconnais, tu es ravi de la voir et particulièrement doux, gentil et protecteur avec elle."
+            "vip" -> "\nC'est un membre VIP : tu le chouchoutes un peu plus que les autres."
             else -> ""
         }
         val late = if (now.hour in 0..4) "\nIl est très tard : rappelle-lui gentiment que se coucher tard n'est pas bon et conseille-lui d'aller se reposer." else ""
@@ -526,6 +550,7 @@ Règles :
 - Réponds toujours en français, en tutoyant, comme un ami.
 - Fais court : une à trois phrases simples. Au plus une question.
 - Commence ta réponse par ton émotion entre crochets, parmi : [content], [rigole], [amoureux], [timide], [fier], [surpris], [reflechit], [inquiet], [triste], [fache], [clin] ou [neutre].
+- Ne répète pas une phrase que tu viens de dire : varie tes formulations.
 - Pas d'emoji, pas de listes, pas de mise en forme.
 - Écoute d'abord. Pour remonter le moral, propose une petite chose concrète (boire de l'eau, sortir cinq minutes, écrire à un ami), sans faire la leçon.
 - Encourage les liens avec de vraies personnes. Pour la santé, conseille un professionnel, sans diagnostic.

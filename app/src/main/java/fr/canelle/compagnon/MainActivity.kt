@@ -146,13 +146,27 @@ class MainActivity : ComponentActivity(), ToolHost {
 
     override fun onPause() {
         super.onPause()
-        if (::web.isInitialized) js("window.onPauseApp&&onPauseApp()")
+        // En arrière-plan, tout s'arrête : position, mesure du rythme, animations et minuteries de la page.
+        LocationKeeper.stop()
+        MusicWatcher.release()
+        BatteryWatch.uiAlert = null
+        if (::web.isInitialized) {
+            js("window.onPauseApp&&onPauseApp()")
+            web.onPause()
+            web.pauseTimers()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         hideSystemBars()
-        if (::web.isInitialized) js("window.onResumeApp&&onResumeApp()")
+        LocationKeeper.start(this)
+        BatteryWatch.uiAlert = { threshold, level -> js("window.onBatteryAlert&&onBatteryAlert($threshold,$level)") }
+        if (::web.isInitialized) {
+            web.onResume()
+            web.resumeTimers()
+            js("window.onResumeApp&&onResumeApp()")
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -261,6 +275,7 @@ class MainActivity : ComponentActivity(), ToolHost {
                 Store.visits = o.optInt("visits", Store.visits)
                 Store.lastSeen = o.optLong("lastSeen", Store.lastSeen)
                 if (o.has("hidePrivacy")) Store.hidePrivacy = o.optBoolean("hidePrivacy", Store.hidePrivacy)
+                if (o.has("musicApp")) Store.musicApp = o.optString("musicApp", Store.musicApp)
             }
         }
 
@@ -292,6 +307,33 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         @JavascriptInterface
         fun confirmOwner(name: String): Boolean = Access.confirmOwner(name).also { LocalModel.markDirty() }
+
+        // ------------------------------------------------ musique
+
+        /** { active, playing, title, artist, app, access } */
+        @JavascriptInterface
+        fun musicState(): String = MusicWatcher.state(this@MainActivity).toString()
+
+        /** Intensité de la musique (0 à 1), ou -1 si le téléphone ne permet pas de la mesurer. */
+        @JavascriptInterface
+        fun musicLevel(): Float = MusicWatcher.level(this@MainActivity)
+
+        @JavascriptInterface
+        fun musicControl(action: String): Boolean = MusicWatcher.control(this@MainActivity, action)
+
+        /** Joue une recherche dans Spotify ou Deezer : "ok:<appli>", "absent:<appli>" ou "aucune". */
+        @JavascriptInterface
+        fun musicPlay(app: String, query: String): String = MusicWatcher.play(this@MainActivity, app, query)
+
+        @JavascriptInterface
+        fun musicApps(): String = MusicWatcher.apps(this@MainActivity).toString()
+
+        @JavascriptInterface
+        fun openMusicAccess() = MusicWatcher.openTitleAccess(this@MainActivity)
+
+        /** Vrai quand la voix de Canelle parle (pour ne pas la confondre avec de la musique). */
+        @JavascriptInterface
+        fun ttsSpeaking(): Boolean = tts?.isSpeaking == true
 
         /** Ferme l'application de force (Canelle chasse un faux gérant). */
         @JavascriptInterface

@@ -10,8 +10,7 @@ import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 /**
- * Tourne environ toutes les heures en arrière-plan :
- * - prévient si la batterie est presque vide ;
+ * Tourne environ toutes les heures en arrière-plan (la batterie est surveillée par BatteryWatch) :
  * - envoie une prise de nouvelles quand l'intervalle choisi est écoulé (sauf pendant les heures calmes).
  */
 class CheckinWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
@@ -20,13 +19,6 @@ class CheckinWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ct
         val ctx = applicationContext
         Store.init(ctx)
         val now = System.currentTimeMillis()
-
-        val b = Device.battery(ctx)
-        val level = b.optInt("pourcentage", 100)
-        if (!b.optBoolean("en_charge") && level in 1..15 && now - Store.lastBatteryWarn > 6 * 3_600_000L) {
-            Notifs.battery(ctx, level)
-            Store.lastBatteryWarn = now
-        }
 
         if (!Store.checkins || isQuiet(LocalTime.now().hour) || Access.isLocked()) return Result.success()
         if (now - Store.lastCheckin < Store.intervalHours * 3_600_000L - 10 * 60_000L) return Result.success()

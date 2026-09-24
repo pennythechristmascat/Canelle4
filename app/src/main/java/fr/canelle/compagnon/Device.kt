@@ -59,46 +59,85 @@ object Device {
             else -> null
         }
         val temp = (sticky?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10.0
+        val volts = (sticky?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) ?: 0).let { if (it > 100) it / 1000.0 else it.toDouble() }
+        val health = when (sticky?.getIntExtra(BatteryManager.EXTRA_HEALTH, 0) ?: 0) {
+            BatteryManager.BATTERY_HEALTH_GOOD -> "bonne"
+            BatteryManager.BATTERY_HEALTH_OVERHEAT -> "surchauffe"
+            BatteryManager.BATTERY_HEALTH_DEAD -> "usée"
+            BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "surtension"
+            BatteryManager.BATTERY_HEALTH_COLD -> "trop froide"
+            else -> null
+        }
+        val cycles = sticky?.getIntExtra("android.os.extra.CYCLE_COUNT", -1) ?: -1
+
+        // Courant instantané : les fabricants ne sont pas d'accord sur l'unité (µA ou mA) ni sur le signe.
+        val rawNow = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        var currentMa: Double? = null
+        if (rawNow != 0 && rawNow != Int.MIN_VALUE && rawNow != Int.MAX_VALUE) {
+            val a0 = abs(rawNow.toDouble())
+            currentMa = if (a0 > 20_000) a0 / 1000.0 else a0
+        }
+        val watts = if (currentMa != null && volts > 0) volts * currentMa / 1000.0 else null
+        val counter = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) // µAh
+        val capacityMah = if (counter > 0 && level in 5..100) (counter / 1000.0) / (level / 100.0) else null
+
+        BatteryWatch.sample(level, charging)
+        val measured = BatteryWatch.rate(charging)
 
         var minutes: Int? = null
-        var estimated = false
+        var method: String? = null
         if (charging && !full) {
-            if (Build.VERSION.SDK_INT >= 28) {
-                val ms = bm.computeChargeTimeRemaining()
-                if (ms > 0) minutes = (ms / 60_000L).toInt().coerceAtLeast(1)
+            // 1) la vitesse réellement mesurée sur ce téléphone, avec ce chargeur (le plus fiable)
+            if (measured != null) {
+                minutes = BatteryWatch.minutesToFull(level, measured)
+                method = "mesure"
             }
+            // 2) l'estimation d'Android (quand le fabricant la fournit)
             if (minutes == null) {
-                // Estimation maison : capacité restante / courant de charge.
-                val counter = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) // µAh
-                val now = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)       // µA
-                if (counter > 0 && now != 0 && now != Int.MIN_VALUE && level in 1..99) {
-                    var current = abs(now.toDouble())
-                    if (current < 20_000) current *= 1000.0 // certains téléphones donnent des mA
-                    val capacity = counter / (level / 100.0)
-                    val hours = (capacity - counter) / current
-                    if (hours > 0.01 && hours < 15) {
-                        minutes = (hours * 60).roundToInt().coerceAtLeast(1)
-                        estimated = true
-                    }
+                val ms = bm.computeChargeTimeRemaining()
+                if (ms > 0) {
+                    minutes = (ms / 60_000L).toInt().coerceAtLeast(1)
+                    method = "android"
+                }
+            }
+            // 3) capacité restante / courant de charge, avec le ralentissement après 80 %
+            if (minutes == null && currentMa != null && currentMa > 50 && capacityMah != null && level in 1..99) {
+                val perMin = currentMa / capacityMah * 100.0 / 60.0 // % par minute au courant actuel
+                if (perMin > 0.01) {
+                    minutes = BatteryWatch.minutesToFull(level, perMin)
+                    method = "courant"
                 }
             }
         }
+        // autonomie restante quand le téléphone est débranché
+        val autonomy = if (!charging && measured != null && measured > 0.0) (level / measured).roundToInt() else null
 
         val advice = when {
             full -> "batterie pleine, tu peux débrancher"
             charging -> "en train de charger"
-            level <= 15 -> "à recharger tout de suite"
-            level <= 30 -> "à recharger bientôt"
+            level <= 5 -> "le téléphone va s'éteindre s'il n'est pas branché"
+            level <= 15 -> "à recharger maintenant"
+            level <= 20 -> "prévoir de recharger bientôt"
             else -> "pas besoin de recharger pour l'instant"
         }
+        fun r1(v: Double) = (v * 10).roundToInt() / 10.0
         return JSONObject()
             .put("pourcentage", level)
             .put("en_charge", charging)
             .put("pleine", full)
             .put("source", source ?: JSONObject.NULL)
             .put("temperature_c", temp)
+            .put("tension_v", if (volts > 0) r1(volts) else JSONObject.NULL)
+            .put("courant_ma", currentMa?.roundToInt() ?: JSONObject.NULL)
+            .put("puissance_w", watts?.let { r1(it) } ?: JSONObject.NULL)
+            .put("sante", health ?: JSONObject.NULL)
+            .put("cycles", if (cycles >= 0) cycles else JSONObject.NULL)
+            .put("capacite_mah", capacityMah?.roundToInt() ?: JSONObject.NULL)
+            .put("vitesse_pct_heure", measured?.let { r1(it * 60) } ?: JSONObject.NULL)
             .put("minutes_avant_pleine_charge", minutes ?: JSONObject.NULL)
-            .put("estimation_approximative", estimated)
+            .put("methode_estimation", method ?: JSONObject.NULL)
+            .put("estimation_approximative", method != "mesure")
+            .put("autonomie_minutes", autonomy ?: JSONObject.NULL)
             .put("conseil", advice)
     }
 
@@ -114,11 +153,13 @@ object Device {
             val granted = foreground && host != null && host.ensureLocationPermission()
             if (!granted) return Store.lastPosition()
         }
+        // position actualisée toutes les 2 minutes quand l'application est ouverte (LocationKeeper)
+        if (Store.lastLocTime > 0L && System.currentTimeMillis() - Store.lastLocTime < 150_000L) return Store.lastPosition()
         val lm = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val last = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER)
             .mapNotNull { runCatching { lm.getLastKnownLocation(it) }.getOrNull() }
             .maxByOrNull { it.time }
-        if (last != null && System.currentTimeMillis() - last.time < 10 * 60_000L) return remember(last)
+        if (last != null && System.currentTimeMillis() - last.time < 150_000L) return remember(last)
 
         if (foreground) {
             val provider = when {
@@ -134,7 +175,7 @@ object Device {
         return last?.let { remember(it) } ?: Store.lastPosition()
     }
 
-    private fun remember(l: Location): Pair<Double, Double> {
+    fun remember(l: Location): Pair<Double, Double> {
         Store.lastLat = l.latitude
         Store.lastLon = l.longitude
         Store.lastLocTime = System.currentTimeMillis()
@@ -142,7 +183,7 @@ object Device {
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun currentLocation(ctx: Context, lm: LocationManager, provider: String): Location? =
+    suspend fun currentLocation(ctx: Context, lm: LocationManager, provider: String): Location? =
         withContext(Dispatchers.Main) {
             suspendCancellableCoroutine<Location?> { cont ->
                 if (Build.VERSION.SDK_INT >= 30) {

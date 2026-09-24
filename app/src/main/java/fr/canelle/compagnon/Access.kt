@@ -11,6 +11,12 @@ object Access {
     private const val DEV = "12677ab08a6a7f89eb6ad7dcf453e9972f535c78ba4aedb7497fc9bed8b58ef9"
     private const val OWNER = "c530b3144ff2930286c045bc74f9bf28b7092df65edf5bc045ac0087a39cc5b9"
     private const val OWNER_NAME = "55de0843e14ab79decddbb86ee039f7efb9c882bf7abb60c5719601e24d0678e"
+    private const val DAUGHTER = "1de2e4fa195c0b375a915ec6a3d1ef5095b9c9138fcb814475f41a900a235026"
+    private const val DAUGHTER_NAME = "540b99c2726b737f781105e152629194e58138fa3630bf2c7437db074e659ead"
+    private const val VIP = "592df82290d8f46a0370d6730ac6d09afad55db56b743bf572442a9163aab862"
+
+    /** Rang en attente de confirmation par le prénom : "owner" (gérant) ou "daughter" (fille du patron). */
+    @Volatile private var pendingRole = "owner"
 
     /** Moment où le code gérant a été entré : le nom doit être donné dans les 5 minutes. */
     @Volatile private var ownerPendingAt = 0L
@@ -41,7 +47,10 @@ object Access {
 
     fun isLocked(): Boolean = lockedUntil() > 0L
 
-    /** Renvoie "dev", "owner_name" (il faut maintenant le nom du gérant), "locked" ou "invalid". */
+    /**
+     * Renvoie "dev", "vip", "owner_name" (il faut maintenant le nom du gérant),
+     * "daughter_name" (il faut le prénom de la fille du patron), "locked" ou "invalid".
+     */
     fun check(code: String): String {
         if (isLocked()) return "locked"
         val c = code.trim().uppercase(Locale.ROOT).replace(Regex("\\s+"), "")
@@ -52,7 +61,18 @@ object Access {
             }
             OWNER -> {
                 ownerPendingAt = System.currentTimeMillis()
+                pendingRole = "owner"
                 "owner_name"
+            }
+            DAUGHTER -> {
+                ownerPendingAt = System.currentTimeMillis()
+                pendingRole = "daughter"
+                "daughter_name"
+            }
+            VIP -> {
+                Store.rank = "vip"
+                Store.ownerName = ""
+                "vip"
             }
             else -> "invalid"
         }
@@ -64,7 +84,9 @@ object Access {
         ownerPendingAt = 0L
         if (!pending || isLocked()) return false
         val words = answer.split(Regex("[^\\p{L}'-]+")).filter { it.isNotBlank() }
-        val match = words.firstOrNull { sha(Intents.norm(it).replace(Regex("[^a-z]"), "")) == OWNER_NAME }
+        val role = pendingRole
+        val expected = if (role == "daughter") DAUGHTER_NAME else OWNER_NAME
+        val match = words.firstOrNull { sha(Intents.norm(it).replace(Regex("[^a-z]"), "")) == expected }
         if (match == null) {
             // Mauvais nom : au 3e mensonge (même après avoir relancé l'appli), Canelle boude 24 h.
             Store.ownerFails = Store.ownerFails + 1
@@ -77,7 +99,7 @@ object Access {
         }
         Store.ownerFails = 0
         val name = match.lowercase(Locale.FRENCH).replaceFirstChar { it.titlecase(Locale.FRENCH) }
-        Store.rank = "owner"
+        Store.rank = role
         Store.ownerName = name
         Store.userName = name
         return true

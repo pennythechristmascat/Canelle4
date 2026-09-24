@@ -61,6 +61,17 @@ object Store {
     var lockUntil: Long
         get() = p.getLong("lockUntil", 0L)
         set(v) = putLong("lockUntil", v)
+    /** Dernière alerte batterie donnée (20, 15, 5 ; 0 = aucune) et changements de pourcentage mesurés. */
+    var battAlert: Int
+        get() = p.getInt("battAlert", 0)
+        set(v) = putInt("battAlert", v)
+    var battSteps: String
+        get() = str("battSteps", "{}")
+        set(v) = putStr("battSteps", v)
+    /** Application de musique préférée : "spotify", "deezer" ou "" (automatique). */
+    var musicApp: String
+        get() = str("musicApp")
+        set(v) = putStr("musicApp", v)
     var hidePrivacy: Boolean
         get() = p.getBoolean("hidePrivacy", false)
         set(v) = putBool("hidePrivacy", v)
@@ -219,6 +230,7 @@ object Store {
         .put("rank", rank)
         .put("ownerName", ownerName)
         .put("hidePrivacy", hidePrivacy)
+        .put("musicApp", musicApp)
         .put("ownerFails", ownerFails)
         .put("lockUntil", Access.lockedUntil())
         .put("now", System.currentTimeMillis())

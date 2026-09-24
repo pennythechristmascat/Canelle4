@@ -9,5 +9,7 @@ class CanelleApp : Application() {
         Notifs.channels(this)
         if (Store.lastCheckin == 0L) Store.lastCheckin = System.currentTimeMillis()
         CheckinWorker.schedule(this)
+        BatteryWorker.schedule(this)
+        BatteryWatch.register(this)
     }
 }

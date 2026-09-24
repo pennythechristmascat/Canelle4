@@ -21,6 +21,7 @@ import androidx.core.graphics.drawable.IconCompat
 object Notifs {
     const val CH_CHECKIN = "nouvelles"
     const val CH_BATTERY = "batterie"
+    const val CH_BATTERY_CRIT = "batterie-critique"
     const val CH_WORK = "reflexion"
     const val ID_THREAD = 1001
     const val ID_BATTERY = 1002
@@ -35,6 +36,9 @@ object Notifs {
         })
         nm.createNotificationChannel(NotificationChannel(CH_BATTERY, "Batterie", NotificationManager.IMPORTANCE_DEFAULT).apply {
             description = "Rappels quand la batterie est presque vide."
+        })
+        nm.createNotificationChannel(NotificationChannel(CH_BATTERY_CRIT, "Batterie presque vide", NotificationManager.IMPORTANCE_HIGH).apply {
+            description = "Alerte quand il reste 5 % : le téléphone va bientôt s'éteindre."
         })
         nm.createNotificationChannel(NotificationChannel(CH_WORK, "Réflexion en cours", NotificationManager.IMPORTANCE_LOW))
     }
@@ -104,6 +108,32 @@ object Notifs {
             .setColor(0xFFE8743B.toInt())
             .setContentTitle("Batterie à $level %")
             .setContentText("$name a besoin d'énergie : pense à brancher ton téléphone !")
+            .setContentIntent(openApp(ctx))
+            .setAutoCancel(true)
+            .build()
+        try {
+            NotificationManagerCompat.from(ctx).notify(ID_BATTERY, n)
+        } catch (e: SecurityException) {
+        }
+    }
+
+    /** Alertes à 20 %, 15 % et 5 %. */
+    @SuppressLint("MissingPermission")
+    fun batteryAlert(ctx: Context, threshold: Int, level: Int) {
+        if (!canPost(ctx)) return
+        val name = Store.companionName
+        val (title, text) = when (threshold) {
+            20 -> "Batterie à $level %" to "$name : pense à prévoir de charger ton téléphone bientôt."
+            15 -> "Batterie à $level %" to "$name : il est temps de brancher ton téléphone !"
+            else -> "Batterie à $level % !" to "$name : ton téléphone va s'éteindre si tu ne le branches pas maintenant !"
+        }
+        val n = NotificationCompat.Builder(ctx, if (threshold <= 5) CH_BATTERY_CRIT else CH_BATTERY)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setColor(0xFFE8743B.toInt())
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setPriority(if (threshold <= 5) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(openApp(ctx))
             .setAutoCancel(true)
             .build()

@@ -6,7 +6,7 @@ import java.net.URL
 
 /** Petites requêtes web (météo, lieux). Aucune clé n'est nécessaire pour ces services. */
 object Net {
-    private const val USER_AGENT = "CanelleCompagnon/0.2 (application Android personnelle)"
+    private const val USER_AGENT = "CanelleCompagnon/5.0 (application Android personnelle)"
 
     fun get(url: String): String {
         val c = URL(url).openConnection() as HttpURLConnection
