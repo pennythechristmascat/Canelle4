@@ -56,6 +56,9 @@ object Brain {
     ): Reply {
         val text = userText.trim().take(800)
         if (text.isEmpty()) throw BrainException("empty")
+        if (Access.isLocked()) {
+            return Reply(listOf(Line("Hmph. Je ne parle pas aux menteurs.", "fache")), null, null, null)
+        }
         val n = Intents.norm(text)
         val tools = Tools(ctx, foreground, host)
 

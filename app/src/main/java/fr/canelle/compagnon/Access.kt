@@ -18,8 +18,32 @@ object Access {
     private fun sha(s: String): String =
         MessageDigest.getInstance("SHA-256").digest(s.toByteArray()).joinToString("") { "%02x".format(it) }
 
-    /** Renvoie "dev", "owner_name" (il faut maintenant le nom du gérant) ou "invalid". */
+    const val MAX_FAILS = 3
+    private const val LOCK_MS = 24 * 3_600_000L
+
+    /**
+     * Fin de la punition (ms), ou 0 si Canelle n'est pas fâché.
+     * Si l'heure du téléphone a été reculée avant le début de la punition, elle reste active.
+     */
+    fun lockedUntil(): Long {
+        val until = Store.lockUntil
+        if (until == 0L) return 0L
+        val now = System.currentTimeMillis()
+        if (now < Store.lockStart) return until
+        if (now >= until) {
+            Store.lockUntil = 0L
+            Store.lockStart = 0L
+            Store.ownerFails = 0
+            return 0L
+        }
+        return until
+    }
+
+    fun isLocked(): Boolean = lockedUntil() > 0L
+
+    /** Renvoie "dev", "owner_name" (il faut maintenant le nom du gérant), "locked" ou "invalid". */
     fun check(code: String): String {
+        if (isLocked()) return "locked"
         val c = code.trim().uppercase(Locale.ROOT).replace(Regex("\\s+"), "")
         return when (sha(c)) {
             DEV -> {
@@ -38,9 +62,20 @@ object Access {
     fun confirmOwner(answer: String): Boolean {
         val pending = System.currentTimeMillis() - ownerPendingAt < 5 * 60_000L
         ownerPendingAt = 0L
-        if (!pending) return false
+        if (!pending || isLocked()) return false
         val words = answer.split(Regex("[^\\p{L}'-]+")).filter { it.isNotBlank() }
-        val match = words.firstOrNull { sha(Intents.norm(it).replace(Regex("[^a-z]"), "")) == OWNER_NAME } ?: return false
+        val match = words.firstOrNull { sha(Intents.norm(it).replace(Regex("[^a-z]"), "")) == OWNER_NAME }
+        if (match == null) {
+            // Mauvais nom : au 3e mensonge (même après avoir relancé l'appli), Canelle boude 24 h.
+            Store.ownerFails = Store.ownerFails + 1
+            if (Store.ownerFails >= MAX_FAILS) {
+                val now = System.currentTimeMillis()
+                Store.lockStart = now
+                Store.lockUntil = now + LOCK_MS
+            }
+            return false
+        }
+        Store.ownerFails = 0
         val name = match.lowercase(Locale.FRENCH).replaceFirstChar { it.titlecase(Locale.FRENCH) }
         Store.rank = "owner"
         Store.ownerName = name

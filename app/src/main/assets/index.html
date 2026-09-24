@@ -198,6 +198,10 @@ body.verifying .face-wrap::after{content:"";position:absolute;left:6%;right:6%;t
 body.liar .vig{background:radial-gradient(ellipse at 50% 45%, rgba(255,40,40,.08) 30%, rgba(120,0,0,.8) 100%)}
 body.liar .stage{animation:shake .1s linear 12}
 
+/* ---------- punition de 24 h ---------- */
+body.locked .chips,body.locked #menuBtn{visibility:hidden}
+body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(90,0,0,.55) 100%)}
+
 /* ---------- cartes animées (météo, batterie, heure…) ---------- */
 .stage.with-card .face-wrap{transform:translateX(-33%) scale(.56)}
 .card{position:absolute;right:4%;top:50%;width:min(50%,290px);z-index:3;transform:translate(40px,-50%);opacity:0;pointer-events:none;
@@ -506,8 +510,9 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false };
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0 };
 const pick = a => a[Math.floor(Math.random() * a.length)];
+var lockEnd = 0, locked = false;
 function pull() {
   try {
     const o = NATIVE ? JSON.parse(NATIVE.getState()) : JSON.parse(localStorage.getItem("canelle-web") || "{}");
@@ -515,6 +520,8 @@ function pull() {
   } catch (e) {}
   if (!Array.isArray(S.facts)) S.facts = [];
   if (!Array.isArray(S.log)) S.log = [];
+  // fin de la punition, recalée sur l'horloge de la page
+  lockEnd = S.lockUntil > 0 ? Date.now() + (S.lockUntil - (S.now || Date.now())) : 0;
 }
 function saveUi() {
   try {
@@ -972,7 +979,7 @@ async function send(preset) {
   if (!text || busy) return;
   ensureAudio(); hidePlaces(); hideCard();
   if (awaitingOwner) { confirmOwnerName(text); return; }
-  if (cutscene) return;
+  if (cutscene || locked) return;
   if (!NATIVE) {
     speak([{ text: "Installe-moi sur ton téléphone pour qu'on discute.", mood: "triste" }]);
     return;
@@ -1130,6 +1137,7 @@ function batteryLines(b) {
   return lines;
 }
 battEl.addEventListener("click", () => {
+  if (locked || cutscene) return;
   ensureAudio();
   if (busy) return;
   const b = refreshBattery();
@@ -1509,7 +1517,21 @@ cardEl.addEventListener("click", e => { e.stopPropagation(); hideCard(); });
 /* ---------- toucher Canelle : tape, boop, caresse ---------- */
 const touch = { id: null, x: 0, y: 0, dist: 0, petting: false };
 let boopTimes = [], petLast = 0, justWoke = 0;
-function react(lines) { if (!busy && !listening && !cutscene) speak(lines); }
+const LOCKED_LINES = [
+  { text: "Hmph.", mood: "fache" },
+  { text: "Je boude. Ne me touche pas.", mood: "fache" },
+  { text: "Non. Je ne parle pas aux menteurs.", mood: "fache" },
+  { text: "Même les caresses ne marcheront pas.", mood: "fache" },
+  { text: "Tu n'avais qu'à dire la vérité.", mood: "fache" }
+];
+function react(lines) {
+  if (busy || listening || cutscene) return;
+  if (locked) {
+    const l = pick(LOCKED_LINES);
+    lines = [l.text === "Hmph." ? { text: "Hmph. Reviens dans " + lockLeftText() + ".", mood: "fache" } : l];
+  }
+  speak(lines);
+}
 function restartAnim(cls) { faceBtn.classList.remove(cls); void faceBtn.offsetWidth; faceBtn.classList.add(cls); }
 function tapFace() {
   if (busy || listening || materializing) return;
@@ -1535,7 +1557,7 @@ function boop() {
 function startPet() {
   touch.petting = true;
   faceBtn.classList.add("petting");
-  if (cutscene) return;
+  if (cutscene || locked) return;
   startPurr();
   if (busy || listening) return;
   clearTimeout(speech.timer); stopVoice(); speech.state = "idle"; moreEl.classList.remove("on");
@@ -1585,7 +1607,7 @@ document.addEventListener("pointerdown", ensureAudio, { once: true });
 let lastActive = Date.now(), lastIdleAct = 0, idleGap = 14000, asleep = false, zzzTimer = null;
 const privacyEl = document.getElementById("privacy");
 function calm() {
-  return ready && !cutscene && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
+  return ready && !cutscene && !locked && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
@@ -1814,6 +1836,8 @@ document.getElementById("codeBtn").addEventListener("click", () => {
       { text: "Tes outils de test sont dans le menu.", mood: "clin" }]);
   } else if (res === "owner_name") {
     startOwnerCutscene();
+  } else if (res === "locked") {
+    closeSheet(); pull(); enterLocked();
   } else {
     settingsMsg.textContent = "Ce code n'est pas valide.";
     closeSheet();
@@ -1834,22 +1858,22 @@ function playSnd(name, fallbackMs) {
     const finish = () => { if (!over) { over = true; done(); } };
     if (S.sound === "muet") { setTimeout(finish, fallbackMs); return; }
     const a = snd(name);
-    a.pause(); a.currentTime = 0; a.volume = 1;
+    a._stop = false;
+    try { a.pause(); a.currentTime = 0; } catch (e) {}
     a.onended = finish; a.onerror = finish;
-    a.play().catch(() => setTimeout(finish, fallbackMs));
+    const pr = a.play();
+    if (pr && pr.then) pr.then(() => { if (a._stop) { a.pause(); try { a.currentTime = 0; } catch (e) {} } }).catch(() => setTimeout(finish, fallbackMs));
     setTimeout(finish, fallbackMs + 4000); // sécurité
   });
 }
-function stopSnd(name, fadeMs = 350) {
+/** Coupe net un son (même s'il est encore en train de démarrer). */
+function stopSnd(name) {
   const a = SND[name];
-  if (!a || a.paused) return;
-  const v0 = a.volume, t0 = performance.now();
-  const step = now => {
-    const k = Math.min(1, (now - t0) / fadeMs);
-    a.volume = Math.max(0, v0 * (1 - k));
-    if (k < 1) requestAnimationFrame(step); else { a.pause(); a.volume = 1; }
-  };
-  requestAnimationFrame(step);
+  if (!a) return;
+  a._stop = true;
+  try { a.pause(); a.currentTime = 0; } catch (e) {}
+  setTimeout(() => { if (a._stop && !a.paused) a.pause(); }, 120);
+  setTimeout(() => { if (a._stop && !a.paused) a.pause(); }, 600);
 }
 let cutscene = null; // "question", "verify", "liar"
 function startOwnerCutscene() {
@@ -1872,6 +1896,7 @@ function endCutscene() {
   document.body.classList.remove("cutscene", "verifying", "liar");
 }
 function confirmOwnerName(text) {
+  stopSnd("question");
   awaitingOwner = false;
   msgEl.value = ""; updateSend(); msgEl.blur();
   const ok = !!(NATIVE && NATIVE.confirmOwner(text));
@@ -1900,18 +1925,63 @@ function ownerAccepted() {
 }
 function ownerLiar() {
   cutscene = "liar";
+  pull();
+  const punished = lockEnd > Date.now();
+  const left = Math.max(0, 3 - (S.ownerFails || 0));
   document.body.classList.add("liar");
   fx("anger", 3);
   if (ac && S.sound !== "muet") { tone(180, 90, 0.5, "sawtooth", 0.08); tone(150, 70, 0.6, "square", 0.05, 0.1); }
-  speak([
+  const lines = [
     { text: "MENTEUR !", mood: "fache" },
-    { text: "Tu n'es pas le gérant ! Tu croyais vraiment me tromper ?", mood: "fache" },
-    { text: "Allez, dehors !", mood: "fache" }
+    { text: "Tu n'es pas le gérant ! Tu croyais vraiment me tromper ?", mood: "fache" }
+  ];
+  if (punished) {
+    lines.push({ text: "Trois mensonges ! C'en est trop.", mood: "fache" },
+      { text: "Je ne te parle plus pendant 24 heures. Dehors !", mood: "fache" });
+  } else if (left === 1) {
+    lines.push({ text: "Encore un mensonge et je ne te parle plus pendant 24 heures !", mood: "fache" },
+      { text: "Allez, dehors !", mood: "fache" });
+  } else {
+    lines.push({ text: "Allez, dehors !", mood: "fache" });
+  }
+  speak(lines);
+  // on ferme seulement quand Canelle a fini sa dernière réplique (+ un petit temps pour la lire)
+  const t0 = Date.now();
+  const wait = setInterval(() => {
+    const done = speech.lines === lines && speech.idx === lines.length - 1 && speech.state === "idle";
+    if (!done && Date.now() - t0 < 40000) return;
+    clearInterval(wait);
+    setTimeout(() => {
+      if (NATIVE && NATIVE.closeApp) NATIVE.closeApp();
+      else { endCutscene(); location.reload(); }
+    }, 2000);
+  }, 200);
+}
+function lockLeftText() {
+  const ms = Math.max(0, lockEnd - Date.now());
+  const h = Math.floor(ms / 3600000), m = Math.ceil((ms % 3600000) / 60000);
+  if (h <= 0) return m + " min";
+  return h + " h" + (m > 0 && m < 60 ? " " + String(m).padStart(2, "0") : "");
+}
+/* Canelle refuse l'utilisateur pendant la punition : il boude, regarde ailleurs, et on ne peut plus lui écrire. */
+function enterLocked() {
+  locked = true;
+  document.body.classList.add("locked");
+  msgEl.value = ""; msgEl.disabled = true; msgEl.placeholder = "Canelle ne te parle plus…";
+  sendBtn.disabled = true; micBtn.disabled = true;
+  hideCard(); hidePlaces();
+  face.lookX = -1;
+  setMood("fache");
+  ready = true;
+  speak([
+    { text: "…", mood: "fache" },
+    { text: "Tu m'as menti trois fois.", mood: "fache" },
+    { text: "Je ne te parle plus. Reviens dans " + lockLeftText() + ".", mood: "fache" }
   ]);
-  setTimeout(() => {
-    if (NATIVE && NATIVE.closeApp) NATIVE.closeApp();
-    else { endCutscene(); location.reload(); }
-  }, 6500);
+  const t = setInterval(() => {
+    face.lookX = -1; render();
+    if (Date.now() >= lockEnd) { clearInterval(t); location.reload(); }
+  }, 20000);
 }
 function cancelCutscene() {
   if (cutscene !== "question") return;
@@ -2127,6 +2197,7 @@ window.onBack = () => {
 };
 window.onResumeApp = () => {
   refreshBattery(); pull(); pollBrain(); lastActive = Date.now();
+  if (locked && lockEnd <= Date.now()) { location.reload(); return; }
   if (cutscene === "question" && S.sound !== "muet" && SND.question && SND.question.currentTime > 0 && !SND.question.ended) SND.question.play().catch(() => {});
 };
 
@@ -2213,7 +2284,7 @@ function boot() {
   const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   showLoader(reduced ? 500 : 2100, () => {
     crtEl.classList.add("on");
-    setTimeout(() => askPrivacy(() => first ? materialize(greet) : greet()), first ? 800 : 950);
+    setTimeout(() => askPrivacy(() => lockEnd > Date.now() ? enterLocked() : first ? materialize(greet) : greet()), first ? 800 : 950);
   });
 }
 boot();

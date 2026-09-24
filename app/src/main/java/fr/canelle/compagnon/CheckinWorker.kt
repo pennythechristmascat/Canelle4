@@ -28,7 +28,7 @@ class CheckinWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ct
             Store.lastBatteryWarn = now
         }
 
-        if (!Store.checkins || isQuiet(LocalTime.now().hour)) return Result.success()
+        if (!Store.checkins || isQuiet(LocalTime.now().hour) || Access.isLocked()) return Result.success()
         if (now - Store.lastCheckin < Store.intervalHours * 3_600_000L - 10 * 60_000L) return Result.success()
         postCheckin(ctx)
         return Result.success()

@@ -51,6 +51,16 @@ object Store {
     var ownerName: String
         get() = str("ownerName")
         set(v) = putStr("ownerName", v)
+    /** Mauvais noms donnés après le code gérant, et punition de 24 h (début et fin, en ms). */
+    var ownerFails: Int
+        get() = p.getInt("ownerFails", 0)
+        set(v) = putInt("ownerFails", v)
+    var lockStart: Long
+        get() = p.getLong("lockStart", 0L)
+        set(v) = putLong("lockStart", v)
+    var lockUntil: Long
+        get() = p.getLong("lockUntil", 0L)
+        set(v) = putLong("lockUntil", v)
     var hidePrivacy: Boolean
         get() = p.getBoolean("hidePrivacy", false)
         set(v) = putBool("hidePrivacy", v)
@@ -209,6 +219,9 @@ object Store {
         .put("rank", rank)
         .put("ownerName", ownerName)
         .put("hidePrivacy", hidePrivacy)
+        .put("ownerFails", ownerFails)
+        .put("lockUntil", Access.lockedUntil())
+        .put("now", System.currentTimeMillis())
 
     private fun tail(a: JSONArray, n: Int): JSONArray {
         if (a.length() <= n) return a
