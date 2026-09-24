@@ -144,6 +144,11 @@ class MainActivity : ComponentActivity(), ToolHost {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (::web.isInitialized) js("window.onPauseApp&&onPauseApp()")
+    }
+
     override fun onResume() {
         super.onResume()
         hideSystemBars()
@@ -287,6 +292,12 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         @JavascriptInterface
         fun confirmOwner(name: String): Boolean = Access.confirmOwner(name).also { LocalModel.markDirty() }
+
+        /** Ferme l'application de force (Canelle chasse un faux gérant). */
+        @JavascriptInterface
+        fun closeApp() {
+            runOnUiThread { finishAndRemoveTask() }
+        }
 
         @JavascriptInterface
         fun clearRank() {

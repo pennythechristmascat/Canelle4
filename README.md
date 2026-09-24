@@ -54,6 +54,8 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 Menu → Réglages → **Code d'accès**, réservé à l'équipe. Un code développeur ou gérant donne un badge dans l'en-tête, un accueil personnalisé et une section **Outils développeur** pour tester chaque animation (matérialisation, cartes, expressions, rappel de nuit, sommeil…). Les codes ne sont pas écrits en clair dans l'application : seule leur empreinte est vérifiée. « Retirer mon rang » annule.
 
+Avec le code gérant, Canelle lance une **cinématique** : bandes noires, il se penche vers toi en plissant les yeux et la musique `question.mp3` démarre (elle s'arrête dès que tu réponds). Tu écris ton nom, `verification.mp3` se joue pendant qu'il vérifie. Bon nom : `verifie.mp3`, et il salue le gérant. Mauvais nom : il s'énerve, te traite de menteur et **ferme l'application**. Le bouton retour pendant la question annule la cinématique. Les sons sont dans `app/src/main/assets/sounds/` ; ils suivent le réglage du son (rien en mode muet).
+
 ## Mettre à jour ton dépôt GitHub
 
 1. Sur la page de ton dépôt : **Add file → Upload files**.

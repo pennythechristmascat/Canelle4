@@ -180,6 +180,24 @@ select.field{appearance:auto}
 .face.petting canvas{animation:nuzzle .45s ease-in-out infinite}
 @keyframes nuzzle{50%{transform:rotate(2.5deg) translateY(2px)}}
 
+/* ---------- cinématique du code gérant ---------- */
+.lb{position:absolute;left:0;right:0;height:9%;background:#000;z-index:6;pointer-events:none;transform:scaleY(0);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.lb.top{top:0;transform-origin:top}
+.lb.bot{bottom:0;transform-origin:bottom}
+.vig{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity 1s, background .4s;
+  background:radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,.75) 100%)}
+body.cutscene .lb{transform:scaleY(1)}
+body.cutscene .vig{opacity:1}
+body.cutscene .face-wrap{transform:scale(1.4) translateY(7%);transition:transform 2.4s cubic-bezier(.2,.8,.2,1)}
+body.cutscene .face{animation:none}
+body.cutscene .face canvas{animation:lean 4s ease-in-out infinite}
+@keyframes lean{50%{transform:scale(1.03) translateY(2px)}}
+body.verifying .face-wrap::after{content:"";position:absolute;left:6%;right:6%;top:4%;height:3px;border-radius:2px;background:#8fe3ff;box-shadow:0 0 14px 2px #8fe3ff;z-index:3;
+  animation:scanV .9s ease-in-out infinite alternate}
+@keyframes scanV{to{top:88%}}
+body.liar .vig{background:radial-gradient(ellipse at 50% 45%, rgba(255,40,40,.08) 30%, rgba(120,0,0,.8) 100%)}
+body.liar .stage{animation:shake .1s linear 12}
+
 /* ---------- cartes animées (météo, batterie, heure…) ---------- */
 .stage.with-card .face-wrap{transform:translateX(-33%) scale(.56)}
 .card{position:absolute;right:4%;top:50%;width:min(50%,290px);z-index:3;transform:translate(40px,-50%);opacity:0;pointer-events:none;
@@ -355,6 +373,9 @@ select.field{appearance:auto}
           <div class="shadow" id="shadow" aria-hidden="true"></div>
         </div>
         <div class="card" id="card" role="status" aria-live="polite"></div>
+        <div class="vig" aria-hidden="true"></div>
+        <div class="lb top" aria-hidden="true"></div>
+        <div class="lb bot" aria-hidden="true"></div>
         <div class="fx" id="fx" aria-hidden="true"></div>
       </div>
 
@@ -505,12 +526,12 @@ pull();
 
 /* ---------- visage pixel : le panda roux ---------- */
 const W = 64, H = 54;
-const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille"];
+const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille", "soupconneux"];
 const ACCENT = { neutre: "#8fe3ff", content: "#ffd166", clin: "#ffd166", reflechit: "#b9a8ff", triste: "#8fb4ff", surpris: "#ff7b4a",
   amoureux: "#ff7aa2", rigole: "#ffd166", timide: "#ffb3c6", fache: "#ff6b5a", fier: "#ffcf5a", inquiet: "#a8c5ff",
-  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0" };
+  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0", soupconneux: "#ff9b4a" };
 const PITCH = { neutre: 600, content: 680, clin: 650, reflechit: 520, triste: 450, surpris: 780,
-  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430 };
+  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430, soupconneux: 470 };
 // O trait, F pelage, f pelage ombré, H reflet, W blanc, D intérieur d'oreille, t marques rousses, B/b cou,
 // N/n truffe, Q/q/Z bandana, I/i/j iris, P pupille, x blanc brillant, M bouche, T langue, K/k joues
 const PAL = { O: "#3b1a14", F: "#e8743b", f: "#c9552c", H: "#fbb98a", W: "#fdf8f3", D: "#5a2a22", t: "#a3452f",
@@ -586,7 +607,8 @@ const EYES = {
   laughR: ["........", "........", ".....OO.", "...OO...", ".OO.....", "...OO...", ".....OO.", "........", "........"],
   half:   ["........", "........", "........", "OOOOOOOO", "OIIIIIIO", "OIxPPIIO", "OiPPPPiO", ".OjjjxO.", "..OOOO.."],
   dizzy:  ["........", "O.....O.", ".O...O..", "..O.O...", "...O....", "..O.O...", ".O...O..", "O.....O.", "........"],
-  closed: ["........", "........", "........", "........", "O......O", ".OOOOOO.", "........", "........", "........"]
+  closed: ["........", "........", "........", "........", "O......O", ".OOOOOO.", "........", "........", "........"],
+  squint: ["........", "........", "........", "........", "OOOOOOOO", "OIxxPPIO", "OiIPPPiO", ".OjjjjO.", "..OOOO.."]
 };
 const OPEN = ["...OO...", ".OOOOOO.", "OMxMMMMO", "OMMTTMMO", ".OTTTTO.", "..OOOO.."];
 const WAVY = ["........", ".OO..OO.", "O..OO..O"];
@@ -606,7 +628,8 @@ const MOUTH = {
   inquiet:   [WAVY, OPEN],
   endormi:   [["........", "...OO...", "...OO..."], ["...OO...", "..OMMO..", "...OO..."]],
   etourdi:   [[".O.OO.O.", "O.O..O.O"], OPEN],
-  baille:    [YAWN, YAWN]
+  baille:    [YAWN, YAWN],
+  soupconneux: [["........", "...OO...", "..O..O.."], OPEN]
 };
 // yeux, sourcils et joues de chaque expression
 const EXPR = {
@@ -623,7 +646,8 @@ const EXPR = {
   inquiet: { L: "sad", R: "sad", brows: "sad" },
   endormi: { L: "closed", R: "closed" },
   etourdi: { L: "dizzy", R: "dizzy" },
-  baille: { L: "blink", R: "blink" }
+  baille: { L: "blink", R: "blink" },
+  soupconneux: { L: "squint", R: "squint", brows: "suspect" }
 };
 // petites marques d'émotion, dessinées dans la couleur de l'humeur
 const MARKS = {
@@ -668,6 +692,7 @@ function render() {
   if (OUTLINED.includes(L) && L !== "half") stamp(g, ["O"], EL[0] - 1 + dx, EL[1] + 1 + dy);
   if (OUTLINED.includes(R) && R !== "half") stamp(g, ["O"], ER[0] + 8 + dx, ER[1] + 1 + dy);
   if (e.brows === "sad") { stamp(g, ["....OO", "OO...."], 21, 20); stamp(g, ["OO....", "....OO"], 37, 20); }
+  if (e.brows === "suspect") { stamp(g, ["OOO.....", "..OOOOO.", ".....OOO"], 20, 23); stamp(g, [".....OOO", ".OOOOO..", "OOO....."], 36, 23); }
   if (e.brows === "angry") { stamp(g, ["OO......", "..OOO...", ".....OO."], 20, 22); stamp(g, ["......OO", "...OOO..", ".OO....."], 36, 22); }
   if (e.blush) { stamp(g, ["KkKk"], 19, 38); stamp(g, ["kKkK"], 41, 38); }
   if (e.blush > 1) { stamp(g, ["kKkK"], 19, 39); stamp(g, ["KkKk"], 41, 39); }
@@ -756,7 +781,7 @@ function squeak() {
   }
 }
 function blip() {
-  if (!ac || ac.state !== "running") return;
+  if (!ac || ac.state !== "running" || cutscene) return;
   const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
   o.type = "square";
   o.frequency.value = (PITCH[face.mood] || 540) * (0.92 + Math.random() * 0.16);
@@ -769,7 +794,7 @@ function blip() {
 const HAS_TTS = NATIVE ? true : ("speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function");
 let voiceId = 0;
 function sayAloud(text) {
-  if (!HAS_TTS) return false;
+  if (!HAS_TTS || cutscene) return false;
   const id = ++voiceId;
   const clean = text.replace(/…/g, "...");
   try {
@@ -947,6 +972,7 @@ async function send(preset) {
   if (!text || busy) return;
   ensureAudio(); hidePlaces(); hideCard();
   if (awaitingOwner) { confirmOwnerName(text); return; }
+  if (cutscene) return;
   if (!NATIVE) {
     speak([{ text: "Installe-moi sur ton téléphone pour qu'on discute.", mood: "triste" }]);
     return;
@@ -1483,7 +1509,7 @@ cardEl.addEventListener("click", e => { e.stopPropagation(); hideCard(); });
 /* ---------- toucher Canelle : tape, boop, caresse ---------- */
 const touch = { id: null, x: 0, y: 0, dist: 0, petting: false };
 let boopTimes = [], petLast = 0, justWoke = 0;
-function react(lines) { if (!busy && !listening) speak(lines); }
+function react(lines) { if (!busy && !listening && !cutscene) speak(lines); }
 function restartAnim(cls) { faceBtn.classList.remove(cls); void faceBtn.offsetWidth; faceBtn.classList.add(cls); }
 function tapFace() {
   if (busy || listening || materializing) return;
@@ -1509,6 +1535,7 @@ function boop() {
 function startPet() {
   touch.petting = true;
   faceBtn.classList.add("petting");
+  if (cutscene) return;
   startPurr();
   if (busy || listening) return;
   clearTimeout(speech.timer); stopVoice(); speech.state = "idle"; moreEl.classList.remove("on");
@@ -1558,7 +1585,7 @@ document.addEventListener("pointerdown", ensureAudio, { once: true });
 let lastActive = Date.now(), lastIdleAct = 0, idleGap = 14000, asleep = false, zzzTimer = null;
 const privacyEl = document.getElementById("privacy");
 function calm() {
-  return ready && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
+  return ready && !cutscene && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
@@ -1786,11 +1813,7 @@ document.getElementById("codeBtn").addEventListener("click", () => {
       { text: "Salut, dev ! Je t'ai reconnu.", mood: "fier" },
       { text: "Tes outils de test sont dans le menu.", mood: "clin" }]);
   } else if (res === "owner_name") {
-    closeSheet();
-    awaitingOwner = true;
-    speak([{ text: "Code gérant détecté…", mood: "surpris" },
-      { text: "Pour confirmer l'accès, dis-moi : quel est ton nom ?", mood: "reflechit" }]);
-    setTimeout(() => msgEl.focus(), 400);
+    startOwnerCutscene();
   } else {
     settingsMsg.textContent = "Ce code n'est pas valide.";
     closeSheet();
@@ -1798,20 +1821,107 @@ document.getElementById("codeBtn").addEventListener("click", () => {
   }
 });
 codeIn.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("codeBtn").click(); });
+/* Cinématique : Canelle se penche, plisse les yeux et demande le nom du gérant. */
+const SND = {};
+function snd(name) {
+  if (!SND[name]) { SND[name] = new Audio("sounds/" + name + ".mp3"); SND[name].preload = "auto"; }
+  return SND[name];
+}
+/** Joue un son et renvoie une promesse tenue à la fin du son (ou après fallbackMs si muet ou en erreur). */
+function playSnd(name, fallbackMs) {
+  return new Promise(done => {
+    let over = false;
+    const finish = () => { if (!over) { over = true; done(); } };
+    if (S.sound === "muet") { setTimeout(finish, fallbackMs); return; }
+    const a = snd(name);
+    a.pause(); a.currentTime = 0; a.volume = 1;
+    a.onended = finish; a.onerror = finish;
+    a.play().catch(() => setTimeout(finish, fallbackMs));
+    setTimeout(finish, fallbackMs + 4000); // sécurité
+  });
+}
+function stopSnd(name, fadeMs = 350) {
+  const a = SND[name];
+  if (!a || a.paused) return;
+  const v0 = a.volume, t0 = performance.now();
+  const step = now => {
+    const k = Math.min(1, (now - t0) / fadeMs);
+    a.volume = Math.max(0, v0 * (1 - k));
+    if (k < 1) requestAnimationFrame(step); else { a.pause(); a.volume = 1; }
+  };
+  requestAnimationFrame(step);
+}
+let cutscene = null; // "question", "verify", "liar"
+function startOwnerCutscene() {
+  closeSheet(); hideCard(); hidePlaces();
+  cutscene = "question";
+  awaitingOwner = true;
+  document.body.classList.add("cutscene");
+  setMood("soupconneux");
+  snd("verification"); snd("verifie"); // préchargés pour la suite
+  playSnd("question", 30000);
+  speak([
+    { text: "…", mood: "soupconneux" },
+    { text: "Un code gérant, hein ?", mood: "soupconneux" },
+    { text: "Si tu es vraiment le gérant… dis-moi ton nom.", mood: "soupconneux" }
+  ]);
+  setTimeout(() => msgEl.focus(), 700);
+}
+function endCutscene() {
+  cutscene = null;
+  document.body.classList.remove("cutscene", "verifying", "liar");
+}
 function confirmOwnerName(text) {
   awaitingOwner = false;
-  msgEl.value = ""; updateSend();
-  const ok = NATIVE && NATIVE.confirmOwner(text);
-  if (ok) {
-    pull(); renderRank(); updateName();
-    flash(); fx("sparkle", 8); fx("hearts", 3);
-    speak([{ text: "Accès gérant confirmé !", mood: "surpris" },
-      { text: "Bienvenue, " + (S.ownerName || "chef") + ". C'est un honneur de te servir, patron !", mood: "fier" },
-      { text: "Je suis tout à toi.", mood: "amoureux" }]);
-  } else {
-    speak([{ text: "Ce n'est pas le bon nom…", mood: "fache" }, { text: "Accès gérant refusé.", mood: "neutre" }]);
-  }
+  msgEl.value = ""; updateSend(); msgEl.blur();
+  const ok = !!(NATIVE && NATIVE.confirmOwner(text));
+  cutscene = "verify";
+  stopSnd("question");
+  document.body.classList.add("verifying");
+  speak([{ text: "Vérification…", mood: "reflechit" }]);
+  let k = 0;
+  const dots = setInterval(() => { face.think = k++ % 3 + 1; render(); }, 380);
+  setTimeout(() => {
+    playSnd("verification", 2800).then(() => {
+      clearInterval(dots); face.think = 0; render();
+      document.body.classList.remove("verifying");
+      if (ok) ownerAccepted(); else ownerLiar();
+    });
+  }, 300);
 }
+function ownerAccepted() {
+  playSnd("verifie", 1000);
+  endCutscene();
+  pull(); renderRank(); updateName();
+  flash(); fx("sparkle", 8); fx("hearts", 3);
+  speak([{ text: "Accès gérant confirmé !", mood: "surpris" },
+    { text: "Bienvenue, " + (S.ownerName || "chef") + ". C'est un honneur de te servir, patron !", mood: "fier" },
+    { text: "Je suis tout à toi.", mood: "amoureux" }]);
+}
+function ownerLiar() {
+  cutscene = "liar";
+  document.body.classList.add("liar");
+  fx("anger", 3);
+  if (ac && S.sound !== "muet") { tone(180, 90, 0.5, "sawtooth", 0.08); tone(150, 70, 0.6, "square", 0.05, 0.1); }
+  speak([
+    { text: "MENTEUR !", mood: "fache" },
+    { text: "Tu n'es pas le gérant ! Tu croyais vraiment me tromper ?", mood: "fache" },
+    { text: "Allez, dehors !", mood: "fache" }
+  ]);
+  setTimeout(() => {
+    if (NATIVE && NATIVE.closeApp) NATIVE.closeApp();
+    else { endCutscene(); location.reload(); }
+  }, 6500);
+}
+function cancelCutscene() {
+  if (cutscene !== "question") return;
+  awaitingOwner = false;
+  stopSnd("question");
+  endCutscene();
+  speak([{ text: "Hmm. C'est bien ce que je pensais…", mood: "soupconneux" }]);
+}
+window.onPauseApp = () => { if (cutscene === "question") { const a = SND.question; if (a) a.pause(); } };
+
 rankClear.addEventListener("click", () => {
   if (!NATIVE) return;
   NATIVE.clearRank(); pull(); renderRank();
@@ -2006,6 +2116,7 @@ brainSheet.addEventListener("click", e => { if (e.target === brainSheet) closeBr
 document.getElementById("openBrain").addEventListener("click", openBrain);
 
 window.onBack = () => {
+  if (cutscene) { cancelCutscene(); return true; }
   if (!privacyEl.hidden) { document.getElementById("privOk").click(); return true; }
   if (!brainSheet.hidden) { closeBrain(); return true; }
   if (cardShown) { hideCard(); return true; }
@@ -2014,7 +2125,10 @@ window.onBack = () => {
   if (listening && NATIVE) { NATIVE.stopListening(); return true; }
   return false;
 };
-window.onResumeApp = () => { refreshBattery(); pull(); pollBrain(); lastActive = Date.now(); };
+window.onResumeApp = () => {
+  refreshBattery(); pull(); pollBrain(); lastActive = Date.now();
+  if (cutscene === "question" && S.sound !== "muet" && SND.question && SND.question.currentTime > 0 && !SND.question.ended) SND.question.play().catch(() => {});
+};
 
 /* ---------- démarrage ---------- */
 const bootEl = document.getElementById("boot");
