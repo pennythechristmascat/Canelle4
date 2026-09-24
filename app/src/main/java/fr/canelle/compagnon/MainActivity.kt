@@ -276,6 +276,7 @@ class MainActivity : ComponentActivity(), ToolHost {
                 Store.lastSeen = o.optLong("lastSeen", Store.lastSeen)
                 if (o.has("hidePrivacy")) Store.hidePrivacy = o.optBoolean("hidePrivacy", Store.hidePrivacy)
                 if (o.has("musicApp")) Store.musicApp = o.optString("musicApp", Store.musicApp)
+                if (o.has("skin")) Store.skin = o.optString("skin", Store.skin)
             }
         }
 

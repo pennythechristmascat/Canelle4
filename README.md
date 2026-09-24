@@ -1,4 +1,4 @@
-# Canelle — compagnon de poche (Android) · V5.0.1
+# Canelle — compagnon de poche (Android) · V5.1.0
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -21,7 +21,7 @@ Ces demandes sont reconnues directement, sans IA : c'est instantané et fiable.
 | Batterie | « Ma batterie ? », « Je dois recharger ? » — temps de charge mesuré sur ton téléphone, puissance, vitesse, température, santé, autonomie restante. |
 | Météo | « Météo », « Météo à Rennes demain », « Je prends un parapluie ? », « La météo de la semaine » |
 | Musique | « Mets de la musique », « Joue Daft Punk sur Spotify », « Ouvre Deezer », « Pause », « Suivante », « Précédente », « C'est quoi cette musique ? » |
-| Jeux et interactions | « High five », « Check », « Danse », « Fais un tour », « Saute », « Câlin », « Bisou », « Fais coucou », « Chatouille », « Rawr », « Chante », « Fais le mort », « Roulade », « Prends la pose », « Applaudis », « Fais dodo », « Chifoumi », « Pile ou face », « Lance un dé » |
+| Jeux et interactions | 55 au total : voir « Jouer avec Canelle » ci-dessous, ou les raccourcis **Jeux** et **Interactions** |
 | Heure et date | « Quelle heure est-il ? », « Quelle heure est-il à Tokyo ? », « On est quel jour ? » |
 | Lieux et Google Maps | « Une pharmacie près d'ici », « Où est le McDo le plus proche ? », « Emmène-moi à la gare », « Itinéraire vers Saint-Brieuc » |
 | Réveils et minuteurs | « Réveille-moi à 7 h 30 », « Réveil à 6 h tous les jours », « Minuteur de 10 minutes », « Mes réveils » |
@@ -56,12 +56,20 @@ Quand l'appli est ouverte, la **position est actualisée toutes les 2 minutes** 
 
 ## Jouer avec Canelle
 
+**55 jeux et interactions**, tous accessibles depuis les raccourcis **Jeux** et **Interactions** en bas de l'écran, ou en les écrivant. Ils répondent tout de suite, sans passer par le cerveau.
+
+**15 jeux** : devine le nombre, quiz (20 questions), vrai ou faux, calcul mental, jeu de mémoire (couleurs), test de réflexes, morpion, mots mélangés, devinettes, clique vite, cache-cache, boule magique (« boule magique : est-ce que… ? »), chifoumi, pile ou face, lancer de dé. Pendant un jeu, réponds dans la zone de texte ou sur la carte ; « stop » arrête la partie.
+
+**37 interactions** : high five, check, danse, câlin, bisou, chatouille, manger un bambou, boire, bulles, feu d'artifice, arc-en-ciel, tour de magie, robot, moonwalk, yoga, balle, étoile filante, blague, compliment, anniversaire (gâteau et bougies à souffler), pirouette, saut, rawr, chanson, faire le mort, éternuer, grimace, muscles, pleurer, prendre la pose, roulade, applaudir, coucou, dodo, s'étirer, clin d'œil, « tu as froid ? ».
+
+**Au toucher (3)** : boop sur le nez, caresse, petite tape.
+
 - **Boop** : touche son nez. Cinq boops d'affilée et il voit des étoiles.
 - **Caresse** : fais glisser ton doigt sur lui. Il ronronne et des cœurs s'envolent.
 - **Toucher** : une petite tape ailleurs sur lui, et il réagit.
 - **High five** : dis « high five » ou « check », une patte apparaît : tape dedans !
 - **Jeux** : chifoumi (avec le score), pile ou face, lancer de dé, directement dans une carte.
-- **17 expressions** : content, clin d'œil, amoureux, rigole, timide, fâché, fier, inquiet, triste, surpris, pensif, endormi, étourdi, bâille, soupçonneux, musique, neutre.
+- **25 expressions** : content, clin d'œil, amoureux, rigole, timide, fâché, fier, inquiet, triste, surpris, pensif, endormi, étourdi, bâille, soupçonneux, musique, émerveillé (yeux étoiles), ému, pleure, dégoûté, malade, gourmand, a froid, zen, neutre.
 - **Quand tu ne fais rien**, il vit sa vie : il regarde autour de lui, chantonne, s'étire, bâille, se parle tout seul… et après 3 minutes, il s'endort. Touche l'écran pour le réveiller.
 - **Après minuit**, il te rappelle gentiment que se coucher tard n'est pas bon et te conseille d'aller dormir (au plus une fois toutes les 30 minutes).
 
@@ -73,6 +81,10 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 - À chaque ouverture : un **écran de chargement**, puis l'avertissement de confidentialité (case **Ne plus montrer** pour ne plus le voir).
 - Au tout premier lancement, Canelle **se matérialise** : faisceau lumineux, pixels qui apparaissent un à un, étincelles.
+
+## Skins (gérant et développeurs)
+
+Menu → **Skins** : 10 apparences en plus du look classique, avec un aperçu de chacune : Neige, Minuit, Doré (avec couronne), Sakura (avec fleur), Menthe, Cyber (lunettes néon), Pirate (cache-œil et bandana noir), Fantôme (translucide et flottant), Magma et Galaxie (pelage étoilé). Si le rang est retiré, Canelle reprend son look classique.
 
 ## Code d'accès
 

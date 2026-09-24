@@ -72,6 +72,10 @@ object Store {
     var musicApp: String
         get() = str("musicApp")
         set(v) = putStr("musicApp", v)
+    /** Apparence choisie (gérant et développeurs). */
+    var skin: String
+        get() = str("skin")
+        set(v) = putStr("skin", v)
     var hidePrivacy: Boolean
         get() = p.getBoolean("hidePrivacy", false)
         set(v) = putBool("hidePrivacy", v)
@@ -231,6 +235,7 @@ object Store {
         .put("ownerName", ownerName)
         .put("hidePrivacy", hidePrivacy)
         .put("musicApp", musicApp)
+        .put("skin", skin)
         .put("ownerFails", ownerFails)
         .put("lockUntil", Access.lockedUntil())
         .put("now", System.currentTimeMillis())

@@ -198,11 +198,76 @@ select.field{appearance:auto}
 @keyframes groove{from{transform:translateY(0) rotate(-2.5deg)}to{transform:translateY(-7px) rotate(2.5deg)}}
 .paw{position:absolute;right:-6%;top:42%;width:26%;aspect-ratio:1;z-index:2;display:grid;place-items:center;background:none;border:0;padding:0;cursor:pointer;
   opacity:0;transform:translateY(40px) rotate(20deg);transition:opacity .3s, transform .45s cubic-bezier(.3,1.6,.6,1);touch-action:manipulation}
-.paw.up{opacity:1;transform:translateY(0) rotate(-8deg)}
+.paw{pointer-events:none;visibility:hidden}
+.paw.up{opacity:1;transform:translateY(0) rotate(-8deg);pointer-events:auto;visibility:visible}
 .paw.wave{animation:waveAnim .45s ease-in-out 5 alternate}
 @keyframes waveAnim{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
 .paw.hit{transform:translateX(-18px) scale(1.25) rotate(-20deg)!important;transition:transform .12s}
 .paw svg{width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(232,116,59,.55))}
+.p.brr{color:#bfe6ff;font-size:15px}
+.p.zen{color:#c3b1ff;font-size:15px;animation-duration:2.6s}
+.p.crumb{width:5px;height:5px;border-radius:1px;background:#c98a4a;text-shadow:none;animation:fall 1s ease-in forwards}
+@keyframes fall{0%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(200deg)}}
+.p.bubble{width:18px;height:18px;border-radius:50%;border:2px solid rgba(191,230,255,.9);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.8),rgba(143,227,255,.15) 45%,transparent 70%);text-shadow:none;animation-duration:2.6s}
+.p.confetti{width:7px;height:11px;border-radius:1px;text-shadow:none;background:hsl(calc(var(--r) * 1deg) 90% 62%);animation:fall 2.2s cubic-bezier(.2,.5,.6,1) forwards}
+.p.fw{width:5px;height:5px;border-radius:50%;background:hsl(var(--hue) 95% 65%);box-shadow:0 0 8px hsl(var(--hue) 95% 65%);text-shadow:none;animation:burst 1.1s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes burst{0%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 30px)) scale(.4)}}
+/* accessoires de scène et jeux */
+.prop{position:absolute;pointer-events:none;z-index:4}
+.prop.rainbow{left:50%;top:6%;width:min(88%,420px);aspect-ratio:2/1;transform:translateX(-50%);border-radius:999px 999px 0 0;opacity:0;
+  background:radial-gradient(circle at 50% 100%, transparent 44%, #b388ff 44% 48%, #6fa8ff 48% 52%, #6fe3b0 52% 56%, #ffe066 56% 60%, #ffa94d 60% 64%, #ff6b6b 64% 68%, transparent 68%);
+  -webkit-mask:linear-gradient(to bottom,#000 55%,transparent);mask:linear-gradient(to bottom,#000 55%,transparent);animation:rainbowIn 5.2s ease forwards}
+@keyframes rainbowIn{0%{opacity:0;transform:translateX(-50%) scale(.8)}15%,80%{opacity:.85;transform:translateX(-50%) scale(1)}100%{opacity:0}}
+.prop.ball{width:28px;height:28px;border-radius:50%;right:-40px;top:20%;background:radial-gradient(circle at 35% 30%,#fff,#ff6b6b 45%,#c0392b);box-shadow:0 0 10px rgba(255,107,107,.5);animation:ballFly 3.1s ease-in-out forwards}
+@keyframes ballFly{0%{right:-40px;top:20%}18%{right:48%;top:22%}30%{right:46%;top:6%}42%{right:50%;top:22%}52%{right:49%;top:10%}62%{right:51%;top:22%}80%{right:60%;top:70%;opacity:1}100%{right:66%;top:78%;opacity:0}}
+.prop.shooting{left:-10%;top:12%;width:90px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#fff3b0);box-shadow:0 0 12px #fff3b0;transform:rotate(18deg);animation:shoot 1.6s ease-in forwards}
+@keyframes shoot{0%{left:-20%;top:6%;opacity:0}10%{opacity:1}100%{left:110%;top:40%;opacity:0}}
+.face.robot{animation:robotAnim 1s steps(4) infinite}
+@keyframes robotAnim{0%{transform:translateX(0) rotate(0)}25%{transform:translateX(-10px) rotate(-6deg)}50%{transform:translateX(0) rotate(0)}75%{transform:translateX(10px) rotate(6deg)}}
+.face.moonwalk{animation:moon 3s linear}
+@keyframes moon{0%{transform:translateX(40px)}50%{transform:translateX(-40px) translateY(-3px)}100%{transform:translateX(0)}}
+.face.float{animation:floatZen 2.6s ease-in-out infinite}
+@keyframes floatZen{50%{transform:translateY(-16px)}}
+.face-wrap.vanish .face,.face-wrap.vanish .shadow{opacity:0;transform:scale(.2) rotate(180deg);transition:opacity .5s,transform .5s}
+.face-wrap .face{transition:opacity .45s,transform .45s}
+.face-wrap.hidden-cc .face,.face-wrap.hidden-cc .shadow,.face-wrap.hidden-cc .halo{opacity:0}
+.opts{display:grid;gap:6px;margin:10px 0 6px}
+.opt{border:1px solid var(--line);border-radius:12px;background:rgba(236,232,220,.06);color:var(--phosphor);font-weight:800;padding:9px 8px;cursor:pointer;text-align:center}
+.opt.good{background:rgba(126,226,154,.25);border-color:#7ee29a}
+.opt.bad{background:rgba(255,107,90,.22);border-color:#ff6b5a}
+.pads{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px auto 6px;width:140px}
+.pad{aspect-ratio:1;border:0;border-radius:14px;opacity:.45;cursor:pointer;transition:opacity .1s,transform .1s}
+.pad.lit{opacity:1;transform:scale(1.06);box-shadow:0 0 18px currentColor}
+.p0{background:#ff6b6b;color:#ff6b6b}.p1{background:#ffd166;color:#ffd166}.p2{background:#7ee29a;color:#7ee29a}.p3{background:#6fa8ff;color:#6fa8ff}
+.reflex{display:block;width:100%;margin:10px 0 6px;min-height:92px;border:0;border-radius:18px;font:500 1.2rem var(--f-px);color:#101820;cursor:pointer}
+.reflex.wait{background:#ff6b5a}.reflex.go{background:#7ee29a}.reflex.done{background:#ffd166}
+.ttt{display:grid;grid-template-columns:repeat(3,44px);gap:5px;justify-content:center;margin:10px 0 6px}
+.ttt button{height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(236,232,220,.06);color:var(--phosphor);font-size:1.4rem;cursor:pointer}
+.ttt button.o{color:var(--accent)}
+.ball8{width:96px;height:96px;margin:10px auto 6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#555,#111 60%);display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.ball8 span{width:66%;min-height:40%;border-radius:12px;background:#1d2b6b;color:#cfe0ff;font-weight:800;font-size:.72rem;display:grid;place-items:center;padding:4px;text-align:center}
+.ball8.shake{animation:shake .12s linear 6}
+.bushes{display:flex;justify-content:center;gap:6px;margin:12px 0 6px}
+.bushes button{font-size:1.6rem;width:44px;height:48px;padding:0;border-radius:16px;border:1px solid var(--line);background:rgba(236,232,220,.06);cursor:pointer}
+.bushes button.shake{animation:shake .1s linear 4;opacity:.4}
+.cake{position:relative;width:110px;height:70px;margin:26px auto 8px;border-radius:12px 12px 8px 8px;background:linear-gradient(#ffb3c6 0 30%,#fff3f7 30% 40%,#c98a4a 40%)}
+.cake i{position:absolute;top:-22px;width:6px;height:20px;border-radius:2px;background:#8fd3ff}
+.cake i:nth-child(1){left:26px}.cake i:nth-child(2){left:52px}.cake i:nth-child(3){left:78px}
+.cake i::after{content:"";position:absolute;left:-3px;top:-14px;width:12px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#ffd166;box-shadow:0 0 12px #ffb703;animation:flicker .3s ease-in-out infinite alternate}
+.cake i.out::after{display:none}
+@keyframes flicker{to{transform:scale(.85,1.1)}}
+/* skins */
+.skins{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.skin{border:1px solid var(--line);border-radius:14px;background:rgba(236,232,220,.05);color:var(--phosphor);padding:6px 4px 8px;cursor:pointer;font-weight:800;font-size:.8rem}
+.skin canvas{width:100%;image-rendering:pixelated;display:block}
+.skin.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.face[data-skin="fantome"]{animation:ghost 3.4s ease-in-out infinite}
+@keyframes ghost{50%{transform:translateY(-10px)}}
+.face[data-skin="magma"] canvas{filter:drop-shadow(0 0 10px rgba(255,120,40,.65))}
+.face[data-skin="cyber"] canvas{filter:drop-shadow(0 0 8px rgba(0,229,255,.6))}
+.face[data-skin="galaxie"] canvas{filter:drop-shadow(0 0 10px rgba(179,136,255,.55))}
+.face[data-skin="dore"] canvas{filter:drop-shadow(0 0 10px rgba(255,209,102,.55))}
+.face[data-mood="froid"] canvas{animation:shake .12s linear infinite}
 .p.clac{color:#fff;font-size:28px;animation:pop .9s ease-out forwards}
 .p.rawr{color:#ff6b5a;font-size:40px;animation:pop 1.2s ease-out forwards}
 .p.mwah{color:#ff7aa2;font-size:22px}
@@ -215,6 +280,9 @@ select.field{appearance:auto}
 .ctl button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(236,232,220,.06);color:var(--phosphor);cursor:pointer;display:grid;place-items:center;font-size:1.3rem}
 .ctl button svg{width:18px;height:18px;fill:currentColor}
 .ctl button:active{transform:scale(.92)}
+.ctl button.txt{width:auto;border-radius:999px;padding:0 18px;font-weight:800;font-size:.95rem}
+.card .when{padding:0 22px}
+.letters{font:500 1.35rem var(--f-px);letter-spacing:.14em;color:var(--phosphor);margin:8px 0 4px;overflow-wrap:anywhere}
 .vs{display:flex;justify-content:center;align-items:center;gap:12px;font-size:2.4rem;margin:10px 0}
 .vs b{font:500 .9rem var(--f-px);color:var(--accent)}
 .vs span{min-width:1.3em}
@@ -259,7 +327,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 
 /* ---------- cartes animées (météo, batterie, heure…) ---------- */
 .stage.with-card .face-wrap{transform:translateX(-33%) scale(.56)}
-.card{position:absolute;right:4%;top:50%;width:min(50%,290px);z-index:3;transform:translate(40px,-50%);opacity:0;pointer-events:none;
+.card{position:absolute;right:4%;top:50%;width:min(50%,290px);z-index:6;transform:translate(40px,-50%);opacity:0;pointer-events:none;
   transition:opacity .45s ease .12s, transform .6s cubic-bezier(.2,.8,.2,1) .12s;
   background:linear-gradient(160deg, rgba(22,42,70,.92), rgba(8,19,34,.94));border:1px solid var(--line);border-radius:22px;
   padding:18px 14px 16px;box-shadow:0 18px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);text-align:center;cursor:pointer}
@@ -528,6 +596,12 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="ok" id="settingsMsg" aria-live="polite"></p>
     </section>
 
+    <section id="skinsSec" hidden>
+      <h3>Skins</h3>
+      <p class="note">Réservé au gérant et aux développeurs. Choisis l'apparence de Canelle.</p>
+      <div class="skins" id="skinGrid"></div>
+    </section>
+
     <section id="devTools" hidden>
       <h3>Outils développeur</h3>
       <p class="note">Pour tester les animations et les écrans sans attendre.</p>
@@ -579,7 +653,7 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "" };
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "" };
 // Choisit au hasard en évitant ce qui vient d'être dit dans la même liste (pas deux fois la même chose d'affilée).
 const PICKED = new Map();
 function pick(a) {
@@ -609,7 +683,7 @@ function pull() {
 }
 function saveUi() {
   try {
-    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy, musicApp: S.musicApp || "" }));
+    if (NATIVE) NATIVE.saveUi(JSON.stringify({ companionName: S.companionName, sound: S.sound, visits: S.visits, lastSeen: S.lastSeen, hidePrivacy: !!S.hidePrivacy, musicApp: S.musicApp || "", skin: S.skin || "" }));
     else localStorage.setItem("canelle-web", JSON.stringify(S));
   } catch (e) {}
 }
@@ -617,18 +691,22 @@ pull();
 
 /* ---------- visage pixel : le panda roux ---------- */
 const W = 64, H = 54;
-const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille", "soupconneux", "musique"];
+const MOODS = ["neutre", "content", "clin", "reflechit", "triste", "surpris", "amoureux", "rigole", "timide", "fache", "fier", "inquiet", "endormi", "etourdi", "baille", "soupconneux", "musique",
+  "emerveille", "emu", "pleure", "degoute", "malade", "gourmand", "froid", "zen"];
 const ACCENT = { neutre: "#8fe3ff", content: "#ffd166", clin: "#ffd166", reflechit: "#b9a8ff", triste: "#8fb4ff", surpris: "#ff7b4a",
   amoureux: "#ff7aa2", rigole: "#ffd166", timide: "#ffb3c6", fache: "#ff6b5a", fier: "#ffcf5a", inquiet: "#a8c5ff",
-  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0", soupconneux: "#ff9b4a", musique: "#7ee2c0" };
+  endormi: "#7f8fbf", etourdi: "#c3a6ff", baille: "#9fb0d0", soupconneux: "#ff9b4a", musique: "#7ee2c0",
+  emerveille: "#ffd84a", emu: "#ffb3c6", pleure: "#7cc8ff", degoute: "#9ad17a", malade: "#9ad17a", gourmand: "#ffb05a", froid: "#bfe6ff", zen: "#c3b1ff" };
 const PITCH = { neutre: 600, content: 680, clin: 650, reflechit: 520, triste: 450, surpris: 780,
-  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430, soupconneux: 470, musique: 660 };
+  amoureux: 700, rigole: 760, timide: 560, fache: 420, fier: 640, inquiet: 480, endormi: 400, etourdi: 520, baille: 430, soupconneux: 470, musique: 660,
+  emerveille: 740, emu: 560, pleure: 440, degoute: 480, malade: 420, gourmand: 640, froid: 520, zen: 500 };
 // O trait, F pelage, f pelage ombré, H reflet, W blanc, D intérieur d'oreille, t marques rousses, B/b cou,
 // N/n truffe, Q/q/Z bandana, I/i/j iris, P pupille, x blanc brillant, M bouche, T langue, K/k joues
 const PAL = { O: "#3b1a14", F: "#e8743b", f: "#c9552c", H: "#fbb98a", W: "#fdf8f3", D: "#5a2a22", t: "#a3452f",
   B: "#6b332b", b: "#552520", N: "#3a3436", n: "#8a8385", Q: "#ff9b2f", q: "#d9741a", Z: "#ffc36e",
   I: "#1d4fa8", i: "#3f82e0", j: "#8cc6ff", P: "#0d1733", x: "#ffffff", M: "#7a2533", T: "#f2849a", K: "#f9b3b6", k: "#e9707f",
-  R: "#ff4f73", r: "#ffc2cf", G: "#3a4560", g: "#9fb0d6", A: "#ff9b4a" };
+  R: "#ff4f73", r: "#ffc2cf", G: "#3a4560", g: "#9fb0d6", A: "#ff9b4a",
+  Y: "#ffd84a", y: "#fff3b0", U: "#7cc8ff", u: "#bfe6ff", V: "#9ad17a", v: "#6fb35a", C: "#00e5ff", c: "#0a3a4a" };
 const BASE = [
   "................................................................",
   "................................................................",
@@ -699,7 +777,8 @@ const EYES = {
   half:   ["........", "........", "........", "OOOOOOOO", "OIIIIIIO", "OIxPPIIO", "OiPPPPiO", ".OjjjxO.", "..OOOO.."],
   dizzy:  ["........", "O.....O.", ".O...O..", "..O.O...", "...O....", "..O.O...", ".O...O..", "O.....O.", "........"],
   closed: ["........", "........", "........", "........", "O......O", ".OOOOOO.", "........", "........", "........"],
-  squint: ["........", "........", "........", "........", "OOOOOOOO", "OIxxPPIO", "OiIPPPiO", ".OjjjjO.", "..OOOO.."]
+  squint: ["........", "........", "........", "........", "OOOOOOOO", "OIxxPPIO", "OiIPPPiO", ".OjjjjO.", "..OOOO.."],
+  star:   ["........", "...YY...", "...YY...", "YYYyyYYY", ".YYyyYY.", "..YYYY..", ".YY..YY.", "YY....YY", "........"]
 };
 const OPEN = ["...OO...", ".OOOOOO.", "OMxMMMMO", "OMMTTMMO", ".OTTTTO.", "..OOOO.."];
 const WAVY = ["........", ".OO..OO.", "O..OO..O"];
@@ -721,7 +800,15 @@ const MOUTH = {
   etourdi:   [[".O.OO.O.", "O.O..O.O"], OPEN],
   baille:    [YAWN, YAWN],
   soupconneux: [["........", "...OO...", "..O..O.."], OPEN],
-  musique: [["...OO...", ".OO..OO."], OPEN]
+  musique: [["...OO...", ".OO..OO."], OPEN],
+  emerveille: [["..OOOO..", ".OMMMMO.", ".OMTTMO.", "..OOOO.."], OPEN],
+  emu: [["...OO...", ".OO..OO."], OPEN],
+  pleure: [["..OOOO..", ".OMMMMO.", "O.MTTM.O"], ["..OOOO..", ".OMMMMO.", "OMMTTMMO", ".OTTTTO."]],
+  degoute: [["........", "..OOOO..", ".O.TT.O.", "...TT..."], OPEN],
+  malade: [WAVY, OPEN],
+  gourmand: [["...OO...", ".OO..OO.", "......U.", "......U."], OPEN],
+  froid: [["........", "OOOOOOOO", "OxOxOxOO", "OOOOOOOO"], ["OOOOOOOO", "OxOxOxOO", "OOOOOOOO", "........"]],
+  zen: [["...OO...", ".OO..OO."], OPEN]
 };
 // yeux, sourcils et joues de chaque expression
 const EXPR = {
@@ -740,7 +827,15 @@ const EXPR = {
   etourdi: { L: "dizzy", R: "dizzy" },
   baille: { L: "blink", R: "blink" },
   soupconneux: { L: "squint", R: "squint", brows: "suspect" },
-  musique: { L: "happy", R: "happy", blush: 1 }
+  musique: { L: "happy", R: "happy", blush: 1 },
+  emerveille: { L: "star", R: "star", blush: 1 },
+  emu: { L: "happy", R: "happy", blush: 1, tears: 1 },
+  pleure: { L: "sad", R: "sad", brows: "sad", tears: 2 },
+  degoute: { L: "squint", R: "half", cheeks: "V" },
+  malade: { L: "half", R: "half", cheeks: "V", brows: "sad" },
+  gourmand: { L: "wide", R: "wide", blush: 1 },
+  froid: { cheeks: "u", brows: "sad" },
+  zen: { L: "closed", R: "closed", blush: 1 }
 };
 // petites marques d'émotion, dessinées dans la couleur de l'humeur
 const MARKS = {
@@ -749,6 +844,22 @@ const MARKS = {
   clin:    [[58, 17], [57, 18], [58, 18], [59, 18], [58, 19]],
   triste:  [[57, 12], [56, 13], [57, 13], [55, 14], [56, 14], [57, 14], [58, 14], [55, 15], [56, 15], [57, 15], [58, 15], [56, 16], [57, 16]]
 };
+// Skins : palettes et accessoires. Réservés au gérant et aux développeurs.
+const SKINS = [
+  { id: "classique", name: "Classique", pal: {} },
+  { id: "neige", name: "Neige", pal: { F: "#f4f1ec", f: "#d9d3cc", t: "#c9c0b8", D: "#b8aea6", W: "#ffffff", B: "#9a8f88", b: "#857a73", O: "#4a4450", Q: "#8fd3ff", q: "#5fb0e6", Z: "#d6f0ff", I: "#c0304a", i: "#e8566e", j: "#ffb3c0" } },
+  { id: "minuit", name: "Minuit", pal: { F: "#3c4a8a", f: "#2c376b", t: "#26305c", D: "#1b2142", W: "#c9d4ff", B: "#262d57", b: "#1d2347", O: "#0d1026", Q: "#48f0ff", q: "#1fb8cc", Z: "#b8fbff", I: "#7a4cff", i: "#a98bff", j: "#e0d4ff" } },
+  { id: "dore", name: "Doré", acc: "crown", pal: { F: "#e7b93c", f: "#c4952a", t: "#a97c1f", D: "#6e4f12", W: "#fff6d8", B: "#8a6516", b: "#6e4f12", Q: "#b23a48", q: "#8a2331", Z: "#ff8a95" } },
+  { id: "sakura", name: "Sakura", acc: "flower", pal: { F: "#f59ab8", f: "#e0739a", t: "#c95a82", D: "#8a3b5a", W: "#fff3f7", B: "#b9557a", b: "#9a4465", Q: "#ffffff", q: "#f2d4df", Z: "#ffe6f0" } },
+  { id: "menthe", name: "Menthe", pal: { F: "#5fcf9f", f: "#3fae80", t: "#2f8f68", D: "#1f5e45", W: "#f0fff8", B: "#2e7a5a", b: "#236148", Q: "#ff9fd1", q: "#e070aa", Z: "#ffd6ea" } },
+  { id: "cyber", name: "Cyber", acc: "glasses", pal: { F: "#2b2f3d", f: "#1e212c", t: "#15171f", D: "#0e1016", W: "#9ff7ff", B: "#1a1d27", b: "#12141c", O: "#00b8d9", Q: "#ff2bd6", q: "#b0108f", Z: "#ff9cf0" } },
+  { id: "pirate", name: "Pirate", acc: "patch", pal: { Q: "#26262c", q: "#141418", Z: "#f2f2f2" } },
+  { id: "fantome", name: "Fantôme", alpha: 175, pal: { F: "#cfe6ff", f: "#a9c9ef", t: "#8fb3e0", D: "#6f8fbf", W: "#f4fbff", B: "#9fbde3", b: "#86a6d0", O: "#5b76a8", Q: "#e3f1ff", q: "#b9d6f2", Z: "#ffffff" } },
+  { id: "magma", name: "Magma", pal: { F: "#e2461e", f: "#b8300f", t: "#8c2209", D: "#3a0e05", W: "#ffd27a", B: "#5a1508", b: "#401004", O: "#1a0602", Q: "#ffcf3a", q: "#ff8f1f", Z: "#fff1a8" } },
+  { id: "galaxie", name: "Galaxie", acc: "stars", pal: { F: "#4b2a7a", f: "#3a1f62", t: "#2e184f", D: "#1d0f33", W: "#e9dcff", B: "#2e184f", b: "#241240", O: "#0e0620", Q: "#ffd84a", q: "#e0a820", Z: "#fff3b0" } }
+];
+const skinAllowed = () => S.rank === "dev" || S.rank === "owner";
+const activeSkin = () => (skinAllowed() && SKINS.find(k => k.id === S.skin)) || SKINS[0];
 const face = { mood: "neutre", blink: false, talk: false, lookX: 0, think: 0, reveal: 1, phones: false };
 // ordre d'apparition des pixels pendant la matérialisation (du bas vers le haut, avec un peu de hasard)
 const REVEAL = new Float32Array(W * H);
@@ -787,13 +898,26 @@ const CUP_R = CUP_L.map(r => [...r].reverse().join(""));
 const BEHIND = new Set(["D", "W", "O"]);
 const OUTLINED = ["open", "sad", "wide", "half"];
 let lastAccent = "";
-function render() {
+const CROWN = ["Y.....Y.....Y", "YY...YYY...YY", "YYY.YYYYY.YYY", "YYYYYYYYYYYYY", "YyRyYyRyYyRyY", "YYYYYYYYYYYYY"];
+const FLOWER = [".T.T.", "TTYTT", ".TTT."];
+const GALAXY = [[30, 19], [20, 27], [45, 21], [16, 33], [48, 36], [27, 29], [38, 18], [12, 30]];
+function skinRGBA(sk) {
+  if (!sk._rgba) {
+    const t = Object.assign({}, RGBA);
+    Object.keys(sk.pal).forEach(k => { t[k] = toRGBA(sk.pal[k]); });
+    if (sk.alpha) Object.keys(t).forEach(k => { t[k] = ((t[k] & 0x00ffffff) | (sk.alpha << 24)) >>> 0; });
+    sk._rgba = t;
+  }
+  return sk._rgba;
+}
+/** Compose la grille de pixels d'un visage (humeur, casque, skin). */
+function compose(st, sk) {
   const g = BASE_FLAT.slice();
-  const m = face.mood;
+  const m = st.mood;
   const e = EXPR[m] || {};
   let L = e.L || "open", R = e.R || "open";
-  const dx = (e.dx || 0) + face.lookX, dy = e.dy || 0;
-  if (face.blink) { if (OUTLINED.includes(L)) L = "blink"; if (OUTLINED.includes(R)) R = "blink"; }
+  const dx = (e.dx || 0) + (st.lookX || 0), dy = e.dy || 0;
+  if (st.blink) { if (OUTLINED.includes(L)) L = "blink"; if (OUTLINED.includes(R)) R = "blink"; }
   stamp(g, EYES[L], EL[0] + dx, EL[1] + dy);
   stamp(g, EYES[R], ER[0] + dx, ER[1] + dy);
   if (OUTLINED.includes(L) && L !== "half") stamp(g, ["O"], EL[0] - 1 + dx, EL[1] + 1 + dy);
@@ -803,26 +927,55 @@ function render() {
   if (e.brows === "angry") { stamp(g, ["OO......", "..OOO...", ".....OO."], 20, 22); stamp(g, ["......OO", "...OOO..", ".OO....."], 36, 22); }
   if (e.blush) { stamp(g, ["KkKk"], 19, 38); stamp(g, ["kKkK"], 41, 38); }
   if (e.blush > 1) { stamp(g, ["kKkK"], 19, 39); stamp(g, ["KkKk"], 41, 39); }
-  const mo = face.think ? MOUTH.reflechit : (MOUTH[m] || MOUTH.neutre);
-  stamp(g, face.talk && !face.think ? mo[1] : mo[0], MO[0], MO[1]);
-  if (face.phones) {
+  if (e.cheeks) { const c = e.cheeks, d = c === "V" ? "v" : "U"; stamp(g, [c + d + c + d], 19, 38); stamp(g, [d + c + d + c], 41, 38); }
+  if (e.tears) {
+    stamp(g, ["U", "U"], 22, 32); stamp(g, ["U", "U"], 41, 32);
+    if (e.tears > 1) { stamp(g, [".U", ".U", "U.", "U."], 21, 34); stamp(g, ["U.", "U.", ".U", ".U"], 41, 34); }
+  }
+  const mo = st.think ? MOUTH.reflechit : (MOUTH[m] || MOUTH.neutre);
+  stamp(g, st.talk && !st.think ? mo[1] : mo[0], MO[0], MO[1]);
+  if (st.phones) {
     for (const [x, y] of PHONES_BAND) for (let k = 0; k < 2; k++) {
       const i = (y + k) * W + x;
       if (!BEHIND.has(BASE_FLAT[i])) g[i] = k ? "G" : "g";
     }
     stamp(g, CUP_L, 3, 25); stamp(g, CUP_R, 55, 25);
   }
-  const rv = face.reveal;
+  switch (sk.acc) {
+    case "crown": stamp(g, CROWN, 25, 10); break;
+    case "flower": stamp(g, FLOWER, 14, 11); break;
+    case "stars": GALAXY.forEach(([x, y]) => { const i = y * W + x; if (g[i] === "F" || g[i] === "f") g[i] = "y"; }); break;
+    case "glasses":
+      stamp(g, ["CCCCCCCCCC", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "CCCCCCCCCC"], 19, 22);
+      stamp(g, ["CCCCCCCCCC", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "C........C", "CCCCCCCCCC"], 35, 22);
+      stamp(g, ["CCCCCC"], 29, 25);
+      break;
+    case "patch":
+      stamp(g, ["..OOOOOO..", ".OOOOOOOO.", "OOOOOOOOOO", "OOOOOOOOOO", "OOOOOOOOOO", "OOOOOOOOOO", "OOOOOOOOOO", ".OOOOOOOO.", "..OOOOOO.."], 35, 23);
+      for (let k = 0; k < 16; k++) { const x = 35 - k, y = 23 - Math.round(k * 0.55); if (x >= 0 && y >= 0) g[y * W + x] = "O"; }
+      break;
+  }
+  return g;
+}
+function paint(g, sk, pix, rv) {
+  const tab = skinRGBA(sk);
   for (let i = 0; i < W * H; i++) {
     const ch = g[i];
-    if (ch === ".") { PIX[i] = 0; continue; }
+    if (ch === ".") { pix[i] = 0; continue; }
     if (rv < 1) {
       const t = REVEAL[i];
-      if (t > rv) { PIX[i] = 0; continue; }
-      if (rv - t < 0.1) { PIX[i] = GLOW_PX; continue; }
+      if (t > rv) { pix[i] = 0; continue; }
+      if (rv - t < 0.1) { pix[i] = GLOW_PX; continue; }
     }
-    PIX[i] = RGBA[ch] || RGBA.F;
+    pix[i] = tab[ch] || tab.F;
   }
+}
+function render() {
+  const sk = activeSkin();
+  const g = compose(face, sk);
+  const m = face.mood;
+  const rv = face.reveal;
+  paint(g, sk, PIX, rv);
   ctx.putImageData(IMG, 0, 0);
   const glow = [];
   if (rv >= 1) (MARKS[m] || []).forEach(p => glow.push(p));
@@ -840,9 +993,16 @@ function render() {
   }
   if (accent !== lastAccent) { lastAccent = accent; document.documentElement.style.setProperty("--accent", accent); }
 }
+/** Petit aperçu d'un skin (menu). */
+function drawPreview(canvas, sk) {
+  const c = canvas.getContext("2d"), im = c.createImageData(W, H), px = new Uint32Array(im.data.buffer);
+  paint(compose({ mood: "content" }, sk), sk, px, 1);
+  c.putImageData(im, 0, 0);
+}
 const MOOD_FX = {
   amoureux: () => fx("hearts", 3), rigole: () => fx("ha", 2), timide: () => fx("sweat"), inquiet: () => fx("sweat"),
-  fache: () => fx("anger"), fier: () => fx("sparkle", 3), etourdi: () => fx("stars"), endormi: () => fx("zzz", 2), surpris: () => fx("excl")
+  fache: () => fx("anger"), fier: () => fx("sparkle", 3), etourdi: () => fx("stars"), endormi: () => fx("zzz", 2), surpris: () => fx("excl"),
+  emerveille: () => fx("sparkle", 5), emu: () => fx("hearts", 2), froid: () => fx("brr"), malade: () => fx("sweat"), gourmand: () => fx("miam"), zen: () => fx("zen")
 };
 function setMood(m) {
   const prev = face.mood;
@@ -1080,15 +1240,24 @@ const msgEl = document.getElementById("msg");
 const sendBtn = document.getElementById("send");
 function updateSend() { sendBtn.disabled = busy || !msgEl.value.trim(); }
 
-async function send(preset) {
+async function send(preset, fromChip) {
   const text = (typeof preset === "string" ? preset : msgEl.value).trim();
   if (!text || busy) return;
-  ensureAudio(); hidePlaces(); hideCard();
+  ensureAudio(); hidePlaces();
+  if (game && game.onText && !fromChip && !awaitingOwner && !cutscene && !locked) {
+    const nn = deaccent(text.toLowerCase()).trim();
+    const clear = () => { if (typeof preset !== "string") msgEl.value = ""; updateSend(); };
+    if (/^(stop|arrete|j'arrete|fin|quitter|on arrete)( le jeu| de jouer)?$/.test(nn)) {
+      clear(); hideCard(); speak([{ text: "D'accord, on arrête. C'était chouette !", mood: "content" }]); return;
+    }
+    if (!localCommand(text, true) && game.onText(text, nn)) { clear(); return; }
+  }
+  hideCard();
   if (awaitingOwner) { confirmOwnerName(text); return; }
   if (cutscene || locked) return;
   if (localCommand(text)) {
     if (typeof preset !== "string") msgEl.value = "";
-    updateSend(); renderChips(false);
+    updateSend();
     return;
   }
   if (!NATIVE) {
@@ -1141,15 +1310,13 @@ const CHIPS = [
   { t: "Batterie", say: "Ma batterie ?" },
   { t: "Météo", say: "Quelle météo aujourd'hui ?" },
   { t: "Heure", say: "Quelle heure est-il ?" },
-  { t: "Autour de moi", sub: true },
+  { t: "Jeux", sub: "games" },
+  { t: "Interactions", sub: "fun" },
+  { t: "Autour de moi", sub: "around" },
   { t: "Réveil", say: "Mets un réveil" },
   { t: "Minuteur", say: "Lance un minuteur" },
   { t: "Calcul", fill: "Calcule " },
   { t: "Musique", say: "Mets de la musique" },
-  { t: "High five", say: "High five" },
-  { t: "Danse", say: "Danse" },
-  { t: "Chifoumi", say: "Chifoumi" },
-  { t: "Pile ou face", say: "Pile ou face" },
   { t: "Que sais-tu faire ?", say: "Qu'est-ce que tu sais faire ?" }
 ];
 const AROUND = [
@@ -1158,6 +1325,23 @@ const AROUND = [
   ["Station essence", "Une station essence près d'ici"], ["Distributeur", "Un distributeur de billets près d'ici"],
   ["Café", "Un café près d'ici"], ["Parking", "Un parking près d'ici"]
 ];
+const GAMES_CHIPS = [
+  ["Devine le nombre", "Devine le nombre"], ["Quiz", "Quiz"], ["Vrai ou faux", "Vrai ou faux"], ["Calcul mental", "Calcul mental"],
+  ["Mémoire", "Jeu de mémoire"], ["Réflexes", "Test de réflexes"], ["Morpion", "Morpion"], ["Mots mélangés", "Mots mélangés"],
+  ["Devinette", "Devinette"], ["Clique vite", "Clique vite"], ["Cache-cache", "Cache-cache"], ["Boule magique", "Boule magique"],
+  ["Chifoumi", "Chifoumi"], ["Pile ou face", "Pile ou face"], ["Dé", "Lance un dé"]
+];
+const FUN_CHIPS = [
+  ["High five", "High five"], ["Check", "Check"], ["Danse", "Danse"], ["Câlin", "Câlin"], ["Bisou", "Bisou"], ["Chatouille", "Chatouille"],
+  ["Mange", "Mange un bambou"], ["Bois", "Bois de l'eau"], ["Bulles", "Fais des bulles"], ["Feu d'artifice", "Feu d'artifice"],
+  ["Arc-en-ciel", "Arc-en-ciel"], ["Tour de magie", "Fais un tour de magie"], ["Robot", "Fais le robot"], ["Moonwalk", "Moonwalk"],
+  ["Yoga", "Fais du yoga"], ["Balle", "Joue à la balle"], ["Étoile filante", "Fais un vœu"], ["Blague", "Raconte une blague"],
+  ["Compliment", "Fais-moi un compliment"], ["Anniversaire", "Joyeux anniversaire"], ["Pirouette", "Fais un tour"], ["Saute", "Saute"],
+  ["Rawr", "Rawr"], ["Chante", "Chante"], ["Fais le mort", "Fais le mort"], ["Éternue", "Éternue"], ["Grimace", "Fais une grimace"],
+  ["Muscles", "Montre tes muscles"], ["Pleure", "Pleure"], ["Pose", "Prends la pose"], ["Roulade", "Roulade"], ["Applaudis", "Applaudis"],
+  ["Coucou", "Fais coucou"], ["Dodo", "Fais dodo"], ["Étire-toi", "Étire-toi"], ["Clin d'œil", "Fais un clin d'œil"], ["Froid ?", "Tu as froid ?"]
+];
+const SUBS = { around: AROUND, games: GAMES_CHIPS, fun: FUN_CHIPS };
 let chipsSub = false;
 function chip(label, fn, cls) {
   const b = document.createElement("button");
@@ -1166,16 +1350,16 @@ function chip(label, fn, cls) {
   return b;
 }
 function renderChips(sub) {
-  chipsSub = !!sub;
+  chipsSub = sub && SUBS[sub] ? sub : (sub === true ? "around" : false);
   chipsEl.replaceChildren();
   if (chipsSub) {
     chipsEl.append(chip("← Retour", () => renderChips(false), "back"));
-    AROUND.forEach(([t, say]) => chipsEl.append(chip(t, () => { renderChips(false); send(say); })));
+    SUBS[chipsSub].forEach(([t, say]) => chipsEl.append(chip(t, () => { if (chipsSub === "around") renderChips(false); send(say, true); })));
   } else {
     CHIPS.forEach(c => chipsEl.append(chip(c.t, () => {
-      if (c.sub) renderChips(true);
+      if (c.sub) renderChips(c.sub);
       else if (c.fill) { msgEl.value = c.fill; updateSend(); msgEl.focus(); }
-      else send(c.say);
+      else send(c.say, true);
     })));
   }
   chipsEl.scrollLeft = 0;
@@ -1425,6 +1609,7 @@ function spark(char, cls, x, y, o = {}) {
   if (o.rx != null) e.style.setProperty("--rx", o.rx + "px");
   if (o.delay) e.style.animationDelay = o.delay + "ms";
   if (o.size) e.style.fontSize = o.size + "px";
+  if (o.hue != null) e.style.setProperty("--hue", o.hue);
   fxEl.append(e);
   setTimeout(() => e.remove(), 4200 + (o.delay || 0));
 }
@@ -1445,6 +1630,21 @@ function fx(kind, n = 1) {
       case "ha": [x, y] = facePoint(rand(8, 56), rand(4, 14)); spark(pick(["ha", "hi", "ha ha"]), "ha", x, y, { dx: rand(-20, 20), dy: -55, delay: d }); break;
       case "excl": [x, y] = facePoint(54, 6); spark("!", "excl", x, y, { dx: 6, dy: -26 }); return;
       case "boop": [x, y] = facePoint((NOSE.x0 + NOSE.x1) / 2, NOSE.y0); spark("boop !", "boop", x, y); return;
+      case "brr": [x, y] = facePoint(rand(6, 58), rand(10, 30)); spark(pick(["brr", "brrr"]), "brr", x, y, { dx: rand(-10, 10), dy: -40, delay: d }); break;
+      case "miam": [x, y] = facePoint(rand(24, 42), 40); spark(pick(["miam", "miam !", "crunch"]), "ha", x, y, { dx: rand(-30, 30), dy: -50, delay: d }); break;
+      case "crumbs": [x, y] = facePoint(rand(26, 38), 42); spark("", "crumb", x, y, { dx: rand(-40, 40), dy: rand(30, 60), delay: d / 3 }); break;
+      case "zen": [x, y] = facePoint(32, 4); spark("ommm", "zen", x, y, { dx: 0, dy: -50, delay: d * 3 }); break;
+      case "bubbles": [x, y] = facePoint(rand(28, 36), 40); spark("", "bubble", x, y, { dx: rand(-90, 90), dy: rand(-160, -90), delay: d }); break;
+      case "confetti": [x, y] = facePoint(rand(0, 64), rand(-10, 10)); spark("", "confetti", x, y, { dx: rand(-60, 60), dy: rand(120, 220), r: rand(-540, 540), delay: rand(0, 600) }); break;
+      case "firework": {
+        const cx = rand(40, stageEl.clientWidth - 40), cy = rand(30, stageEl.clientHeight * 0.45), hue = Math.floor(rand(0, 360));
+        for (let k = 0; k < 18; k++) {
+          const a = k / 18 * Math.PI * 2, r0 = rand(50, 90);
+          spark("", "fw", cx, cy, { dx: Math.cos(a) * r0, dy: Math.sin(a) * r0, delay: d * 3, hue });
+        }
+        break;
+      }
+      case "tear": [x, y] = facePoint(i % 2 ? 42 : 22, 34); spark("", "drop", x, y, { delay: d * 2 }); break;
       case "gather": {
         [x, y] = facePoint(32, 30);
         const a = rand(0, Math.PI * 2), r = rand(120, 220);
@@ -1600,6 +1800,8 @@ function buildCard(c) {
       return `${x}<div class="when">Chifoumi</div><div class="vs"><span data-you>?</span><b>VS</b><span data-me>?</span></div>
         <div class="ctl"><button type="button" data-rps="pierre" aria-label="Pierre">✊</button><button type="button" data-rps="feuille" aria-label="Feuille">✋</button><button type="button" data-rps="ciseaux" aria-label="Ciseaux">✌️</button></div>
         <div class="sub" data-score>Toi ${rpsScore[0]} – ${rpsScore[1]} ${esc(S.companionName)}</div>`;
+    case "game":
+      return `${x}<div class="when">${esc(c.title)}</div>${c.html}`;
     case "coin":
       return `${x}<div class="when">Pile ou face</div><div class="coin">?</div><div class="ctl"><button type="button" data-again="coin" aria-label="Relancer">↻</button></div>`;
     case "dice":
@@ -1659,6 +1861,7 @@ function showCard(c, ms) {
 }
 function hideCard() {
   clearTimeout(cardTimer); clearInterval(cardTick); cardTick = null;
+  if (typeof game !== "undefined" && game) stopGame();
   if (!cardShown) return;
   stageEl.classList.remove("with-card");
   cardShown = false;
@@ -1668,11 +1871,12 @@ cardEl.addEventListener("click", e => {
   const b = e.target.closest("button:not(.card-x)");
   if (!b) { hideCard(); return; }
   ensureAudio();
+  if (b.dataset.g != null) { if (game && game.onButton) game.onButton(b.dataset.g, b); return; }
   if (b.dataset.act) musicControl(b.dataset.act);
   else if (b.dataset.rps) rpsPlay(b.dataset.rps);
   else if (b.dataset.again === "coin") coin();
   else if (b.dataset.again === "dice") dice();
-  clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 40000);
+  clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, game ? 180000 : 40000);
 });
 
 /* ---------- toucher Canelle : tape, boop, caresse ---------- */
@@ -2039,35 +2243,40 @@ function whatPlaying() {
 }
 
 /* ---------- commandes locales : musique et jeux (réponse immédiate, sans passer par le cerveau) ---------- */
-const deaccent = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-function localCommand(raw) {
-  const low = raw.trim().replace(/[\s!?.…]+$/g, "");
+const deaccent = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae");
+function localCommand(raw, dry) {
+  const low = raw.trim().replace(/[\s!?.…]+$/g, "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae");
   const n = deaccent(low.toLowerCase()).replace(/[’]/g, "'");
   const cut = (m, g) => low.slice(m.indices[g][0], m.indices[g][1]).trim();
   let m;
   // --- musique
   if ((m = n.match(/^(?:mets?|joue|lance|ecoute|passe|balance)(?:[- ]moi)?\s+(.+?)\s+(?:sur|avec|dans)\s+(spotify|deezer)$/d))) {
+    if (dry) return true;
     const q = cut(m, 1);
     playMusic(m[2], /^(?:de la |du |un peu de |une )?(?:musique|son|chanson|playlist)$/.test(deaccent(q.toLowerCase())) ? "" : q);
     return true;
   }
-  if ((m = n.match(/^(?:mets?|joue|lance|passe|balance)(?:[- ]moi)?\s+(?:de la |du |un peu de |une |la )?(?:musique|son|zik|chanson|playlist)$/))) { playMusic("", ""); return true; }
-  if ((m = n.match(/^(?:joue|mets?|lance|balance)(?:[- ]moi)?\s+(?:la chanson|le morceau|le titre|l'album|la playlist|la musique de|les chansons de|du|de la musique de)\s+(.+)$/d))) { playMusic("", cut(m, 1)); return true; }
-  if ((m = n.match(/^(?:ouvre|lance|demarre)\s+(spotify|deezer)$/))) { playMusic(m[1], ""); return true; }
+  if ((m = n.match(/^(?:mets?|joue|lance|passe|balance)(?:[- ]moi)?\s+(?:de la |du |un peu de |une |la )?(?:musique|son|zik|chanson|playlist)$/))) { if (dry) return true; playMusic("", ""); return true; }
+  if ((m = n.match(/^(?:joue|mets?|lance|balance)(?:[- ]moi)?\s+(?:la chanson|le morceau|le titre|l'album|la playlist|la musique de|les chansons de|du|de la musique de)\s+(.+)$/d))) { if (dry) return true; playMusic("", cut(m, 1)); return true; }
+  if ((m = n.match(/^(?:ouvre|lance|demarre)\s+(spotify|deezer)$/))) { if (dry) return true; playMusic(m[1], ""); return true; }
   if (/^(?:pause|mets? (?:en )?pause(?: la musique)?|stop(?:pe)?(?: la musique)?|arrete (?:la musique|le son|la chanson)|coupe (?:la musique|le son|la chanson))$/.test(n)) {
-    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    if (dry) return true;
+    if (!music.on && !musicActive()) { if (dry) return true; speak(NO_MUSIC); return true; }
     musicControl("pause"); speak([{ text: pick(["Pause !", "Et… pause.", "Musique en pause."]), mood: "content" }]); return true;
   }
-  if (/^(?:reprends?|remets?|relance)(?: la)? (?:musique|lecture|chanson)$/.test(n)) { musicControl("play"); speak([{ text: "Et c'est reparti !", mood: "musique" }]); return true; }
+  if (/^(?:reprends?|remets?|relance)(?: la)? (?:musique|lecture|chanson)$/.test(n)) { if (dry) return true; musicControl("play"); speak([{ text: "Et c'est reparti !", mood: "musique" }]); return true; }
   if (/^(?:(?:musique|chanson|titre|piste|morceau) suivante?|suivante?|passe(?: a la)? (?:suivante|chanson suivante|musique suivante)|skip|zappe)$/.test(n)) {
-    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    if (dry) return true;
+    if (!music.on && !musicActive()) { if (dry) return true; speak(NO_MUSIC); return true; }
     musicControl("next"); speak([{ text: pick(["Suivante !", "Allez, on zappe !", "Au suivant !"]), mood: "clin" }]); return true;
   }
   if (/^(?:(?:musique|chanson|titre|piste|morceau) precedente?|precedente?|reviens? (?:a la chanson )?(?:d'avant|precedente))$/.test(n)) {
-    if (!music.on && !musicActive()) { speak(NO_MUSIC); return true; }
+    if (dry) return true;
+    if (!music.on && !musicActive()) { if (dry) return true; speak(NO_MUSIC); return true; }
     musicControl("previous"); speak([{ text: "On revient en arrière !", mood: "clin" }]); return true;
   }
-  if (/(?:c'?est quoi|quelle est|qu'?est[- ]ce que c'?est|c'?est quel(?:le)?)\s+(?:cette|la|le|ce)?\s*(?:musique|chanson|son|morceau|titre)|qu'?est[- ]ce que j'?ecoute|j'?ecoute quoi/.test(n)) { whatPlaying(); return true; }
+  if (/(?:c'?est quoi|quelle est|qu'?est[- ]ce que c'?est|c'?est quel(?:le)?)\s+(?:cette|la|le|ce)?\s*(?:musique|chanson|son|morceau|titre)|qu'?est[- ]ce que j'?ecoute|j'?ecoute quoi/.test(n)) { if (dry) return true; whatPlaying(); return true; }
+  if ((m = n.match(/^boule magique[ ,:]+(.{3,})$/))) { if (dry) return true; gEightBall(m[1]); return true; }
   // --- interactions (commandes courtes seulement)
   const c = n.replace(/\b(?:canelle|stp|s'?il te plait|s'?il te plais|allez|vas[- ]y|hey|eh|oh|dis|tu peux|tu veux|peux[- ]tu|encore|avec moi|pour moi|un peu)\b/g, " ").replace(/\s+/g, " ").trim();
   if (c.length > 40) return false;
@@ -2090,9 +2299,46 @@ function localCommand(raw) {
     [/^(?:prends la pose|fais le beau|pose pour (?:moi|la photo)|souris|cheese|fais une photo)$/, pose],
     [/^(?:fais une roulade|roule|roulade)$/, roll],
     [/^(?:fais le mort|mort)$/, playDead],
-    [/^(?:chante|chante(?:[- ]moi)? (?:une chanson|quelque chose)|une chanson)$/, sing]
+    [/^(?:chante|chante(?:[- ]moi)? (?:une chanson|quelque chose)|une chanson)$/, sing],
+    // nouvelles interactions
+    [/^(?:mange(?: un bambou)?|tiens(?: un)? bambou|je te donne (?:un bambou|a manger)|tu as faim|a table)$/, eat],
+    [/^(?:bois(?: de l'eau| un verre d'eau)?|tu as soif)$/, drink],
+    [/^(?:etire[- ]toi|etirement|fais des etirements)$/, stretch],
+    [/^(?:pleure|fais semblant de pleurer)$/, cry],
+    [/^(?:eternue|atchoum|fais atchoum)$/, sneeze],
+    [/^(?:fais(?:[- ]moi)? un clin d'?oeil|clin d'?oeil)$/, winkMe],
+    [/^(?:montre(?:[- ]moi)? tes muscles|fais le fort|muscles)$/, muscles],
+    [/^(?:fais(?:[- ]moi)? une grimace|grimace)$/, grimace],
+    [/^(?:fais le robot|robot|danse (?:du|le) robot)$/, robot],
+    [/^(?:medite|fais du yoga|yoga|zen|respire)$/, zen],
+    [/^(?:fais des bulles|bulles|souffle des bulles)$/, bubbles],
+    [/^(?:arc[- ]en[- ]ciel|fais un arc[- ]en[- ]ciel)$/, rainbow],
+    [/^(?:feux? d'?artifice|fais un feu d'?artifice)$/, fireworks],
+    [/^(?:moonwalk|fais le moonwalk)$/, moonwalk],
+    [/^(?:fais un tour de magie|tour de magie|magie|abracadabra)$/, magic],
+    [/^(?:fais[- ]moi un compliment|un compliment|compliment|dis[- ]moi (?:un truc|quelque chose) de gentil)$/, compliment],
+    [/^(?:raconte(?:[- ]moi)? une blague|une blague|blague|fais[- ]moi rire)$/, joke],
+    [/^(?:joue a la balle|lance la balle|balle|on joue a la balle)$/, ball],
+    [/^(?:fais un voeu|etoile filante|une etoile filante)$/, wish],
+    [/^(?:tu as froid|t'?as froid)$/, cold],
+    [/^(?:joyeux anniversaire|bon anniversaire|c'?est mon anniversaire|souhaite[- ]moi (?:un )?bon anniversaire)$/, birthday],
+    // jeux
+    [/^(?:devine le nombre|devine un nombre|jeu du nombre|plus ou moins)$/, gNumber],
+    [/^(?:calcul mental|fais[- ]moi faire du calcul)$/, gMath],
+    [/^(?:mots? melanges?|anagrammes?)$/, gAnagram],
+    [/^(?:devinette|une devinette|pose[- ]moi une devinette|une autre devinette)$/, gRiddle],
+    [/^(?:quiz|un quiz|culture generale)$/, gQuiz],
+    [/^(?:vrai ou faux)$/, gTrueFalse],
+    [/^(?:jeu de memoire|memoire|simon|jeu des couleurs)$/, gSimon],
+    [/^(?:test de reflexes|reflexes|jeu de reflexes)$/, gReflex],
+    [/^(?:morpion|tic[- ]tac[- ]toe|oxo)$/, gTicTacToe],
+    [/^(?:clique vite|tape vite|jeu de vitesse)$/, gTap],
+    [/^(?:boule magique|la boule magique|boule de cristal)$/, () => gEightBall("")],
+    [/^(?:cache[- ]cache|on joue a cache[- ]cache)$/, gHide],
+    [/^(?:jeux|jouer|on joue|a quoi on joue|liste des jeux|les jeux|tu veux jouer)$/, () => { renderChips("games"); speak([{ text: "Choisis un jeu dans la liste en bas !", mood: "clin" }]); }],
+    [/^(?:interactions|tes tours|montre[- ]moi tes tours|qu'?est[- ]ce que tu sais faire comme tours)$/, () => { renderChips("fun"); speak([{ text: "Voilà tout ce que je sais faire ! Choisis.", mood: "fier" }]); }]
   ];
-  for (const [re, fn] of A) if (re.test(c)) { fn(); return true; }
+  for (const [re, fn] of A) if (re.test(c)) { if (!dry) fn(); return true; }
   return false;
 }
 
@@ -2298,6 +2544,620 @@ function sing() {
   speak([{ text: "La la la… ♪", mood: "musique" }, { text: "Mon bandana est orange, ma queue est touffue… ♪", mood: "musique" }, { text: "Merci, merci ! Pas d'autographes.", mood: "fier" }]);
 }
 
+/* ---------- interactions (suite) ---------- */
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const faceWrap = document.querySelector(".face-wrap");
+function stageItem(cls, html, ms) {
+  const e = document.createElement("div");
+  e.className = "prop " + cls; e.innerHTML = html || "";
+  stageEl.append(e);
+  setTimeout(() => e.remove(), ms);
+  return e;
+}
+function busyNow() { return busy || cutscene || locked; }
+function eat() {
+  if (busyNow()) return;
+  setMood("gourmand");
+  fx("miam", 2); fx("crumbs", 8);
+  [0, 0.25, 0.5, 0.75].forEach(t => tone(220, 160, 0.08, "square", 0.03, t));
+  speak([pick([{ text: "Un bambou ? Pour moi ?! Merci !", mood: "gourmand" }, { text: "Miam ! Crunch crunch crunch…", mood: "gourmand" }, { text: "Oh, du bambou tout frais !", mood: "emerveille" }]),
+    { text: "*croque* Mmmh… délicieux !", mood: "gourmand" }, pick([{ text: "J'ai la bedaine pleine.", mood: "content" }, { text: "Merci, chef cuisinier !", mood: "amoureux" }])]);
+}
+function drink() {
+  if (busyNow()) return;
+  const [x, y] = facePoint(32, 42);
+  for (let k = 0; k < 3; k++) spark("glou", "ha", x, y, { dx: rand(-20, 20), dy: -40, delay: k * 350 });
+  speak([{ text: "Glou glou glou…", mood: "content" }, { text: "Ahhh, ça fait du bien ! Et toi, tu as bu de l'eau ?", mood: "clin" }]);
+}
+function stretch() {
+  if (busyNow()) return;
+  restartAnim("stretch");
+  speak([{ text: "Hmmmmmmmph… *s'étire*", mood: "baille" }, { text: "Ahhh, ça détend les pattes !", mood: "content" }]);
+}
+function cry() {
+  if (busyNow()) return;
+  fx("tear", 4);
+  speak([{ text: "Ouiiiiin…", mood: "pleure" }, { text: "Snif… snif…", mood: "pleure" }, { text: "…Je rigolais ! Tu y as cru ?", mood: "rigole" }]);
+}
+function sneeze() {
+  if (busyNow()) return;
+  speak([{ text: "Ah… ah… ahhh…", mood: "surpris" }]);
+  setTimeout(() => {
+    const [x, y] = facePoint(32, 30);
+    spark("ATCHOUM !", "rawr", x, y);
+    restartAnim("shiver");
+    tone(900, 200, 0.25, "sawtooth", 0.05);
+    speak([{ text: "ATCHOUM !", mood: "etourdi" }, { text: "Pardon… C'est la poussière de pixels.", mood: "timide" }]);
+  }, 1400);
+}
+function winkMe() {
+  if (busyNow()) return;
+  speak([pick([{ text: "*clin d'œil* Ça reste entre nous.", mood: "clin" }, { text: "Et… clin d'œil !", mood: "clin" }])]);
+}
+function muscles() {
+  if (busyNow()) return;
+  playFor("bigjump", 950);
+  const [x, y] = facePoint(32, 6);
+  spark("BIM !", "clac", x, y);
+  speak([{ text: "Regarde ces muscles !", mood: "fier" }, pick([{ text: "Je soulève des bambous de trois kilos.", mood: "fier" }, { text: "Fort comme un panda roux. Enfin… presque.", mood: "rigole" }])]);
+}
+function grimace() {
+  if (busyNow()) return;
+  speak([{ text: "Bleeeeh !", mood: "degoute" }, pick([{ text: "Je suis beau, hein ?", mood: "rigole" }, { text: "À toi de faire une grimace !", mood: "clin" }])]);
+}
+function robot() {
+  if (busyNow()) return;
+  playFor("robot", 3200);
+  [0, 0.4, 0.8, 1.2, 1.6, 2.0].forEach((t, i) => tone(i % 2 ? 660 : 440, i % 2 ? 660 : 440, 0.12, "square", 0.03, t));
+  speak([{ text: "BIP. BOUP. JE. SUIS. UN. ROBOT.", mood: "neutre" }, { text: "MISSION : ÊTRE. TROP. MIGNON. …Réussie.", mood: "fier" }]);
+}
+function zen() {
+  if (busyNow()) return;
+  playFor("float", 5200);
+  fx("zen", 3);
+  melody([392, 0, 440, 0, 392], 0.6);
+  speak([{ text: "Ommmm…", mood: "zen" }, { text: "Inspire… expire…", mood: "zen" }, { text: "Je suis aussi calme qu'un bambou dans la brise.", mood: "zen" }]);
+}
+function bubbles() {
+  if (busyNow()) return;
+  fx("bubbles", 12);
+  speak([{ text: "Pfffff… des bulles !", mood: "emerveille" }, { text: "Essaie de les compter !", mood: "clin" }]);
+}
+function rainbow() {
+  if (busyNow()) return;
+  stageItem("rainbow", "", 5200);
+  fx("sparkle", 6);
+  speak([{ text: "Waouh… un arc-en-ciel !", mood: "emerveille" }, { text: "Il paraît qu'il y a un trésor au bout. On y va ?", mood: "clin" }]);
+}
+function fireworks() {
+  if (busyNow()) return;
+  for (let k = 0; k < 6; k++) setTimeout(() => {
+    fx("firework");
+    if (ac && S.sound !== "muet") { tone(300, 60, 0.35, "sawtooth", 0.03); sfxClap(); }
+  }, k * 550);
+  speak([{ text: "Feu d'artifice !", mood: "emerveille" }, { text: "Ooooh… Aaaaah…", mood: "emerveille" }, { text: "C'était magnifique !", mood: "content" }]);
+}
+function moonwalk() {
+  if (busyNow()) return;
+  playFor("moonwalk", 3000);
+  melody([330, 0, 330, 392, 330, 294, 262, 0], 0.25);
+  speak([{ text: "Hee-hee !", mood: "fier" }, { text: "Le moonwalk du panda !", mood: "rigole" }]);
+}
+function magic() {
+  if (busyNow()) return;
+  speak([{ text: "Abracadabra…", mood: "clin" }]);
+  setTimeout(() => { faceWrap.classList.add("vanish"); fx("sparkle", 8); tone(1200, 300, 0.4, "sine", 0.04); }, 1200);
+  setTimeout(() => {
+    faceWrap.classList.remove("vanish"); flash(); fx("sparkle", 8); tone(300, 1400, 0.4, "sine", 0.04);
+    speak([{ text: "Ta-daa ! Me revoilà !", mood: "fier" }, { text: "Un magicien ne révèle jamais ses secrets.", mood: "clin" }]);
+  }, 3400);
+}
+const COMPLIMENTS = [
+  "Tu es quelqu'un de vraiment chouette, tu sais.", "Ton sourire rendrait jaloux le soleil.", "Tu as un super bon goût… la preuve, tu parles avec moi !",
+  "Tu es plus fort que tu ne le penses.", "Le monde est plus joli avec toi dedans.", "Tu as des idées géniales.",
+  "Tu es aussi doux qu'un panda roux. C'est le plus beau compliment que je connaisse.", "Je suis fier d'être ton compagnon.",
+  "Tu fais de ton mieux, et c'est déjà énorme.", "Tu mérites une journée magnifique.", "Tu es unique, comme mon bandana.", "Tu illumines mon écran."
+];
+function compliment() {
+  if (busyNow()) return;
+  fx("hearts", 3);
+  speak([{ text: pick(COMPLIMENTS), mood: "amoureux" }]);
+}
+const JOKES = [
+  ["Pourquoi les poissons n'aiment pas jouer au tennis ?", "Parce qu'ils ont peur du filet !"],
+  ["Que dit un escargot quand il croise une limace ?", "« Oh, un nudiste ! »"],
+  ["Quel est le comble pour un électricien ?", "De ne pas être au courant !"],
+  ["Pourquoi les plongeurs plongent-ils toujours en arrière ?", "Parce que sinon, ils tombent dans le bateau !"],
+  ["Qu'est-ce qu'un crocodile qui surveille la pharmacie ?", "Un Lacoste garde !"],
+  ["Que fait un panda roux sur un ordinateur ?", "Il clique sur la souris… et la mange pas, promis !"],
+  ["Comment appelle-t-on un chat tombé dans un pot de peinture le jour de Noël ?", "Un chat-peint de Noël !"],
+  ["Pourquoi le livre de maths est-il triste ?", "Parce qu'il a trop de problèmes."],
+  ["Quel est le sport préféré des insectes ?", "Le cricket !"],
+  ["Que dit une imprimante dans l'eau ?", "« J'ai papier ! »"],
+  ["Qu'est-ce qui est jaune et qui attend ?", "Jonathan !"],
+  ["Pourquoi les girafes ont-elles un long cou ?", "Parce que leurs pieds sentent mauvais !"],
+  ["Quel est le fruit préféré des vampires ?", "Le sang-guine… euh, l'orange sanguine !"],
+  ["Comment fait-on aboyer un chat ?", "On lui donne du lait… et il boit. Bon, ça ne marche pas."],
+  ["Qu'est-ce qu'un canif ?", "Un petit fien !"]
+];
+function joke() {
+  if (busyNow()) return;
+  const [q, a] = pick(JOKES);
+  speak([{ text: q, mood: "clin" }, { text: a, mood: "rigole" }, pick([{ text: "Hihi ! Elle est bonne, non ?", mood: "rigole" }, { text: "…Tu ne ris pas ? Bon.", mood: "timide" }])]);
+  setTimeout(() => fx("ha", 3), 2500);
+}
+function ball() {
+  if (busyNow()) return;
+  stageItem("ball", "", 3200);
+  [0.55, 1.25, 1.85, 2.3].forEach((t, i) => setTimeout(() => { restartAnim("hop"); tone(260 + i * 60, 520 + i * 60, 0.12, "sine", 0.05); }, t * 1000));
+  speak([{ text: "Une balle ! Lance-la !", mood: "surpris" }, { text: "Boing… boing… boing !", mood: "rigole" }, { text: "Encore ! J'adore ce jeu !", mood: "content" }]);
+}
+function wish() {
+  if (busyNow()) return;
+  stageItem("shooting", "", 2600);
+  setTimeout(() => fx("sparkle", 6), 900);
+  speak([{ text: "Regarde, une étoile filante !", mood: "emerveille" }, { text: "Vite, fais un vœu… Je ne dirai rien à personne.", mood: "clin" }]);
+}
+function cold() {
+  if (busyNow()) return;
+  playFor("shiver", 900);
+  fx("brr", 3);
+  speak([{ text: "Brrr… un peu, oui !", mood: "froid" }, { text: "Heureusement, j'ai ma grosse queue comme écharpe.", mood: "content" }]);
+}
+function birthday() {
+  if (busyNow()) return;
+  const who = S.userName ? " " + S.userName : "";
+  showCard({ type: "game", title: "Joyeux anniversaire", html: `<div class="cake"><i></i><i></i><i></i></div><div class="ctl"><button type="button" class="txt" data-g="blow">Souffler 🎂</button></div>` }, 60000);
+  game = { card: true, onButton(v) {
+    if (v !== "blow") return;
+    cardEl.querySelectorAll(".cake i").forEach(e => e.classList.add("out"));
+    fx("confetti", 30); flash();
+    game = null;
+    speak([{ text: "Bravo ! Toutes les bougies d'un coup !", mood: "emerveille" }, { text: "Joyeux anniversaire" + who + " ! Que tous tes vœux se réalisent !", mood: "amoureux" }]);
+  } };
+  // « Joyeux anniversaire » (mélodie traditionnelle)
+  melody([392, 392, 440, 392, 523, 494, 0, 392, 392, 440, 392, 587, 523, 0, 392, 392, 784, 659, 523, 494, 440, 0, 698, 698, 659, 523, 587, 523], 0.32);
+  fx("confetti", 20);
+  speak([{ text: "Joyeux anniversaire" + who + " !", mood: "emerveille" }, { text: "J'ai fait un gâteau ! Souffle les bougies sur la carte.", mood: "fier" }]);
+}
+
+/* ---------- jeux ---------- */
+let game = null;
+const best = { tap: 0, simon: 0, reflex: 0 };
+function startGame(g, title, html, ms) {
+  stopGame();
+  showCard({ type: "game", title, html }, ms || 180000);
+  game = g;
+}
+function stopGame() {
+  const g = game;
+  game = null;
+  if (g && g.stop) g.stop();
+}
+function keepCard() { clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 180000); }
+// élément de la carte du jeu (ou un élément fantôme si la carte a été fermée entre-temps)
+const gq = sel => cardEl.querySelector(sel) || document.createElement("div");
+const plain = t => deaccent(String(t).toLowerCase()).replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+// 1. Devine le nombre
+function gNumber() {
+  if (busyNow()) return;
+  const secret = ri(1, 100);
+  let tries = 0, lo = 1, hi = 100;
+  startGame({ onText(t) {
+    const m = t.match(/-?\d+/);
+    if (!m) return false;
+    const v = +m[0]; tries++;
+    if (v === secret) {
+      gq("[data-range]").textContent = secret; gq("[data-tries]").textContent = "Trouvé en " + tries + " essai" + (tries > 1 ? "s" : "") + " !";
+      fx("confetti", 25); game = null;
+      speak([{ text: "Oui ! C'était " + secret + " !", mood: "emerveille" }, { text: tries <= 7 ? "En " + tries + " essais, tu es un génie !" : "Trouvé en " + tries + " essais. Bien joué !", mood: "fier" }]);
+      return true;
+    }
+    if (v < secret) lo = Math.max(lo, v + 1); else hi = Math.min(hi, v - 1);
+    gq("[data-range]").textContent = lo + " – " + hi;
+    gq("[data-tries]").textContent = tries + " essai" + (tries > 1 ? "s" : "");
+    const far = Math.abs(v - secret);
+    speak([{ text: (v < secret ? "Plus grand" : "Plus petit") + " ! " + (far <= 3 ? "Tu brûles !" : far <= 10 ? "Tu chauffes !" : "Tu es encore loin…"), mood: far <= 3 ? "surpris" : "clin" }]);
+    keepCard();
+    return true;
+  } }, "Devine le nombre", `<div class="big" data-range>1 – 100</div><div class="sub" data-tries>Écris un nombre</div>`);
+  speak([{ text: "J'ai choisi un nombre entre 1 et 100.", mood: "clin" }, { text: "Écris ta proposition !", mood: "content" }]);
+}
+// 2. Calcul mental
+function gMath() {
+  if (busyNow()) return;
+  let i = 0, score = 0, q = null;
+  const next = () => {
+    const op = pick(["+", "−", "×"]);
+    let a, b, r;
+    if (op === "+") { a = ri(5, 60); b = ri(5, 40); r = a + b; }
+    else if (op === "−") { a = ri(10, 80); b = ri(1, a); r = a - b; }
+    else { a = ri(2, 10); b = ri(2, 10); r = a * b; }
+    q = { a, b, op, r };
+    gq("[data-q]").textContent = a + " " + op + " " + b + " = ?";
+    gq("[data-n]").textContent = "Question " + (i + 1) + "/5 · " + score + " bonne" + (score > 1 ? "s" : "");
+  };
+  startGame({ onText(t) {
+    const m = t.match(/-?\d+/);
+    if (!m) return false;
+    const ok = +m[0] === q.r;
+    if (ok) { score++; fx("sparkle", 2); }
+    i++;
+    if (i >= 5) {
+      game = null;
+      gq("[data-q]").textContent = score + " / 5";
+      gq("[data-n]").textContent = score === 5 ? "Parfait !" : "Partie terminée";
+      speak([{ text: ok ? "Exact !" : "Non, c'était " + q.r + ".", mood: ok ? "fier" : "triste" },
+        { text: score === 5 ? "Cinq sur cinq ! Tu es une calculatrice humaine !" : "Score : " + score + " sur 5. " + (score >= 3 ? "Bravo !" : "On s'entraîne encore ?"), mood: score >= 3 ? "emerveille" : "clin" }]);
+    } else {
+      speak([{ text: ok ? pick(["Exact !", "Bravo !", "Bien joué !", "Parfait !"]) : "Non, c'était " + q.r + ".", mood: ok ? "fier" : "triste" }]);
+      next();
+    }
+    keepCard();
+    return true;
+  } }, "Calcul mental", `<div class="big mid" data-q></div><div class="sub" data-n></div>`);
+  next();
+  speak([{ text: "Calcul mental ! Cinq questions. Écris tes réponses.", mood: "clin" }]);
+}
+// 3. Mots mélangés
+const WORDS = ["BAMBOU", "PANDA", "BANDANA", "ETOILE", "MUSIQUE", "CHOCOLAT", "GIRAFE", "PLANETE", "CHATEAU", "DRAGON", "SOLEIL", "NUAGE",
+  "JARDIN", "PIRATE", "BISCUIT", "TORTUE", "VOLCAN", "ORANGE", "FUSEE", "CITRON", "LICORNE", "FORET", "RIVIERE", "CROISSANT"];
+function shuffleWord(w) {
+  let s2 = w;
+  for (let k = 0; k < 10 && s2 === w; k++) s2 = [...w].sort(() => Math.random() - 0.5).join("");
+  return s2;
+}
+function gAnagram() {
+  if (busyNow()) return;
+  let word = pick(WORDS), shown = 1, round = 0, score = 0;
+  const show = () => {
+    gq("[data-w]").textContent = shuffleWord(word);
+    gq("[data-h]").textContent = "Mot " + (round + 1) + "/3 · « indice » pour une aide";
+  };
+  const nextWord = () => {
+    round++;
+    if (round >= 3) {
+      game = null;
+      gq("[data-w]").textContent = score + " / 3";
+      gq("[data-h]").textContent = "Partie terminée";
+      speak([{ text: "Fini ! Tu as trouvé " + score + " mot" + (score > 1 ? "s" : "") + " sur 3.", mood: score >= 2 ? "fier" : "clin" }]);
+      return false;
+    }
+    word = pick(WORDS); shown = 1; show();
+    return true;
+  };
+  startGame({ onText(t, n) {
+    const p = plain(t).replace(/ /g, "").toUpperCase();
+    if (/^(indice|aide)/.test(n)) {
+      shown = Math.min(word.length - 1, shown + 1);
+      speak([{ text: "Le mot commence par « " + word.slice(0, shown) + " ».", mood: "clin" }]); keepCard(); return true;
+    }
+    if (/(reponse|abandonne|langue au chat|je sais pas|passe)/.test(n)) {
+      speak([{ text: "C'était « " + word + " » !", mood: "clin" }]);
+      nextWord(); keepCard(); return true;
+    }
+    if (p === word) {
+      score++; fx("sparkle", 4);
+      speak([{ text: pick(["Bravo ! C'était bien « " + word + " » !", "Trouvé : « " + word + " » !"]), mood: "emerveille" }]);
+      nextWord(); keepCard(); return true;
+    }
+    if (p.length >= 3) { speak([{ text: pick(["Non, ce n'est pas ça…", "Presque ? Essaie encore !", "Raté ! Dis « indice » si tu veux."]), mood: "reflechit" }]); keepCard(); return true; }
+    return false;
+  } }, "Mots mélangés", `<div class="letters" data-w></div><div class="sub" data-h></div>`);
+  show();
+  speak([{ text: "Remets les lettres dans l'ordre ! Trois mots à trouver.", mood: "clin" }]);
+}
+// 4. Devinettes
+const RIDDLES = [
+  ["Je suis plein de trous, mais je retiens l'eau. Qui suis-je ?", ["eponge"], "une éponge"],
+  ["Plus j'ai de gardiens, moins je suis gardé. Qui suis-je ?", ["secret"], "un secret"],
+  ["Qu'est-ce qui monte et ne redescend jamais ?", ["age"], "l'âge"],
+  ["Je réponds à tout le monde, mais je n'ai pas de bouche. Qui suis-je ?", ["echo"], "l'écho"],
+  ["Qu'est-ce qui a des dents mais ne mange jamais ?", ["peigne", "scie", "fourchette"], "un peigne"],
+  ["Plus on m'enlève de terre, plus je deviens grand. Qui suis-je ?", ["trou"], "un trou"],
+  ["J'ai des aiguilles, mais je ne couds jamais. Qui suis-je ?", ["horloge", "montre", "pendule", "sapin", "herisson", "reveil"], "une horloge"],
+  ["Qu'est-ce qui court sans avoir de jambes ?", ["riviere", "eau", "fleuve", "ruisseau", "vent", "temps"], "une rivière"],
+  ["Il est à toi, mais les autres l'utilisent plus que toi. Qu'est-ce que c'est ?", ["prenom", "nom"], "ton prénom"],
+  ["Qu'est-ce qui a un cou, mais pas de tête ?", ["bouteille", "pull", "chemise"], "une bouteille"],
+  ["Je tombe sans jamais me faire mal. Qui suis-je ?", ["pluie", "nuit", "neige", "feuille"], "la pluie"],
+  ["Qu'est-ce qui a quatre pattes le matin, deux à midi et trois le soir ?", ["homme", "humain", "personne", "etre humain"], "l'être humain (à quatre pattes bébé, puis avec une canne)"]
+];
+function gRiddle() {
+  if (busyNow()) return;
+  const [q, answers, said] = pick(RIDDLES);
+  let tries = 0;
+  startGame({ onText(t, n) {
+    const p = plain(t);
+    if (answers.some(a => p.includes(a))) {
+      game = null; fx("confetti", 20);
+      gq("[data-a]").textContent = "Réponse : " + said;
+      speak([{ text: "Bravo ! C'était " + said + " !", mood: "emerveille" }, { text: "Tu en veux une autre ? Dis « devinette ».", mood: "clin" }]);
+      return true;
+    }
+    if (/(reponse|abandonne|langue au chat|je sais pas|j'?sais pas|aucune idee)/.test(n)) {
+      game = null;
+      gq("[data-a]").textContent = "Réponse : " + said;
+      speak([{ text: "C'était " + said + " !", mood: "clin" }, { text: "Tu en veux une autre ? Dis « devinette ».", mood: "content" }]);
+      return true;
+    }
+    tries++;
+    speak([{ text: tries >= 2 ? "Non… Tu peux dire « réponse » si tu donnes ta langue au chat." : "Non, ce n'est pas ça. Essaie encore !", mood: "reflechit" }]);
+    keepCard();
+    return true;
+  } }, "Devinette", `<div class="desc">${esc(q)}</div><div class="sub" data-a>Écris ta réponse</div>`);
+  speak([{ text: q, mood: "clin" }]);
+}
+// 5. Quiz
+const QUIZ = [
+  ["Quelle est la capitale de l'Italie ?", ["Rome", "Milan", "Venise"], 0],
+  ["Combien de pattes a une araignée ?", ["6", "8", "10"], 1],
+  ["Quelle planète est surnommée la planète rouge ?", ["Vénus", "Mars", "Jupiter"], 1],
+  ["Que mangent surtout les pandas roux ?", ["Du bambou", "Du poisson", "Des cailloux"], 0],
+  ["Quel est le plus grand océan ?", ["Atlantique", "Indien", "Pacifique"], 2],
+  ["Quel est le plus gros animal du monde ?", ["L'éléphant", "La baleine bleue", "La girafe"], 1],
+  ["Combien de jours compte une année bissextile ?", ["365", "366", "364"], 1],
+  ["Qui a peint la Joconde ?", ["Léonard de Vinci", "Picasso", "Monet"], 0],
+  ["Bleu + jaune, ça donne…", ["Vert", "Violet", "Orange"], 0],
+  ["Quel est le plus long fleuve de France ?", ["La Seine", "La Loire", "Le Rhône"], 1],
+  ["Dans quelle ville se trouve la tour Eiffel ?", ["Lyon", "Paris", "Marseille"], 1],
+  ["Combien font 7 × 8 ?", ["54", "56", "58"], 1],
+  ["Quel gaz respirons-nous pour vivre ?", ["L'oxygène", "L'hélium", "Le néon"], 0],
+  ["Quel est l'animal terrestre le plus rapide ?", ["Le guépard", "Le lion", "Le cheval"], 0],
+  ["Combien de côtés a un hexagone ?", ["5", "6", "8"], 1],
+  ["En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?", ["1959", "1969", "1979"], 1],
+  ["Quelle est la capitale de l'Espagne ?", ["Barcelone", "Madrid", "Séville"], 1],
+  ["Rennes est la capitale de quelle région ?", ["La Normandie", "La Bretagne", "Les Pays de la Loire"], 1],
+  ["Combien de temps met la Terre pour faire le tour du Soleil ?", ["Un jour", "Un mois", "Un an"], 2],
+  ["Quel instrument a 88 touches ?", ["La guitare", "Le piano", "La flûte"], 1]
+];
+function sample(arr, n) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = ri(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, n); }
+function choiceGame(title, intro, items, render1, check, n) {
+  if (busyNow()) return;
+  const list = sample(items, n);
+  let i = 0, score = 0, lock = false;
+  const show = () => {
+    gq("[data-q]").textContent = render1(list[i]).q;
+    gq("[data-c]").innerHTML = render1(list[i]).o.map((o, k) => `<button type="button" class="opt" data-g="${k}">${esc(o)}</button>`).join("");
+    gq("[data-n]").textContent = "Question " + (i + 1) + "/" + n + " · " + score + " point" + (score > 1 ? "s" : "");
+  };
+  startGame({ onButton(v, b) {
+    if (lock) return;
+    lock = true;
+    const { ok, say } = check(list[i], +v);
+    b.classList.add(ok ? "good" : "bad");
+    if (ok) { score++; fx("sparkle", 3); }
+    i++;
+    setTimeout(() => {
+      lock = false;
+      if (i >= n) {
+        game = null;
+        gq("[data-q]").textContent = "Score : " + score + " / " + n;
+        gq("[data-c]").innerHTML = ""; gq("[data-n]").textContent = score === n ? "Sans faute !" : "Partie terminée";
+        if (score === n) fx("confetti", 25);
+        speak([{ text: say, mood: ok ? "fier" : "triste" }, { text: score === n ? "Sans faute ! Tu es incollable !" : "Tu as " + score + " sur " + n + ". " + (score >= n / 2 ? "Bien joué !" : "On rejoue ?"), mood: score >= n / 2 ? "emerveille" : "clin" }]);
+      } else { speak([{ text: say, mood: ok ? "fier" : "triste" }]); show(); }
+    }, 900);
+    keepCard();
+  } }, title, `<div class="desc" data-q></div><div class="opts" data-c></div><div class="sub" data-n></div>`);
+  show();
+  speak([{ text: intro, mood: "clin" }]);
+}
+function gQuiz() {
+  choiceGame("Quiz", "Quiz ! Cinq questions, choisis la bonne réponse.", QUIZ, x => ({ q: x[0], o: x[1] }),
+    (x, v) => ({ ok: v === x[2], say: v === x[2] ? pick(["Bonne réponse !", "Exact !", "Bravo !"]) : "Non, c'était « " + x[1][x[2]] + " »." }), 5);
+}
+// 6. Vrai ou faux
+const TRUTHS = [
+  ["Les pandas roux sont de la même famille que les pandas géants.", false, "Faux ! Ils ont leur propre famille, les ailuridés."],
+  ["Le Soleil est une étoile.", true, "Vrai ! C'est même l'étoile la plus proche de nous."],
+  ["Les poissons rouges n'ont que 3 secondes de mémoire.", false, "Faux ! Ils se souviennent de choses pendant des mois."],
+  ["L'eau bout à 100 °C au niveau de la mer.", true, "Vrai !"],
+  ["Les chauves-souris sont aveugles.", false, "Faux ! Elles voient, et utilisent aussi l'écho pour se repérer."],
+  ["La Lune produit sa propre lumière.", false, "Faux ! Elle renvoie la lumière du Soleil."],
+  ["Les pieuvres ont trois cœurs.", true, "Vrai ! Trois cœurs et du sang bleu."],
+  ["La tomate est un fruit.", true, "Vrai ! Pour les botanistes, c'est un fruit."],
+  ["Les autruches cachent leur tête dans le sable quand elles ont peur.", false, "Faux ! C'est une légende."],
+  ["La Grande Muraille de Chine se voit à l'œil nu depuis la Lune.", false, "Faux ! Elle est bien trop fine vue de si loin."],
+  ["Le cœur humain a quatre cavités.", true, "Vrai ! Deux oreillettes et deux ventricules."],
+  ["Au pôle Sud, on trouve des pingouins.", false, "Faux ! Au pôle Sud, ce sont des manchots. Les pingouins vivent dans le Nord."],
+  ["Les dauphins sont des mammifères.", true, "Vrai ! Ils respirent de l'air, comme nous."],
+  ["Les abeilles fabriquent le miel à partir du nectar des fleurs.", true, "Vrai !"],
+  ["Un panda roux dort souvent dans les arbres.", true, "Vrai ! Il adore faire la sieste sur une branche."]
+];
+function gTrueFalse() {
+  choiceGame("Vrai ou faux", "Vrai ou faux ? Cinq affirmations !", TRUTHS, x => ({ q: x[0], o: ["Vrai", "Faux"] }),
+    (x, v) => { const ok = (v === 0) === x[1]; return { ok, say: (ok ? "Bien vu ! " : "Raté ! ") + x[2] }; }, 5);
+}
+// 7. Jeu de mémoire (couleurs)
+function gSimon() {
+  if (busyNow()) return;
+  const seq = [], NOTES = [392, 523, 659, 784];
+  let pos = 0, showing = false, timers = [];
+  const lightPad = (k, ms) => {
+    const b = gq('[data-g="' + k + '"]');
+    if (!b) return;
+    b.classList.add("lit"); tone(NOTES[k], NOTES[k], ms / 1000 * 0.9, "triangle", 0.05);
+    timers.push(setTimeout(() => b.classList.remove("lit"), ms));
+  };
+  const play = () => {
+    showing = true; pos = 0;
+    gq("[data-n]").textContent = "Regarde bien… (" + seq.length + ")";
+    seq.forEach((k, i) => timers.push(setTimeout(() => lightPad(k, 380), 600 + i * 560)));
+    timers.push(setTimeout(() => { showing = false; gq("[data-n]").textContent = "À toi ! (" + seq.length + ")"; }, 600 + seq.length * 560));
+  };
+  const addStep = () => { seq.push(ri(0, 3)); play(); };
+  startGame({
+    onButton(v) {
+      if (showing) return;
+      const k = +v;
+      lightPad(k, 220);
+      if (k !== seq[pos]) {
+        const sc = seq.length - 1;
+        best.simon = Math.max(best.simon, sc);
+        game = null;
+        gq("[data-n]").textContent = "Score : " + sc + " · record : " + best.simon;
+        speak([{ text: "Oups, raté !", mood: "surpris" }, { text: "Tu as retenu " + sc + " couleur" + (sc > 1 ? "s" : "") + ". " + (sc >= 6 ? "Quelle mémoire !" : "On retente ?"), mood: sc >= 6 ? "emerveille" : "clin" }]);
+        return;
+      }
+      pos++;
+      if (pos >= seq.length) { fx("sparkle", 2); timers.push(setTimeout(addStep, 500)); }
+      keepCard();
+    },
+    stop() { timers.forEach(clearTimeout); }
+  }, "Mémoire", `<div class="pads"><button type="button" data-g="0" class="pad p0"></button><button type="button" data-g="1" class="pad p1"></button><button type="button" data-g="2" class="pad p2"></button><button type="button" data-g="3" class="pad p3"></button></div><div class="sub" data-n></div>`);
+  speak([{ text: "Retiens l'ordre des couleurs, puis répète-le !", mood: "clin" }]);
+  timers.push(setTimeout(addStep, 900));
+}
+// 8. Réflexes
+function gReflex() {
+  if (busyNow()) return;
+  let state = "wait", t0 = 0, round = 0, times = [], timer = null;
+  const pad = () => gq("[data-g='hit']");
+  const arm = () => {
+    state = "wait";
+    const p = pad(); if (!p) return;
+    p.className = "reflex wait"; p.textContent = "Attends le vert…";
+    timer = setTimeout(() => { state = "go"; t0 = performance.now(); const q = pad(); if (q) { q.className = "reflex go"; q.textContent = "TAPE !"; } }, ri(1500, 4000));
+  };
+  startGame({
+    onButton() {
+      if (state === "wait") {
+        clearTimeout(timer);
+        speak([{ text: "Trop tôt ! Attends le vert.", mood: "clin" }]);
+        arm(); return;
+      }
+      if (state !== "go") return;
+      const ms = Math.round(performance.now() - t0);
+      times.push(ms); round++;
+      state = "done";
+      const p = pad(); p.className = "reflex done"; p.textContent = ms + " ms";
+      if (round >= 3) {
+        const b = Math.min(...times);
+        best.reflex = best.reflex ? Math.min(best.reflex, b) : b;
+        game = null;
+        gq("[data-n]").textContent = "Meilleur : " + b + " ms · record : " + best.reflex + " ms";
+        speak([{ text: "Ton meilleur temps : " + b + " millisecondes !", mood: b < 300 ? "emerveille" : "fier" }, { text: b < 250 ? "Des réflexes de ninja !" : b < 350 ? "Très rapide !" : "Pas mal ! On retente ?", mood: "clin" }]);
+      } else {
+        speak([{ text: ms + " millisecondes !", mood: ms < 300 ? "emerveille" : "content" }]);
+        timer = setTimeout(arm, 1300);
+      }
+      keepCard();
+    },
+    stop() { clearTimeout(timer); }
+  }, "Réflexes", `<button type="button" data-g="hit" class="reflex wait">Attends le vert…</button><div class="sub" data-n>3 essais</div>`);
+  speak([{ text: "Tape dès que ça devient vert ! Trois essais.", mood: "clin" }]);
+  setTimeout(arm, 400);
+}
+// 9. Morpion
+function gTicTacToe() {
+  if (busyNow()) return;
+  const b = Array(9).fill(""), L = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+  let turn = "X", over = false;
+  const winner = () => { for (const [a, c, d] of L) if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a]; return b.every(Boolean) ? "=" : ""; };
+  const draw = () => { cardEl.querySelectorAll(".ttt button").forEach((e, k) => { e.textContent = b[k] === "X" ? "✕" : b[k] === "O" ? "◯" : ""; e.classList.toggle("o", b[k] === "O"); }); };
+  const finish = w => {
+    over = true; game = null;
+    gq("[data-n]").textContent = w === "X" ? "Tu as gagné !" : w === "O" ? S.companionName + " a gagné !" : "Match nul !";
+    if (w === "X") { fx("confetti", 25); speak([{ text: "Tu m'as battu ! Bravo !", mood: "emerveille" }]); }
+    else if (w === "O") speak([{ text: "Hé hé, j'ai gagné !", mood: "fier" }]);
+    else speak([{ text: "Match nul ! On est trop forts tous les deux.", mood: "clin" }]);
+  };
+  const aiMove = () => {
+    const free = b.map((v, k) => v ? -1 : k).filter(k => k >= 0);
+    const tryWin = who => { for (const k of free) { b[k] = who; const w = winner() === who; b[k] = ""; if (w) return k; } return -1; };
+    let k = tryWin("O");
+    if (k < 0) k = tryWin("X");
+    if (k < 0 && !b[4] && Math.random() < 0.8) k = 4;
+    if (k < 0) k = pick(free);
+    b[k] = "O"; draw();
+    const w = winner(); if (w) finish(w); else { turn = "X"; gq("[data-n]").textContent = "À toi !"; }
+  };
+  startGame({ onButton(v) {
+    const k = +v;
+    if (over || turn !== "X" || b[k]) return;
+    b[k] = "X"; draw();
+    const w = winner();
+    if (w) { finish(w); return; }
+    turn = "O"; gq("[data-n]").textContent = S.companionName + " réfléchit…";
+    setTimeout(() => { if (game) aiMove(); }, 600);
+    keepCard();
+  } }, "Morpion", `<div class="ttt">${Array.from({ length: 9 }, (_, k) => `<button type="button" data-g="${k}"></button>`).join("")}</div><div class="sub" data-n>Tu joues les ✕. À toi !</div>`);
+  speak([{ text: "Morpion ! Tu commences.", mood: "clin" }]);
+}
+// 10. Clique vite
+function gTap() {
+  if (busyNow()) return;
+  let n = 0, running = false, timer = null, t0 = 0;
+  startGame({
+    onButton() {
+      if (!running && n === 0) {
+        running = true; t0 = Date.now();
+        timer = setInterval(() => {
+          const left = Math.max(0, 5 - (Date.now() - t0) / 1000);
+          gq("[data-n]").textContent = left.toFixed(1) + " s";
+          if (left <= 0) {
+            clearInterval(timer); running = false;
+            best.tap = Math.max(best.tap, n);
+            game = null;
+            gq("[data-n]").textContent = n + " tapes · record : " + best.tap;
+            speak([{ text: n + " tapes en 5 secondes !", mood: n >= 35 ? "emerveille" : "fier" }, { text: n >= 45 ? "Tes doigts sont des fusées !" : "Bien joué ! Tu peux battre ton record ?", mood: "clin" }]);
+          }
+        }, 100);
+      }
+      if (!running) return;
+      n++;
+      const bt = gq("[data-g='tap']"); if (bt) bt.textContent = n;
+      if (n % 5 === 0) fx("sparkle", 1);
+    },
+    stop() { clearInterval(timer); }
+  }, "Clique vite", `<button type="button" data-g="tap" class="reflex go">TAPE !</button><div class="sub" data-n>Le chrono part à la première tape (5 s)</div>`);
+  speak([{ text: "Tape le plus de fois possible en 5 secondes ! Prêt ?", mood: "clin" }]);
+}
+// 11. Boule magique
+const EIGHT = ["C'est certain !", "Sans aucun doute.", "Oui, absolument.", "Tu peux compter dessus.", "Très probable.", "Les signes disent oui.",
+  "Réponse floue, réessaie.", "Redemande plus tard.", "Mieux vaut ne pas te le dire maintenant…", "N'y compte pas trop.", "Ma boule dit non.", "Peu probable."];
+function gEightBall(question) {
+  if (busyNow()) return;
+  const ask2 = () => {
+    const el = gq(".ball8"); if (el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+    const a = pick(EIGHT);
+    setTimeout(() => { const t = gq("[data-a]"); if (t) t.textContent = a; speak([{ text: a, mood: "clin" }]); }, 900);
+  };
+  startGame({ onText(t) { if (t.length < 3) return false; ask2(); keepCard(); return true; } },
+    "Boule magique", `<div class="ball8"><span data-a>8</span></div><div class="sub">Pose une question fermée</div>`, 90000);
+  if (question) { speak([{ text: "Je secoue la boule magique…", mood: "reflechit" }]); ask2(); }
+  else speak([{ text: "Pose-moi une question fermée, et la boule magique répondra…", mood: "clin" }]);
+}
+// 12. Cache-cache
+function gHide() {
+  if (busyNow()) return;
+  const spot = ri(0, 2);
+  let tries = 0;
+  speak([{ text: "Cache-cache ! Ferme les yeux… Je me cache !", mood: "clin" }]);
+  setTimeout(() => {
+    faceWrap.classList.add("hidden-cc");
+    startGame({
+      onButton(v, b) {
+        if (+v === spot) {
+          game = null; b.textContent = "🐾"; faceWrap.classList.remove("hidden-cc"); restartAnim("hop"); fx("sparkle", 5);
+          speak([{ text: tries === 0 ? "Oh non, trouvé du premier coup !" : "Tu m'as trouvé !", mood: "rigole" }]);
+          setTimeout(() => { if (!game && cardEl.querySelector(".bushes")) hideCard(); }, 2500);
+          return;
+        }
+        tries++;
+        b.classList.add("shake"); b.disabled = true;
+        if (tries >= 2) {
+          game = null; faceWrap.classList.remove("hidden-cc"); restartAnim("hop");
+          speak([{ text: "Coucou ! J'étais derrière le buisson " + (spot + 1) + " !", mood: "fier" }]);
+          setTimeout(() => { if (!game && cardEl.querySelector(".bushes")) hideCard(); }, 2500);
+        } else speak([{ text: pick(["Pas là !", "Raté, hi hi !"]), mood: "clin" }]);
+      },
+      stop() { faceWrap.classList.remove("hidden-cc"); }
+    }, "Cache-cache", `<div class="bushes"><button type="button" data-g="0">🌳</button><button type="button" data-g="1">🌳</button><button type="button" data-g="2">🌳</button></div><div class="sub">Derrière quel buisson suis-je ?</div>`, 90000);
+  }, 1800);
+}
+
 
 const soundBtn = document.getElementById("soundBtn");
 const MODES = HAS_TTS ? ["bips", "voix", "muet"] : ["bips", "muet"];
@@ -2340,6 +3200,7 @@ settingsEl.hidden = !NATIVE;
 
 function renderSheet() {
   try { renderMusicSettings(); } catch (e) {}
+  try { renderSkins(); } catch (e) {}
   pull();
   logEl.replaceChildren();
   const entries = S.log.slice(-120);
@@ -2464,6 +3325,8 @@ function renderRank() {
   }[r] || "";
   rankClear.hidden = !info;
   devTools.hidden = !(r === "dev" || r === "owner");
+  document.getElementById("skinsSec").hidden = !skinAllowed();
+  applySkin();
   document.body.classList.toggle("vip", r === "vip");
 }
 document.getElementById("codeBtn").addEventListener("click", () => {
@@ -2686,6 +3549,40 @@ const DEV = [
   ["Avertissement vie privée", () => { closeSheet(); askPrivacy(() => {}, true); }]
 ];
 document.getElementById("devBtns").append(...DEV.map(([label, fn]) => button(label, false, fn)));
+
+/* ---------- skins (gérant et développeurs) ---------- */
+const SKIN_LINES = {
+  classique: "Retour au look classique. Le bandana orange, c'est la vie !", neige: "Tout blanc comme la neige ! Brrr…",
+  minuit: "Mode minuit activé. Je suis le panda de la nuit.", dore: "Doré, avec une couronne ! Appelez-moi Votre Majesté.",
+  sakura: "Rose sakura, avec une fleur. Tout doux !", menthe: "Vert menthe, frais comme un bonbon !",
+  cyber: "Mode cyber : lunettes néon enclenchées.", pirate: "Arrr ! Capitaine Canelle, avec son cache-œil !",
+  fantome: "Hou hou… je suis un fantôme !", magma: "Magma ! Attention, je suis brûlant.", galaxie: "Galaxie : j'ai des étoiles plein le pelage."
+};
+function applySkin() {
+  const sk = activeSkin();
+  faceBtn.dataset.skin = sk.id;
+  render();
+}
+function renderSkins() {
+  const grid = document.getElementById("skinGrid");
+  if (!grid || !skinAllowed()) return;
+  grid.replaceChildren();
+  const cur = activeSkin().id;
+  SKINS.forEach(sk => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "skin" + (sk.id === cur ? " on" : "");
+    b.setAttribute("aria-pressed", sk.id === cur ? "true" : "false");
+    const c = document.createElement("canvas"); c.width = W; c.height = H;
+    drawPreview(c, sk);
+    b.append(c, document.createTextNode(sk.name));
+    b.addEventListener("click", () => {
+      S.skin = sk.id; saveUi(); applySkin(); renderSkins();
+      closeSheet(); flash(); fx("sparkle", 6);
+      speak([{ text: SKIN_LINES[sk.id] || "Nouveau look !", mood: "fier" }]);
+    });
+    grid.append(b);
+  });
+}
 
 /* ---------- menu : musique ---------- */
 const musicSel = document.getElementById("musicAppSel");

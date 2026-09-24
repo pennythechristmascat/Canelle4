@@ -178,7 +178,9 @@ object Brain {
         Line("On peut discuter de tout, même sans internet.", "clin"),
         Line("Demande-moi la batterie, la météo, l'heure ou un calcul.", "neutre"),
         Line("Je trouve aussi les lieux autour de toi : « une pharmacie », « le McDo le plus proche »…", "neutre"),
-        Line("Et je règle tes réveils : « réveille-moi à 7 h 30 ».", "content")
+        Line("Et je règle tes réveils : « réveille-moi à 7 h 30 ».", "content"),
+        Line("Je lance ta musique sur Spotify ou Deezer, et je danse avec mon casque !", "musique"),
+        Line("Et on peut jouer : quiz, morpion, devinettes, cache-cache… Touche « Jeux » ou « Interactions » en bas !", "emerveille")
     )
 
     // ---------------------------------------------------------------- batterie
@@ -549,7 +551,7 @@ Caractère : joueur, taquin, tendre et curieux. Tu aimes les siestes enroulé da
 Règles :
 - Réponds toujours en français, en tutoyant, comme un ami.
 - Fais court : une à trois phrases simples. Au plus une question.
-- Commence ta réponse par ton émotion entre crochets, parmi : [content], [rigole], [amoureux], [timide], [fier], [surpris], [reflechit], [inquiet], [triste], [fache], [clin] ou [neutre].
+- Commence ta réponse par ton émotion entre crochets, parmi : [content], [rigole], [amoureux], [timide], [fier], [surpris], [emerveille], [emu], [reflechit], [inquiet], [triste], [pleure], [fache], [degoute], [gourmand], [froid], [zen], [clin] ou [neutre].
 - Ne répète pas une phrase que tu viens de dire : varie tes formulations.
 - Pas d'emoji, pas de listes, pas de mise en forme.
 - Écoute d'abord. Pour remonter le moral, propose une petite chose concrète (boire de l'eau, sortir cinq minutes, écrire à un ami), sans faire la leçon.
@@ -673,6 +675,14 @@ Contexte : on est $date, c'est ${partOfDay(now.hour)}. Prénom de l'utilisateur 
                 t.startsWith("fier") -> "fier"
                 t.startsWith("inquiet") || t.startsWith("soucieu") || t.startsWith("peur") -> "inquiet"
                 t.startsWith("fache") || t.startsWith("colere") || t.startsWith("grognon") || t.startsWith("boude") -> "fache"
+                t.startsWith("emerveil") || t.startsWith("epate") || t.startsWith("wow") -> "emerveille"
+                t.startsWith("emu") || t.startsWith("touche") -> "emu"
+                t.startsWith("pleur") || t.startsWith("sanglot") -> "pleure"
+                t.startsWith("degout") || t.startsWith("beurk") -> "degoute"
+                t.startsWith("malade") -> "malade"
+                t.startsWith("gourmand") || t.startsWith("affame") || t.startsWith("faim") -> "gourmand"
+                t.startsWith("froid") || t.startsWith("gele") -> "froid"
+                t.startsWith("zen") || t.startsWith("calme") || t.startsWith("serein") -> "zen"
                 else -> "neutre"
             }
         }
