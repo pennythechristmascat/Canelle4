@@ -144,6 +144,19 @@ class MainActivity : ComponentActivity(), ToolHost {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        CanelleApp.visible = true
+        LocalModel.cancelRelease()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        CanelleApp.visible = false
+        // Le cerveau pèse lourd : on rend sa mémoire une minute après que l'appli passe en arrière-plan.
+        LocalModel.releaseSoon()
+    }
+
     override fun onPause() {
         super.onPause()
         // En arrière-plan, tout s'arrête : position, mesure du rythme, animations et minuteries de la page.
@@ -435,7 +448,32 @@ class MainActivity : ComponentActivity(), ToolHost {
         /** Réveille le cerveau en arrière-plan, pour que la première réponse arrive plus vite. */
         @JavascriptInterface
         fun warmUp() {
+            // Réveil automatique seulement si le cerveau a déjà démarré sans problème sur ce téléphone.
+            if (!Store.brainOkOnce) return
             lifecycleScope.launch { runCatching { LocalModel.ensureLoaded(this@MainActivity) } }
+        }
+
+        /** Réveil demandé par l'utilisateur (bouton) : autorisé même après un plantage, en mode léger. */
+        @JavascriptInterface
+        fun retryBrain() {
+            lifecycleScope.launch { runCatching { LocalModel.ensureLoaded(this@MainActivity, manual = true) } }
+        }
+
+        @JavascriptInterface
+        fun ackBrainNotice() = LocalModel.ackCrashNotice()
+
+        @JavascriptInterface
+        fun clearReport() {
+            Store.lastExitReport = ""
+        }
+
+        /** Copie un texte dans le presse-papiers (rapport de plantage). */
+        @JavascriptInterface
+        fun copyText(text: String) {
+            runOnUiThread {
+                val cm = getSystemService(android.content.ClipboardManager::class.java)
+                cm?.setPrimaryClip(android.content.ClipData.newPlainText("Rapport Canelle", text))
+            }
         }
 
         @JavascriptInterface
@@ -468,6 +506,8 @@ class MainActivity : ComponentActivity(), ToolHost {
                 if (gpu != Store.useGpu || (gpu && Store.gpuBroken)) {
                     Store.useGpu = gpu
                     Store.gpuBroken = false
+                    // choix explicite : on repart du niveau normal (le garde-fou reprendra la main en cas de plantage)
+                    if (Store.brainTier < LocalModel.TIER_BLOCKED) Store.brainTier = if (gpu) LocalModel.TIER_GPU else maxOf(Store.brainTier, LocalModel.TIER_CPU)
                     lifecycleScope.launch { LocalModel.release() }
                 }
             }

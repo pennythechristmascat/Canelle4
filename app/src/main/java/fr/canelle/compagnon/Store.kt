@@ -37,6 +37,42 @@ object Store {
     var gpuPending: Boolean
         get() = p.getBoolean("gpuPending", false)
         set(v) { p.edit().putBoolean("gpuPending", v).commit() }
+    /**
+     * Niveau de chargement du cerveau en cours (0 puce graphique, 1 processeur, 2 économe), ou -1.
+     * Écrit de façon synchrone : si l'appli est tuée pendant le chargement, on le saura au lancement suivant.
+     */
+    var loadAttempt: Int
+        get() = p.getInt("loadAttempt", -1)
+        set(v) { p.edit().putInt("loadAttempt", v).commit() }
+    /** Niveau minimal à utiliser après un plantage (0 normal … 3 = ne plus charger tout seul). */
+    var brainTier: Int
+        get() = p.getInt("brainTier", 0)
+        set(v) { p.edit().putInt("brainTier", v).commit() }
+    /** Le cerveau a déjà démarré au moins une fois sans problème sur ce téléphone. */
+    var brainOkOnce: Boolean
+        get() = p.getBoolean("brainOkOnce", false)
+        set(v) = putBool("brainOkOnce", v)
+    /** Canelle doit expliquer qu'il est passé en mode plus léger après un plantage. */
+    var brainCrashNotice: Boolean
+        get() = p.getBoolean("brainCrashNotice", false)
+        set(v) = putBool("brainCrashNotice", v)
+    // diagnostic du dernier arrêt anormal (reste sur le téléphone)
+    var lastExitSeen: Long
+        get() = p.getLong("lastExitSeen", 0L)
+        set(v) = putLong("lastExitSeen", v)
+    var lastExitReport: String
+        get() = str("lastExitReport")
+        set(v) { p.edit().putString("lastExitReport", v).commit() }
+    var lastExitReason: Int
+        get() = p.getInt("lastExitReason", -1)
+        set(v) = putInt("lastExitReason", v)
+    var lastExitMemory: Boolean
+        get() = p.getBoolean("lastExitMemory", false)
+        set(v) = putBool("lastExitMemory", v)
+    /** Trace du dernier plantage Java (écrite de façon synchrone au moment du plantage). */
+    var javaCrash: String
+        get() = str("javaCrash")
+        set(v) { p.edit().putString("javaCrash", v).commit() }
     var gpuBroken: Boolean
         get() = p.getBoolean("gpuBroken", false)
         set(v) = putBool("gpuBroken", v)

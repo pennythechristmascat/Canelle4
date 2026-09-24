@@ -23,6 +23,7 @@ class CheckinWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ct
         if (!Store.checkins || isQuiet(LocalTime.now().hour) || Access.isLocked()) return Result.success()
         if (now - Store.lastCheckin < Store.intervalHours * 3_600_000L - 10 * 60_000L) return Result.success()
         postCheckin(ctx)
+        if (!CanelleApp.visible) LocalModel.releaseSoon(20_000L)
         return Result.success()
     }
 

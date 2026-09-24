@@ -641,6 +641,11 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="warn" id="brainWarn" hidden></p>
       <label class="check" id="mobileRow"><input type="checkbox" id="allowMobile"> Autoriser les données mobiles (sinon, wifi seulement)</label>
       <div class="btns" id="brainBtns"></div>
+      <div id="brainReport" hidden style="margin-top:14px">
+        <p class="note">L'appli s'est fermée toute seule la dernière fois. Voici ce qu'Android en dit (ça reste sur ton téléphone) :</p>
+        <pre id="brainReportTxt" style="white-space:pre-wrap;font-size:.72rem;line-height:1.4;max-height:180px;overflow:auto;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0"></pre>
+        <div class="btns"><button class="btn" id="copyReport" type="button">Copier le rapport</button><button class="btn" id="clearReport" type="button">Effacer</button></div>
+      </div>
     </div>
     <p class="note" style="margin-top:14px">Même sans cerveau, je sais donner la batterie, la météo et l'heure, trouver des lieux autour de toi, régler des réveils et faire des calculs. Le cerveau sert à discuter de tout.</p>
   </div>
@@ -1229,6 +1234,7 @@ function normalize(r) {
 }
 function errorLines(code) {
   switch (code) {
+    case "model_blocked": return [{ text: "Mon cerveau a fait fermer l'appli, alors je le laisse se reposer.", mood: "inquiet" }, { text: "Tu peux le relancer en mode économe dans « Mon cerveau ».", mood: "neutre" }];
     case "no_model": return [{ text: "Pour discuter librement, il me faut mon cerveau.", mood: "reflechit" }, { text: "Il se télécharge une seule fois : je t'ouvre le panneau.", mood: "neutre" }];
     case "model_error": return [{ text: "Aïe, mon cerveau n'arrive pas à démarrer.", mood: "triste" }, { text: "Regarde dans « Mon cerveau », ou redémarre l'appli.", mood: "neutre" }];
     case "timeout": return [{ text: "Oups, j'ai réfléchi trop longtemps.", mood: "triste" }, { text: "Tu peux reformuler plus simplement ?", mood: "neutre" }];
@@ -1293,7 +1299,7 @@ async function send(preset, fromChip) {
       stopThinking();
       if (!msgEl.value && typeof preset !== "string") msgEl.value = text;
       speak(errorLines(code));
-      if (code === "no_model" || code === "model_error") setTimeout(() => { if (sheet.hidden) openBrain(); }, 2800);
+      if (code === "no_model" || code === "model_error" || code === "model_blocked") setTimeout(() => { if (sheet.hidden) openBrain(); }, 2800);
     } else if (speech.state === "waiting") speech.state = "idle";
   } finally {
     busy = false; streamId = null;
@@ -3631,7 +3637,7 @@ const mobileRow = document.getElementById("mobileRow");
 const allowMobile = document.getElementById("allowMobile");
 const brainBtns = document.getElementById("brainBtns");
 let brainTimer = null, brainKey = "", lastBrain = null;
-const HAS = ["ready", "loading", "loaded", "error"];
+const HAS = ["ready", "loading", "loaded", "error", "blocked"];
 function go(b) { return (b / 1e9).toFixed(1).replace(".", ",") + " Go"; }
 function brainStatus() {
   if (!NATIVE) return null;
@@ -3682,7 +3688,7 @@ function renderBrain(st) {
     case "ready":
       title = "Cerveau installé ✓";
       detail = "Il se réveillera à ta première question.";
-      btns = [["Le réveiller maintenant", true, () => { NATIVE.warmUp(); setTimeout(() => { brainKey = ""; pollBrain(); }, 300); }]];
+      btns = [["Le réveiller maintenant", true, wakeBrain]];
       break;
     case "loading":
       title = "Je me réveille…";
@@ -3690,12 +3696,18 @@ function renderBrain(st) {
       break;
     case "loaded":
       title = "Cerveau prêt ✓";
-      detail = "Il tourne sur " + (st.backend === "gpu" ? "la puce graphique" : "le processeur") + " de ton téléphone, sans internet.";
+      detail = "Il tourne sur " + (st.backend === "gpu" ? "la puce graphique" : "le processeur") + " de ton téléphone, sans internet." +
+        (st.tier === 2 ? " Mode économe : il retient des conversations plus courtes, pour ménager la mémoire du téléphone." : "");
       break;
     case "error":
       title = "Mon cerveau n'a pas pu démarrer.";
       detail = "Essaie de redémarrer le téléphone, ou décoche « puce graphique » dans les réglages." + (st.error ? " (" + st.error + ")" : "");
-      btns = [["Réessayer", true, () => { NATIVE.warmUp(); setTimeout(() => { brainKey = ""; pollBrain(); }, 300); }]];
+      btns = [["Réessayer", true, wakeBrain]];
+      break;
+    case "blocked":
+      title = "Mon cerveau est en pause de sécurité.";
+      detail = "En se chargeant, il a fait fermer l'appli plusieurs fois : ton téléphone ne lui laisse pas assez de mémoire. Il ne se lance donc plus tout seul. Tu peux réessayer en mode économe, en fermant d'abord les autres applis.";
+      btns = [["Réessayer en mode économe", true, wakeBrain]];
       break;
   }
   if (HAS.includes(st.state)) btns.push(["Supprimer le cerveau", false, armDelete, "danger small"]);
@@ -3711,7 +3723,24 @@ function renderBrain(st) {
     }));
   }
   if (st.justFinished) brainArrived();
+  const rep0 = st.report || "";
+  document.getElementById("brainReport").hidden = !rep0;
+  if (rep0) document.getElementById("brainReportTxt").textContent = rep0;
 }
+function wakeBrain() {
+  if (!NATIVE) return;
+  if (NATIVE.retryBrain) NATIVE.retryBrain(); else NATIVE.warmUp();
+  setTimeout(() => { brainKey = ""; pollBrain(); }, 300);
+}
+document.getElementById("copyReport").addEventListener("click", () => {
+  const t = document.getElementById("brainReportTxt").textContent;
+  if (NATIVE && NATIVE.copyText) NATIVE.copyText(t);
+  speak([{ text: "Rapport copié ! Tu peux le coller dans un message.", mood: "content" }]);
+});
+document.getElementById("clearReport").addEventListener("click", () => {
+  if (NATIVE && NATIVE.clearReport) NATIVE.clearReport();
+  brainKey = ""; pollBrain();
+});
 let delArmed = false;
 function armDelete(e) {
   const b = e.currentTarget;
@@ -3727,13 +3756,12 @@ function armDelete(e) {
 }
 function brainArrived() {
   S.hasModel = true;
-  if (NATIVE) NATIVE.warmUp();
   if (busy) return;
   if (!brainSheet.hidden) closeBrain();
   const lines = [
     { text: "Ça y est ! Mon cerveau est installé.", mood: "surpris" },
     { text: "Je réfléchis maintenant directement dans ton téléphone.", mood: "content" },
-    { text: "Laisse-moi quelques secondes pour me réveiller, et on discute !", mood: "clin" }
+    { text: "Pose-moi ta première question : je me réveillerai en quelques secondes.", mood: "clin" }
   ];
   remember(lines); speak(lines);
 }
@@ -3834,6 +3862,12 @@ function greet() {
     lines = [hello, extra];
     if (st && st.state === "downloading") lines.push({ text: "Mon cerveau se télécharge : " + Math.floor(100 * st.done / (st.total || 1)) + " %.", mood: "content" });
     else if (st && !S.hasModel) lines.push({ text: "Mon cerveau n'est pas encore installé : menu, puis « Mon cerveau ».", mood: "reflechit" });
+  }
+  if (st && st.crashNotice) {
+    lines.push(st.tier >= 3
+      ? { text: "Au fait : mon cerveau a encore fait fermer l'appli. Je le mets en pause de sécurité.", mood: "inquiet" }
+      : { text: "Au fait : la dernière fois, mon cerveau a pris trop de mémoire et l'appli s'est fermée. Je passe en mode " + (st.tier >= 2 ? "économe" : "plus léger") + ".", mood: "inquiet" });
+    if (NATIVE && NATIVE.ackBrainNotice) NATIVE.ackBrainNotice();
   }
   if (b && !b.en_charge && b.pourcentage <= 20) lines.push({ text: "Au fait, ta batterie est à " + b.pourcentage + " %. Pense à la recharger !", mood: "inquiet" });
   S.visits++; S.lastSeen = Date.now();

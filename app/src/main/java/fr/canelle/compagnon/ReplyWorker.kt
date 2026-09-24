@@ -14,11 +14,13 @@ class ReplyWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
         val text = inputData.getString("text") ?: return Result.success()
         val answer = try {
             Brain.reply(ctx, text, foreground = false, host = null).lines.joinToString(" ") { it.text }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             "Oups, je n'ai pas réussi à répondre. Ouvre l'application pour qu'on en parle ?"
         }
         Store.threadAdd("bip", answer)
         Notifs.showThread(ctx, thinking = false)
+        // Réponse donnée depuis une notification : on ne garde pas le cerveau en mémoire en arrière-plan.
+        if (!CanelleApp.visible) LocalModel.releaseSoon(20_000L)
         return Result.success()
     }
 

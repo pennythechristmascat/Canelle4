@@ -1,4 +1,4 @@
-# Canelle — compagnon de poche (Android) · V5.1.0
+# Canelle — compagnon de poche (Android) · V5.1.1
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -107,6 +107,16 @@ Si tu as déjà installé la version 0.2 (celle avec le cerveau local), installe
 Si tu viens d'une version plus ancienne (0.1, avec la clé API), désinstalle-la **une seule fois** avant : elle avait une signature différente. Depuis la 0.2, la signature est fixe (`app/canelle.keystore`).
 
 Ensuite, ouvre l'APK sur le téléphone et accepte l'installation depuis cette source si Android le demande.
+
+## Si l'appli se ferme toute seule (cerveau trop lourd)
+
+Le cerveau pèse 2,6 Go. Sur certains téléphones, surtout sous Android 16 et 17 (qui impose désormais une limite de mémoire à chaque appli), son chargement peut faire fermer l'appli. Canelle se protège tout seul :
+
+1. Au lancement suivant, il sait que le dernier chargement a échoué et passe au niveau plus léger : puce graphique → processeur → mode économe (conversations plus courtes, moins de mémoire).
+2. S'il plante encore en mode économe, il se met en **pause de sécurité** : il ne se charge plus tout seul, et « Mon cerveau » propose « Réessayer en mode économe ».
+3. Le cerveau ne se charge plus automatiquement tant qu'il n'a jamais démarré avec succès : il se réveille à la première question.
+4. Il rend sa mémoire une minute après que l'appli passe en arrière-plan.
+5. « Mon cerveau » affiche le rapport d'Android sur le dernier arrêt (raison, mémoire utilisée, modèle du téléphone), avec un bouton **Copier le rapport**. Il reste sur le téléphone.
 
 ## Si la construction échoue
 
