@@ -127,6 +127,12 @@ object Notifs {
             15 -> "Batterie à $level %" to "$name : il est temps de brancher ton téléphone !"
             else -> "Batterie à $level % !" to "$name : ton téléphone va s'éteindre si tu ne le branches pas maintenant !"
         }
+        // traduites dans la langue de l'utilisateur (sur le téléphone) avant d'être affichées
+        Lang.async(listOf(title, text)) { out -> postBattery(ctx, threshold, out[0], out[1]) }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun postBattery(ctx: Context, threshold: Int, title: String, text: String) {
         val n = NotificationCompat.Builder(ctx, if (threshold <= 5) CH_BATTERY_CRIT else CH_BATTERY)
             .setSmallIcon(R.drawable.ic_notif)
             .setColor(0xFFE8743B.toInt())

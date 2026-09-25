@@ -180,6 +180,106 @@ select.field{appearance:auto}
 .face.petting canvas{animation:nuzzle .45s ease-in-out infinite}
 @keyframes nuzzle{50%{transform:rotate(2.5deg) translateY(2px)}}
 
+/* ---------- menu en tuiles ---------- */
+.panel.menu .panel-head{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:2;background:var(--panel);padding-bottom:10px}
+.panel.menu .panel-head h2{flex:1;margin:0}
+.pill.back{width:40px;padding:0;display:grid;place-items:center}
+.pill.back[hidden]{display:none}
+.mpage{animation:pageIn .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes pageIn{from{opacity:0;transform:translateX(14px)}}
+.profile{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:18px;margin:4px 0 14px;
+  background:linear-gradient(135deg,rgba(255,155,74,.16),rgba(143,227,255,.08));border:1px solid var(--line)}
+.profile canvas{width:78px;image-rendering:pixelated;flex:none}
+.profile b{display:block;font:500 1.25rem var(--f-px)}
+.profile span{display:block;color:var(--phosphor-dim);font-weight:700;font-size:.9rem}
+.profile .streak{color:#ffd166;margin-top:2px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;
+  padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(236,232,220,.04);color:var(--phosphor);cursor:pointer;min-height:68px}
+.tile:hover{background:rgba(236,232,220,.08)}
+.tile:active{transform:scale(.98)}
+.tile .tico{grid-row:1 / 3;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
+.tile .tico svg{width:21px;height:21px}
+.tile b{font-size:.98rem;line-height:1.15}
+.tile small{color:var(--phosphor-dim);font-weight:700;font-size:.76rem;line-height:1.25}
+.tile[hidden]{display:none}
+.group{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(236,232,220,.03);margin-bottom:12px}
+.gtitle{margin:0 0 8px;font:500 .95rem var(--f-px);color:var(--accent)}
+.group .btn{margin-top:4px}
+.danger-zone{border-color:rgba(255,107,90,.35)}
+/* ---------- pièces ---------- */
+.pc{display:inline-block;width:16px;height:16px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff1b8,#ffcf5a 55%,#c9901c);box-shadow:inset 0 0 0 2px rgba(120,80,0,.35),0 0 8px rgba(255,207,90,.4)}
+.pc.big{width:44px;height:44px}
+.coinpill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,209,102,.45);background:rgba(255,209,102,.1);color:#ffd166;font:500 .95rem var(--f-px);cursor:pointer;white-space:nowrap}
+.coinpill.bump{animation:bump .5s cubic-bezier(.3,1.6,.6,1)}
+@keyframes bump{40%{transform:scale(1.18)}}
+.p.coinpop{color:#ffd166;font-size:20px}
+.wallet{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;background:linear-gradient(135deg,rgba(255,209,102,.18),rgba(255,155,74,.08));border:1px solid rgba(255,209,102,.35);margin-bottom:12px}
+.wallet b{display:block;font:500 1.8rem var(--f-px);color:#ffd166}
+.wallet span{color:var(--phosphor-dim);font-weight:700}
+.earn{padding:4px 2px 8px}
+.earn p{margin:0 0 6px}
+.earn ul{margin:0;padding-left:1.1em;color:var(--phosphor-dim);font-weight:700;font-size:.88rem;line-height:1.5}
+.skin{position:relative}
+.skin .price{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;color:#ffd166;font-weight:800;font-size:.78rem}
+.skin .price .pc{width:11px;height:11px}
+.skin.locked canvas{opacity:.55;filter:grayscale(.35)}
+.skin .owned{color:#7ee29a;font-weight:800;font-size:.72rem}
+/* ---------- onglets ---------- */
+.tabs{display:flex;align-items:center;gap:8px;padding:6px clamp(12px,4vw,20px) 0}
+.tabset{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(236,232,220,.06);border:1px solid var(--line);flex:1;max-width:320px}
+.tab{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;border:0;border-radius:999px;background:transparent;color:var(--phosphor-dim);font-weight:800;font-size:.9rem;cursor:pointer}
+.tab svg{width:16px;height:16px}
+.tab[aria-selected="true"]{background:var(--phosphor);color:#101820}
+.tabs .globe{margin-left:auto;width:36px;height:36px}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 10px}
+.langbtn{height:52px;border-radius:14px;border:1px solid var(--line);background:rgba(236,232,220,.05);color:var(--phosphor);font-size:1.05rem;font-weight:800;cursor:pointer}
+.langbtn.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;background:rgba(236,232,220,.1)}
+[dir="rtl"] .tile,[dir="rtl"] .char,[dir="rtl"] .model{text-align:right}
+.crt{grid-template-rows:auto auto 1fr auto auto auto}
+.steps-view{grid-row:3 / -1;overflow:auto;padding:12px clamp(14px,5vw,24px) calc(18px + var(--sab,0px))}
+.steps-view[hidden]{display:none}
+.crt.tab-steps .stage,.crt.tab-steps .cap,.crt.tab-steps .chips,.crt.tab-steps .composer{display:none}
+.ringbox{position:relative;width:min(64vw,250px);aspect-ratio:1;margin:6px auto 10px}
+.ringbox svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringbox .bg{stroke:rgba(236,232,220,.1)}
+.ringbox .fg{stroke:#7ee29a;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 8px rgba(126,226,154,.5))}
+.ringbox .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ringbox .mid b{font:500 2.6rem var(--f-px);color:var(--phosphor)}
+.ringbox .mid span{color:var(--phosphor-dim);font-weight:800}
+.ringbox .mid small{color:#7ee29a;font-weight:800;margin-top:2px}
+.mate{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(236,232,220,.05);border:1px solid var(--line)}
+.mate canvas{width:62px;image-rendering:pixelated;flex:none}
+.mate p{margin:0;font-weight:800;line-height:1.35}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{padding:10px;border-radius:14px;background:rgba(236,232,220,.05);border:1px solid var(--line);text-align:center}
+.stat b{display:block;font:500 1.3rem var(--f-px)}
+.stat span{color:var(--phosphor-dim);font-weight:700;font-size:.78rem}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:120px;padding:10px;border-radius:16px;background:rgba(236,232,220,.05);border:1px solid var(--line)}
+.week div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.week i{width:100%;max-width:26px;border-radius:6px 6px 3px 3px;background:#3a5a45;min-height:3px}
+.week i.done{background:#7ee29a}
+.week i.today{box-shadow:0 0 0 2px var(--phosphor) inset}
+.week span{font-size:.72rem;font-weight:800;color:var(--phosphor-dim)}
+.steps-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:12px;border-radius:16px;background:rgba(236,232,220,.05);border:1px solid var(--line)}
+.steps-row p{margin:0;font-weight:700;font-size:.9rem;line-height:1.35}
+.connect{padding:16px;border-radius:18px;border:1px solid var(--line);background:rgba(126,226,154,.08);margin-top:12px}
+.connect p{margin:0 0 10px;line-height:1.45;font-weight:700}
+/* ---------- fenêtre de confirmation ---------- */
+.ask .modal-box h2{display:flex;align-items:center;gap:8px}
+.ask .warnbox{padding:10px 12px;border-radius:12px;background:rgba(255,107,90,.12);border:1px solid rgba(255,107,90,.4);color:#ffc2b8;font-weight:700;line-height:1.45;margin:0 0 10px}
+.ask .btnrow{display:flex;gap:8px;margin-top:6px}
+.ask .btnrow .btn{flex:1;margin:0}
+.ask .btn.danger{background:#ff6b5a;color:#1a0806;border-color:#ff6b5a}
+/* choix du cerveau */
+.models{display:grid;gap:8px;margin-top:10px}
+.model{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(236,232,220,.04)}
+.model b{font-size:1rem}
+.model small{grid-column:1;color:var(--phosphor-dim);font-weight:700;line-height:1.35}
+.model .btn{grid-row:1 / 3;grid-column:2;margin:0}
+.fit{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font-size:.7rem;font-weight:800;vertical-align:middle}
+.fit.ok{background:rgba(126,226,154,.2);color:#7ee29a}.fit.juste{background:rgba(255,209,102,.2);color:#ffd166}.fit.risque{background:rgba(255,107,90,.2);color:#ff8a7a}
+
 /* ---------- interactions ---------- */
 .face.dance{animation:danceAnim .8s ease-in-out infinite}
 @keyframes danceAnim{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-14px) translateY(-8px) rotate(-8deg)}50%{transform:translateX(0) translateY(0) rotate(0)}75%{transform:translateX(14px) translateY(-8px) rotate(8deg)}}
@@ -270,7 +370,9 @@ select.field{appearance:auto}
 .cake i.out::after{display:none}
 @keyframes flicker{to{transform:scale(.85,1.1)}}
 /* skins */
-.skins{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.skins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.skin{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.skin .price,.skin .owned{display:flex}
 .chars{display:grid;gap:8px}
 .char{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:14px;background:rgba(236,232,220,.05);color:var(--phosphor);padding:8px 12px 8px 8px;cursor:pointer}
 .char canvas{width:72px;image-rendering:pixelated;display:block}
@@ -459,6 +561,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 .badge[hidden]{display:none}
 .code-row{display:flex;gap:8px}
 .code-row .field{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.06em}
+.linkbtn{background:none;border:0;padding:0;color:var(--cyan,#8fe3ff);font:inherit;font-weight:800;text-decoration:underline;cursor:pointer}
 .facts li{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .facts .del{flex:none;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--phosphor-dim);cursor:pointer;line-height:1}
 @media (prefers-reduced-motion: reduce){
@@ -512,6 +615,21 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         </div>
       </header>
 
+      <nav class="tabs" aria-label="Onglets">
+        <div class="tabset" role="tablist">
+          <button class="tab" role="tab" type="button" data-tab="home" aria-selected="true">
+            <svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true"><g fill="currentColor"><rect x="1" y="5" width="3" height="4"/><rect x="4" y="1" width="3" height="4"/><rect x="9" y="1" width="3" height="4"/><rect x="12" y="5" width="3" height="4"/><rect x="4" y="8" width="8" height="2"/><rect x="3" y="10" width="10" height="3"/></g></svg>
+            <span id="tabName">Canelle</span></button>
+          <button class="tab" role="tab" type="button" data-tab="steps" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20c-2 0-3-2-2.5-4.5L6 9c.5-2 2.5-3 4-1.5 1.2 1.2 1 3 .5 4.5L9 17c-.5 2-1 3-2 3z"/><path d="M17 16c-2 0-3-2-2.5-4.5L16 5c.5-2 2.5-3 4-1.5"/></svg>
+            Pas</button>
+        </div>
+        <button class="icon-btn globe" id="langBtn" type="button" aria-label="Langue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        </button>
+        <button class="coinpill" id="coinPill" type="button" aria-label="Mes pièces"><i class="pc" aria-hidden="true"></i><span>0</span></button>
+      </nav>
+
       <div class="stage" id="stage">
         <div class="beam" id="beam" aria-hidden="true"></div>
         <div class="face-wrap">
@@ -553,6 +671,35 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         </button>
       </div>
 
+      <section class="steps-view" id="stepsView" hidden aria-label="Compteur de pas">
+        <div class="ringbox">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52" fill="none" stroke-width="12"/><circle class="fg" id="stepsRing" cx="60" cy="60" r="52" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
+          <div class="mid"><b id="stepsNum">—</b><span>pas aujourd'hui</span><small id="stepsGoalTxt"></small></div>
+        </div>
+        <div class="mate"><canvas id="stepsCv" width="64" height="54" aria-hidden="true"></canvas><p id="stepsSay">…</p></div>
+        <div id="stepsBody">
+          <div class="stats">
+            <div class="stat"><b id="stepsKm">—</b><span>km environ</span></div>
+            <div class="stat"><b id="stepsKcal">—</b><span>kcal environ</span></div>
+            <div class="stat"><b id="stepsAvg">—</b><span>moyenne 7 j</span></div>
+          </div>
+          <div class="week" id="stepsWeek" aria-label="Pas des 7 derniers jours"></div>
+          <div class="steps-row">
+            <p id="stepsCoinTxt">10 pièces tous les 1 000 pas (jusqu'à 100 par jour).</p>
+            <button class="btn primary" id="stepsClaim" type="button" hidden>Récupérer</button>
+          </div>
+          <div class="steps-row">
+            <p><label for="stepsGoal">Objectif du jour</label></p>
+            <select class="field" id="stepsGoal" style="width:auto"><option>4000</option><option>6000</option><option>8000</option><option>10000</option><option>12000</option><option>15000</option></select>
+          </div>
+        </div>
+        <div class="connect" id="stepsConnectBox" hidden>
+          <p id="stepsConnectTxt"></p>
+          <button class="btn primary" id="stepsConnectBtn" type="button"></button>
+        </div>
+        <p class="note" style="margin-top:12px">Les pas viennent de Health Connect, qui rassemble ceux de Google Fit, Samsung Health, Fitbit… et, depuis Android 14, ceux comptés par le téléphone lui-même. Ils restent sur ton téléphone. <button class="linkbtn" id="stepsSettings" type="button">Gérer les sources</button></p>
+      </section>
+
       <div class="places" id="places" hidden>
         <div class="places-head">
           <span id="placesTitle">Autour de toi</span>
@@ -571,23 +718,99 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 </main>
 
 <div class="sheet" id="sheet" hidden>
-  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="panel menu" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
     <div class="panel-head">
+      <button class="pill back" id="menuBack" type="button" hidden aria-label="Retour au menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
       <h2 id="sheetTitle">Menu</h2>
+      <button class="coinpill" id="menuCoins" type="button" aria-label="Pièces"><i class="pc" aria-hidden="true"></i><span>0</span></button>
       <button class="pill" id="closeBtn" type="button">Fermer</button>
     </div>
-    <h3>Vos échanges</h3>
-    <div class="log" id="log"></div>
-    <h3>Ce qu'il retient de toi</h3>
-    <div id="facts"></div>
 
-    <section id="settings" hidden>
-      <h3>Réglages</h3>
-      <span class="lab">Cerveau</span>
-      <button class="btn" id="openBrain" type="button">Mon cerveau (IA locale)</button>
-      <label class="check"><input type="checkbox" id="useGpu"> Utiliser la puce graphique (plus rapide)</label>
-      <label class="check"><input type="checkbox" id="checkins"> Prendre de mes nouvelles</label>
-      <div class="inline">
+    <div class="mpage" data-page="home" data-title="Menu">
+      <div class="profile">
+        <canvas id="profileCv" width="64" height="54" aria-hidden="true"></canvas>
+        <div>
+          <b id="profileName">Canelle</b>
+          <span id="profileSub">Panda roux</span>
+          <span class="streak" id="profileStreak"></span>
+        </div>
+      </div>
+      <div class="tiles">
+        <button class="tile" type="button" data-go="chars" style="--c:#ff9b4a"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><b>Personnages</b><small data-sub="chars">Choisir ton compagnon</small></button>
+        <button class="tile" type="button" data-go="shop" style="--c:#ffd166"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5H7.5a2 2 0 0 1-2-1.5L4 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><b>Boutique</b><small data-sub="shop">Skins et pièces</small></button>
+        <button class="tile" type="button" data-go="brain" style="--c:#b9a8ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a2 2 0 0 0-3-1z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/></svg></span><b>Mon cerveau</b><small data-sub="brain">L'IA de ton compagnon</small></button>
+        <button class="tile" type="button" data-go="steps" style="--c:#7ee29a"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20c-2 0-3-2-2.5-4.5L6 9c.5-2 2.5-3 4-1.5 1.2 1.2 1 3 .5 4.5L9 17c-.5 2-1 3-2 3z"/><path d="M17 16c-2 0-3-2-2.5-4.5L16 5c.5-2 2.5-3 4-1.5"/></svg></span><b>Pas</b><small data-sub="steps">Ton compteur du jour</small></button>
+        <button class="tile" type="button" data-go="memory" style="--c:#ff9ec7"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3z"/><path d="M9 22h6"/></svg></span><b>Souvenirs</b><small data-sub="memory">Ce qu'il sait de toi</small></button>
+        <button class="tile" type="button" data-go="chats" style="--c:#8fe3ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><b>Échanges</b><small data-sub="chats">Vos derniers messages</small></button>
+        <button class="tile" type="button" data-go="music" style="--c:#7ee2c0"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><b>Musique</b><small data-sub="music">Spotify et Deezer</small></button>
+        <button class="tile" type="button" data-go="lang" style="--c:#8fb4ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><b>Langue</b><small data-sub="lang">8 langues</small></button>
+        <button class="tile" type="button" data-go="settings" style="--c:#c6cbd6"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span><b>Réglages</b><small data-sub="settings">Notifications, code, nom</small></button>
+        <button class="tile" type="button" data-go="dev" style="--c:#ff6b5a" hidden id="devTile"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg></span><b>Outils dev</b><small data-sub="dev">Tests et animations</small></button>
+      </div>
+      <p class="note" style="margin-top:14px">Tout reste sur ce téléphone : ton compagnon réfléchit sans internet, et tes pas, tes pièces et tes souvenirs ne quittent jamais l'appareil. Seules la météo et la recherche de lieux utilisent internet (ta position est alors envoyée à Open-Meteo et OpenStreetMap).</p>
+    </div>
+
+    <div class="mpage" data-page="chars" data-title="Personnages" hidden>
+      <section id="charSec">
+        <p class="note">Choisis ton compagnon. Chacun a sa personnalité, et il garde tout ce qu'il sait de toi.</p>
+        <div class="chars" id="charGrid"></div>
+      </section>
+    </div>
+
+    <div class="mpage" data-page="shop" data-title="Boutique" hidden>
+      <div class="wallet">
+        <i class="pc big" aria-hidden="true"></i>
+        <div><b id="walletCoins">0</b><span>pièces</span></div>
+      </div>
+      <div class="earn">
+        <p><b>Gagner des pièces</b></p>
+        <ul>
+          <li>Bonus chaque jour : 20 pièces, et plus si tu reviens plusieurs jours d'affilée.</li>
+          <li>Jeux : 5 par partie, 15 par victoire.</li>
+          <li>Marche : 10 pièces tous les 1 000 pas (onglet « Pas »).</li>
+          <li>Interactions : 1 pièce à chaque fois.</li>
+        </ul>
+        <p class="note" id="earnToday"></p>
+      </div>
+      <section id="skinsSec">
+        <h3>Skins</h3>
+        <div class="skins" id="skinGrid"></div>
+      </section>
+    </div>
+
+    <div class="mpage" data-page="memory" data-title="Souvenirs" hidden>
+      <p class="note">Ce que ton compagnon a retenu de vos discussions. Touche × pour qu'il oublie.</p>
+      <div id="facts"></div>
+    </div>
+
+    <div class="mpage" data-page="chats" data-title="Échanges" hidden>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="mpage" data-page="music" data-title="Musique" hidden>
+      <p class="note" id="musicNote"></p>
+      <label class="lab" for="musicAppSel">Appli préférée</label>
+      <select class="field" id="musicAppSel" aria-label="Appli de musique préférée">
+        <option value="">Automatique</option>
+        <option value="spotify">Spotify</option>
+        <option value="deezer">Deezer</option>
+      </select>
+      <button class="btn" id="musicAccessBtn" type="button" style="margin-top:10px">Autoriser Canelle à voir Spotify et Deezer</button>
+    </div>
+
+    <div class="mpage" data-page="settings" data-title="Réglages" hidden>
+      <section id="settings" hidden>
+        <div class="group">
+          <p class="gtitle">Cerveau</p>
+          <button class="btn" id="openBrain" type="button">Mon cerveau (IA locale)</button>
+          <label class="check"><input type="checkbox" id="useGpu"> Utiliser la puce graphique (plus rapide)</label>
+        </div>
+        <div class="group">
+          <p class="gtitle">Nouvelles</p>
+          <label class="check"><input type="checkbox" id="checkins"> Prendre de mes nouvelles</label>
+          <div class="inline">
         <label for="interval">Toutes les</label>
         <select id="interval"><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="6">6</option><option value="8">8</option></select>
         <span>heures, sauf entre</span>
@@ -596,50 +819,54 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         <select id="quietEnd" aria-label="Fin des heures calmes"></select>
         <span>h</span>
       </div>
-      <label class="lab" for="musicAppSel">Musique</label>
-      <p class="note" id="musicNote"></p>
-      <select class="field" id="musicAppSel" aria-label="Appli de musique préférée">
-        <option value="">Appli de musique : automatique</option>
-        <option value="spotify">Appli de musique : Spotify</option>
-        <option value="deezer">Appli de musique : Deezer</option>
-      </select>
-      <button class="btn" id="musicAccessBtn" type="button" style="margin-top:8px">Autoriser Canelle à voir Spotify et Deezer</button>
-      <label class="lab" for="codeIn">Code d'accès</label>
-      <div class="code-row">
-        <input class="field" id="codeIn" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Entre un code">
-        <button class="btn primary" id="codeBtn" type="button">Valider</button>
+          <div class="btns">
+            <button class="btn primary" id="saveSettings" type="button">Enregistrer</button>
+            <button class="btn" id="testNotif" type="button">Tester une notification</button>
+          </div>
+          <p class="ok" id="settingsMsg" aria-live="polite"></p>
+        </div>
+      </section>
+      <div class="group">
+        <p class="gtitle"><label for="rename">Nom de ton compagnon</label></p>
+        <input class="field" id="rename" type="text" maxlength="20" autocomplete="off">
       </div>
-      <p class="note" id="rankNote" style="margin-top:6px"></p>
-      <button class="btn" id="rankClear" type="button" hidden>Retirer mon rang</button>
-      <div class="btns">
-        <button class="btn primary" id="saveSettings" type="button">Enregistrer les réglages</button>
-        <button class="btn" id="testNotif" type="button">Tester une notification</button>
+      <div class="group">
+        <p class="gtitle"><label for="codeIn">Code d'accès</label></p>
+        <div class="code-row">
+          <input class="field" id="codeIn" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Entre un code">
+          <button class="btn primary" id="codeBtn" type="button">Valider</button>
+        </div>
+        <p class="note" id="rankNote" style="margin-top:6px"></p>
+        <button class="btn" id="rankClear" type="button" hidden>Retirer mon rang</button>
       </div>
-      <p class="ok" id="settingsMsg" aria-live="polite"></p>
-    </section>
+      <div class="group danger-zone">
+        <p class="gtitle">Zone sensible</p>
+        <button class="danger" id="forget" type="button">Tout oublier</button>
+      </div>
+    </div>
 
-    <section id="charSec">
-      <h3>Personnages</h3>
-      <p class="note">Choisis ton compagnon. Chacun a sa personnalité, et il garde tout ce qu'il sait de toi.</p>
-      <div class="chars" id="charGrid"></div>
-    </section>
+    <div class="mpage" data-page="lang" data-title="Langue" hidden>
+      <p class="note">Choisis la langue de l'application et de ton compagnon.</p>
+      <div class="langs" id="langGrid"></div>
+      <p class="note" id="langNote" aria-live="polite"></p>
+      <p class="note">Les langues autres que le français sont traduites automatiquement sur ton téléphone (Google ML Kit). Un pack d'environ 30 Mo est téléchargé une seule fois par langue ; ensuite, rien ne quitte ton téléphone. Le cerveau de ton compagnon répond directement dans ta langue.</p>
+    </div>
 
-    <section id="skinsSec">
-      <h3>Skins</h3>
-      <p class="note">20 apparences, pour tous les personnages.</p>
-      <div class="skins" id="skinGrid"></div>
-    </section>
+    <div class="mpage" data-page="dev" data-title="Outils dev" hidden>
+      <section id="devTools" hidden>
+        <p class="note">Pour tester les animations et les écrans sans attendre.</p>
+        <div class="btns" id="devBtns"></div>
+      </section>
+    </div>
+  </div>
+</div>
 
-    <section id="devTools" hidden>
-      <h3>Outils développeur</h3>
-      <p class="note">Pour tester les animations et les écrans sans attendre.</p>
-      <div class="btns" id="devBtns"></div>
-    </section>
-
-    <h3><label for="rename">Nom de ton compagnon</label></h3>
-    <input class="field" id="rename" type="text" maxlength="20" autocomplete="off">
-    <button class="danger" id="forget" type="button">Tout oublier</button>
-    <p class="note" style="margin-top:10px">Tout reste sur ce téléphone : Canelle réfléchit sans internet. Seules la météo et la recherche de lieux utilisent internet (ta position est alors envoyée à Open-Meteo et OpenStreetMap).</p>
+<div class="modal ask" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askTitle">
+  <div class="modal-box">
+    <h2 id="askTitle"></h2>
+    <p class="warnbox" id="askWarn" hidden></p>
+    <p id="askText"></p>
+    <div class="btnrow"><button class="btn" id="askNo" type="button">Annuler</button><button class="btn primary" id="askYes" type="button">OK</button></div>
   </div>
 </div>
 
@@ -669,6 +896,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="warn" id="brainWarn" hidden></p>
       <label class="check" id="mobileRow"><input type="checkbox" id="allowMobile"> Autoriser les données mobiles (sinon, wifi seulement)</label>
       <div class="btns" id="brainBtns"></div>
+      <div class="models" id="brainModels" hidden></div>
       <div id="brainReport" hidden style="margin-top:14px">
         <p class="note">L'appli s'est fermée toute seule la dernière fois. Voici ce qu'Android en dit (ça reste sur ton téléphone) :</p>
         <pre id="brainReportTxt" style="white-space:pre-wrap;font-size:.72rem;line-height:1.4;max-height:180px;overflow:auto;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0"></pre>
@@ -686,7 +914,7 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "", character: "canelle" };
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "", character: "canelle", lang: "fr" };
 // Choisit au hasard en évitant ce qui vient d'être dit dans la même liste (pas deux fois la même chose d'affilée).
 const PICKED = new Map();
 function pick(a) {
@@ -1175,7 +1403,10 @@ const SKINS = [
   { id: "aurore", name: "Aurore", pal: { F: "#3fb6a8", f: "#2f958a", t: "#6f5cc9", D: "#2c2466", W: "#e6fffb", B: "#2c2466", b: "#211b4d", Q: "#ff7ad9", q: "#d94fb4", Z: "#ffc2ee" } }
 ];
 const skinAllowed = () => true; // les skins sont pour tout le monde
-const activeSkin = () => (skinAllowed() && SKINS.find(k => k.id === S.skin)) || SKINS[0];
+// boutique : pièces et skins achetés (tenus à jour par Android)
+S.shop = { coins: 0, prices: {}, owned: ["classique"], streak: 0 };
+const ownsSkin = id => id === "classique" || !NATIVE || (S.shop.owned || []).includes(id);
+const activeSkin = () => (SKINS.find(k => k.id === S.skin && ownsSkin(k.id))) || SKINS[0];
 const face = { mood: "neutre", blink: false, talk: false, lookX: 0, think: 0, reveal: 1, phones: false };
 // ordre d'apparition des pixels pendant la matérialisation (du bas vers le haut, avec un peu de hasard)
 const REVEAL = new Float32Array(W * H);
@@ -1426,12 +1657,39 @@ const moreEl = document.getElementById("more");
 const speech = { lines: [], idx: 0, n: 0, letters: 0, state: "idle", timer: null, voicePending: false, waitVoice: false, streaming: false, endedAt: 0 };
 const LETTER = /[\p{L}\p{N}]/u;
 
+let speakSeq = 0;
 function speak(lines) {
   // jetons du personnage ({nom}, {cri}…) : on remplace dans une copie, sans toucher aux listes de phrases
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
     if (l && l.text && l.text.indexOf("{") >= 0) lines[i] = Object.assign({}, l, { text: fill(l.text) });
   }
+  const my = ++speakSeq;
+  // autre langue : on traduit les phrases écrites en français (les réponses du cerveau sont déjà dans la bonne langue)
+  if (LANG !== "fr") {
+    const missing = [];
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i];
+      if (!l || l.nt || !l.text) continue;
+      const t = trLine(l.text);
+      if (t !== undefined) lines[i] = Object.assign({}, l, { text: t, nt: true });
+      else missing.push(i);
+    }
+    if (missing.length && NATIVE && NATIVE.translate) {
+      const texts = missing.map(i => lines[i].text), lang = LANG;
+      trTexts(texts, "fr", lang).then(out => {
+        missing.forEach((i, k) => {
+          if (out[k] != null && lang === LANG) TR.set(texts[k], out[k]);
+          lines[i] = Object.assign({}, lines[i], { text: out[k] || texts[k], nt: true });
+        });
+        if (my === speakSeq) speakNow(lines);
+      });
+      return;
+    }
+  }
+  speakNow(lines);
+}
+function speakNow(lines) {
   clearTimeout(speech.timer); stopVoice();
   speech.lines = lines; speech.idx = 0;
   startLine();
@@ -1520,7 +1778,10 @@ function thinkingLabel(t) { if (face.think) { capEl.textContent = t; liveEl.text
 
 /* ---------- mémoire des répliques affichées ---------- */
 function remember(lines) {
-  const said = lines.filter(l => LETTER.test(l.text)).map(l => Object.assign({}, l, { text: fill(l.text) }));
+  const said = lines.filter(l => LETTER.test(l.text)).map(l => {
+    const t = fill(l.text);
+    return Object.assign({}, l, { text: l.nt || LANG === "fr" ? t : (trLine(t) || t) });
+  });
   if (!said.length) return;
   if (NATIVE) { try { NATIVE.addAssistantLines(JSON.stringify(said)); } catch (e) {} }
   said.forEach(l => S.log.push({ w: "bip", t: l.text }));
@@ -1546,21 +1807,21 @@ window.onReplyStatus = (id, st) => {
 window.onReplyLine = (id, json) => {
   if (id !== streamId) return;
   let l; try { l = JSON.parse(json); } catch (e) { return; }
-  const line = { text: String((l && l.text) || "").trim(), mood: MOODS.includes(l && l.mood) ? l.mood : "neutre" };
+  const line = { text: String((l && l.text) || "").trim(), mood: MOODS.includes(l && l.mood) ? l.mood : "neutre", nt: true };
   if (!line.text) return;
   streamGot++;
   if (streamGot === 1) { stopThinking(); speech.streaming = true; speak([line]); }
   else pushLine(line);
 };
-function ask(id, text) {
+function ask(id, text, french) {
   return new Promise((resolve, reject) => {
     pending[id] = { resolve, reject };
-    try { NATIVE.send(id, text); } catch (e) { delete pending[id]; reject({ code: "upstream" }); }
+    try { if (french && NATIVE.sendFr) NATIVE.sendFr(id, text); else NATIVE.send(id, text); } catch (e) { delete pending[id]; reject({ code: "upstream" }); }
   });
 }
 function normalize(r) {
   const arr = r && Array.isArray(r.lines) ? r.lines : [];
-  return arr.map(l => ({ text: String((l && l.text) || "").trim(), mood: MOODS.includes(l && l.mood) ? l.mood : "neutre" }))
+  return arr.map(l => ({ text: String((l && l.text) || "").trim(), mood: MOODS.includes(l && l.mood) ? l.mood : "neutre", nt: true }))
     .filter(l => l.text).slice(0, 8);
 }
 function errorLines(code) {
@@ -1583,18 +1844,21 @@ async function send(preset, fromChip) {
   const text = (typeof preset === "string" ? preset : msgEl.value).trim();
   if (!text || busy) return;
   ensureAudio(); hidePlaces();
+  // les commandes (jeux, interactions, musique) sont comprises en français : on traduit ce qui est écrit dans une autre langue
+  let cmd = text;
+  if (LANG !== "fr" && !fromChip && !awaitingOwner && NATIVE && NATIVE.translate) cmd = (await trTexts([text], LANG, "fr"))[0] || text;
   if (game && game.onText && !fromChip && !awaitingOwner && !cutscene && !locked) {
-    const nn = deaccent(text.toLowerCase()).trim();
+    const nn = deaccent(cmd.toLowerCase()).trim();
     const clear = () => { if (typeof preset !== "string") msgEl.value = ""; updateSend(); };
     if (/^(stop|arrete|j'arrete|fin|quitter|on arrete)( le jeu| de jouer)?$/.test(nn)) {
       clear(); hideCard(); speak([{ text: "D'accord, on arrête. C'était chouette !", mood: "content" }]); return;
     }
-    if (!localCommand(text, true) && game.onText(text, nn)) { clear(); return; }
+    if (!localCommand(cmd, true) && game.onText(cmd, nn)) { clear(); return; }
   }
   hideCard();
   if (awaitingOwner) { confirmOwnerName(text); return; }
   if (cutscene || locked) return;
-  if (localCommand(text)) {
+  if (localCommand(cmd)) {
     if (typeof preset !== "string") msgEl.value = "";
     updateSend();
     return;
@@ -1611,7 +1875,7 @@ async function send(preset, fromChip) {
   const id = String(++reqId);
   streamId = id; streamGot = 0;
   try {
-    const r = await ask(id, text);
+    const r = await ask(id, text, !!fromChip);
     const lines = normalize(r);
     if (!lines.length) throw { code: "upstream" };
     lines.forEach(l => S.log.push({ w: "bip", t: l.text }));
@@ -2320,11 +2584,12 @@ document.addEventListener("pointerdown", ensureAudio, { once: true });
 let lastActive = Date.now(), lastIdleAct = 0, idleGap = 14000, asleep = false, zzzTimer = null;
 const privacyEl = document.getElementById("privacy");
 function calm() {
-  return ready && !cutscene && !locked && !music.on && !pawMode && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
+  return ready && tab === "home" && !cutscene && !locked && !music.on && !pawMode && !busy && !listening && !materializing && speech.state === "idle" && sheet.hidden && brainSheet.hidden &&
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
   text = fill(text);
+  if (LANG !== "fr") { const t = trLine(text); if (t === undefined) { want(text); return; } text = t; }
   capEl.classList.add("dim"); capEl.textContent = text; liveEl.textContent = text;
   if (mood) idleMood(mood, ms);
 }
@@ -2703,7 +2968,10 @@ function localCommand(raw, dry) {
     [/^(?:jeux|jouer|on joue|a quoi on joue|liste des jeux|les jeux|tu veux jouer)$/, () => { renderChips("games"); speak([{ text: "Choisis un jeu dans la liste en bas !", mood: "clin" }]); }],
     [/^(?:interactions|tes tours|montre[- ]moi tes tours|qu'?est[- ]ce que tu sais faire comme tours)$/, () => { renderChips("fun"); speak([{ text: "Voilà tout ce que je sais faire ! Choisis.", mood: "fier" }]); }]
   ];
-  for (const [re, fn] of A) if (re.test(c)) { if (!dry) fn(); return true; }
+  for (const [re, fn] of A) if (re.test(c)) {
+    if (!dry) { fn(); if (NATIVE && NATIVE.earnCoins) { const g = NATIVE.earnCoins("interaction"); if (g) setTimeout(() => refreshCoins(), 300); } }
+    return true;
+  }
   return false;
 }
 
@@ -2847,7 +3115,7 @@ function rpsPlay(you) {
     const win = { pierre: "ciseaux", feuille: "pierre", ciseaux: "feuille" };
     let line;
     if (you === me) line = pick([{ text: "Égalité ! On a le même cerveau.", mood: "surpris" }, { text: "Pareil ! On rejoue ?", mood: "clin" }]);
-    else if (win[you] === me) { rpsScore[0]++; line = pick([{ text: "Tu as gagné… Bien joué !", mood: "timide" }, { text: "Grrr, tu m'as eu !", mood: "fache" }]); fx("sparkle", 3); }
+    else if (win[you] === me) { rpsScore[0]++; reward(true); line = pick([{ text: "Tu as gagné… Bien joué !", mood: "timide" }, { text: "Grrr, tu m'as eu !", mood: "fache" }]); fx("sparkle", 3); }
     else { rpsScore[1]++; line = pick([{ text: "J'ai gagné ! Hé hé !", mood: "fier" }, { text: "Victoire de {nom} !", mood: "rigole" }]); }
     if (sc) sc.textContent = "Toi " + rpsScore[0] + " – " + rpsScore[1] + " " + S.companionName;
     speak([{ text: "Moi, je fais… " + me + " !", mood: "surpris" }, line]);
@@ -3237,7 +3505,7 @@ function gNumber() {
     const v = +m[0]; tries++;
     if (v === secret) {
       gq("[data-range]").textContent = secret; gq("[data-tries]").textContent = "Trouvé en " + tries + " essai" + (tries > 1 ? "s" : "") + " !";
-      fx("confetti", 25); game = null;
+      fx("confetti", 25); game = null; reward(true);
       speak([{ text: "Oui ! C'était " + secret + " !", mood: "emerveille" }, { text: tries <= 7 ? "En " + tries + " essais, tu es un génie !" : "Trouvé en " + tries + " essais. Bien joué !", mood: "fier" }]);
       return true;
     }
@@ -3272,7 +3540,7 @@ function gMath() {
     if (ok) { score++; fx("sparkle", 2); }
     i++;
     if (i >= 5) {
-      game = null;
+      game = null; reward(score >= 3);
       gq("[data-q]").textContent = score + " / 5";
       gq("[data-n]").textContent = score === 5 ? "Parfait !" : "Partie terminée";
       speak([{ text: ok ? "Exact !" : "Non, c'était " + q.r + ".", mood: ok ? "fier" : "triste" },
@@ -3305,7 +3573,7 @@ function gAnagram() {
   const nextWord = () => {
     round++;
     if (round >= 3) {
-      game = null;
+      game = null; reward(score >= 2);
       gq("[data-w]").textContent = score + " / 3";
       gq("[data-h]").textContent = "Partie terminée";
       speak([{ text: "Fini ! Tu as trouvé " + score + " mot" + (score > 1 ? "s" : "") + " sur 3.", mood: score >= 2 ? "fier" : "clin" }]);
@@ -3357,7 +3625,7 @@ function gRiddle() {
   startGame({ onText(t, n) {
     const p = plain(t);
     if (answers.some(a => p.includes(a))) {
-      game = null; fx("confetti", 20);
+      game = null; fx("confetti", 20); reward(true);
       gq("[data-a]").textContent = "Réponse : " + said;
       speak([{ text: "Bravo ! C'était " + said + " !", mood: "emerveille" }, { text: "Tu en veux une autre ? Dis « devinette ».", mood: "clin" }]);
       return true;
@@ -3418,7 +3686,7 @@ function choiceGame(title, intro, items, render1, check, n) {
     setTimeout(() => {
       lock = false;
       if (i >= n) {
-        game = null;
+        game = null; reward(score >= n / 2);
         gq("[data-q]").textContent = "Score : " + score + " / " + n;
         gq("[data-c]").innerHTML = ""; gq("[data-n]").textContent = score === n ? "Sans faute !" : "Partie terminée";
         if (score === n) fx("confetti", 25);
@@ -3481,7 +3749,7 @@ function gSimon() {
       lightPad(k, 220);
       if (k !== seq[pos]) {
         const sc = seq.length - 1;
-        best.simon = Math.max(best.simon, sc);
+        best.simon = Math.max(best.simon, sc); reward(sc >= 5);
         game = null;
         gq("[data-n]").textContent = "Score : " + sc + " · record : " + best.simon;
         speak([{ text: "Oups, raté !", mood: "surpris" }, { text: "Tu as retenu " + sc + " couleur" + (sc > 1 ? "s" : "") + ". " + (sc >= 6 ? "Quelle mémoire !" : "On retente ?"), mood: sc >= 6 ? "emerveille" : "clin" }]);
@@ -3521,7 +3789,7 @@ function gReflex() {
       const p = pad(); p.className = "reflex done"; p.textContent = ms + " ms";
       if (round >= 3) {
         const b = Math.min(...times);
-        best.reflex = best.reflex ? Math.min(best.reflex, b) : b;
+        best.reflex = best.reflex ? Math.min(best.reflex, b) : b; reward(b < 350);
         game = null;
         gq("[data-n]").textContent = "Meilleur : " + b + " ms · record : " + best.reflex + " ms";
         speak([{ text: "Ton meilleur temps : " + b + " millisecondes !", mood: b < 300 ? "emerveille" : "fier" }, { text: b < 250 ? "Des réflexes de ninja !" : b < 350 ? "Très rapide !" : "Pas mal ! On retente ?", mood: "clin" }]);
@@ -3544,7 +3812,7 @@ function gTicTacToe() {
   const winner = () => { for (const [a, c, d] of L) if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a]; return b.every(Boolean) ? "=" : ""; };
   const draw = () => { cardEl.querySelectorAll(".ttt button").forEach((e, k) => { e.textContent = b[k] === "X" ? "✕" : b[k] === "O" ? "◯" : ""; e.classList.toggle("o", b[k] === "O"); }); };
   const finish = w => {
-    over = true; game = null;
+    over = true; game = null; reward(w === "X");
     gq("[data-n]").textContent = w === "X" ? "Tu as gagné !" : w === "O" ? S.companionName + " a gagné !" : "Match nul !";
     if (w === "X") { fx("confetti", 25); speak([{ text: "Tu m'as battu ! Bravo !", mood: "emerveille" }]); }
     else if (w === "O") speak([{ text: "Hé hé, j'ai gagné !", mood: "fier" }]);
@@ -3585,7 +3853,7 @@ function gTap() {
           gq("[data-n]").textContent = left.toFixed(1) + " s";
           if (left <= 0) {
             clearInterval(timer); running = false;
-            best.tap = Math.max(best.tap, n);
+            best.tap = Math.max(best.tap, n); reward(n >= 30);
             game = null;
             gq("[data-n]").textContent = n + " tapes · record : " + best.tap;
             speak([{ text: n + " tapes en 5 secondes !", mood: n >= 35 ? "emerveille" : "fier" }, { text: n >= 45 ? "Tes doigts sont des fusées !" : "Bien joué ! Tu peux battre ton record ?", mood: "clin" }]);
@@ -3627,7 +3895,7 @@ function gHide() {
     startGame({
       onButton(v, b) {
         if (+v === spot) {
-          game = null; b.textContent = "🐾"; faceWrap.classList.remove("hidden-cc"); restartAnim("hop"); fx("sparkle", 5);
+          game = null; b.textContent = "🐾"; reward(true); faceWrap.classList.remove("hidden-cc"); restartAnim("hop"); fx("sparkle", 5);
           speak([{ text: tries === 0 ? "Oh non, trouvé du premier coup !" : "Tu m'as trouvé !", mood: "rigole" }]);
           setTimeout(() => { if (!game && cardEl.querySelector(".bushes")) hideCard(); }, 2500);
           return;
@@ -3687,6 +3955,7 @@ settingsEl.hidden = !NATIVE;
 
 function renderSheet() {
   try { renderMusicSettings(); } catch (e) {}
+  try { refreshCoins(); renderProfile(); } catch (e) {}
   try { renderChars(); } catch (e) {}
   try { renderSkins(); } catch (e) {}
   pull();
@@ -3754,11 +4023,20 @@ document.getElementById("testNotif").addEventListener("click", () => {
 });
 window.onNotifDenied = () => { settingsMsg.textContent = "Les notifications sont bloquées : autorise-les dans les réglages Android."; };
 
+function menuGo(page) {
+  document.querySelectorAll("#sheet .mpage").forEach(pg => { pg.hidden = pg.dataset.page !== page; });
+  const cur = document.querySelector('#sheet .mpage[data-page="' + page + '"]');
+  document.getElementById("sheetTitle").textContent = cur ? cur.dataset.title : "Menu";
+  document.getElementById("menuBack").hidden = page === "home";
+  const panel = document.querySelector("#sheet .panel");
+  if (panel) panel.scrollTop = 0;
+  if (page === "chats") logEl.scrollTop = logEl.scrollHeight;
+}
 function openSheet(toSettings) {
   renderSheet();
+  menuGo(toSettings && NATIVE ? "settings" : "home");
   sheet.hidden = false;
-  if (toSettings && NATIVE) { settingsEl.scrollIntoView({ block: "start" }); }
-  else { document.getElementById("closeBtn").focus(); logEl.scrollTop = logEl.scrollHeight; }
+  document.getElementById("closeBtn").focus();
 }
 function closeSheet() { sheet.hidden = true; menuBtn.focus(); }
 menuBtn.addEventListener("click", () => openSheet(false));
@@ -3813,6 +4091,8 @@ function renderRank() {
   }[r] || "";
   rankClear.hidden = !info;
   devTools.hidden = !(r === "dev" || r === "owner");
+  const dt = document.getElementById("devTile"); if (dt) dt.hidden = devTools.hidden;
+  if (NATIVE) refreshCoins(); // le gérant et les développeurs ont tous les skins
   applySkin();
   document.body.classList.toggle("vip", r === "vip");
 }
@@ -4055,23 +4335,44 @@ function applySkin() {
 }
 function renderSkins() {
   const grid = document.getElementById("skinGrid");
-  if (!grid || !skinAllowed()) return;
+  if (!grid) return;
+  refreshCoins();
   grid.replaceChildren();
   const cur = activeSkin().id;
   SKINS.forEach(sk => {
+    const owned = ownsSkin(sk.id);
+    const price = (S.shop.prices || {})[sk.id] || 0;
     const b = document.createElement("button");
-    b.type = "button"; b.className = "skin" + (sk.id === cur ? " on" : "");
+    b.type = "button"; b.className = "skin" + (sk.id === cur ? " on" : "") + (owned ? "" : " locked");
     b.setAttribute("aria-pressed", sk.id === cur ? "true" : "false");
+    b.setAttribute("aria-label", sk.name + (owned ? "" : ", " + price + " pièces"));
     const c = document.createElement("canvas"); c.width = W; c.height = H;
     drawPreview(c, sk);
-    b.append(c, document.createTextNode(sk.name));
-    b.addEventListener("click", () => {
-      S.skin = sk.id; saveUi(); applySkin(); renderSkins();
-      closeSheet(); flash(); fx("sparkle", 6);
-      speak([{ text: SKIN_LINES[sk.id] || "Nouveau look !", mood: "fier" }]);
-    });
+    const tag = document.createElement("span");
+    if (owned) { tag.className = "owned"; tag.textContent = sk.id === cur ? "Porté" : "À toi"; }
+    else { tag.className = "price"; tag.innerHTML = '<i class="pc" aria-hidden="true"></i>' + price; }
+    b.append(c, document.createTextNode(sk.name), tag);
+    b.addEventListener("click", () => pickSkin(sk, owned, price));
     grid.append(b);
   });
+}
+async function pickSkin(sk, owned, price) {
+  if (!owned) {
+    const have = S.shop.coins || 0;
+    if (have < price) {
+      await confirmBox({ title: "Pas assez de pièces", text: "« " + sk.name + " » coûte " + price + " pièces, et tu en as " + have + ". Gagne des pièces en jouant, en marchant et en revenant chaque jour !", ok: "D'accord", cancel: false });
+      return;
+    }
+    const yes = await confirmBox({ title: "Acheter « " + sk.name + " » ?", text: "Il coûte " + price + " pièces. Il t'en restera " + (have - price) + ".", ok: "Acheter", cancel: "Pas maintenant" });
+    if (!yes) return;
+    const r = NATIVE ? NATIVE.buySkin(sk.id) : "ok";
+    refreshCoins();
+    if (r !== "ok") { await confirmBox({ title: "Achat impossible", text: "Il te manque des pièces.", ok: "D'accord", cancel: false }); return; }
+    tone(880, 1320, 0.15, "triangle", 0.04); tone(1320, 1760, 0.2, "triangle", 0.04, 0.12);
+  }
+  S.skin = sk.id; saveUi(); applySkin(); renderSkins();
+  closeSheet(); flash(); fx("sparkle", 6);
+  speak([{ text: SKIN_LINES[sk.id] || "Nouveau look !", mood: "fier" }]);
 }
 
 /* ---------- personnages ---------- */
@@ -4101,7 +4402,7 @@ function chooseChar(id) {
   const changed = curChar().id !== id;
   S.character = id;
   S.companionName = c.name;
-  saveUi(); updateName();
+  saveUi(); updateName(); renderProfile();
   closeSheet();
   if (!changed) return;
   hideCard();
@@ -4120,8 +4421,313 @@ function chooseChar(id) {
 }
 function openMenuAt(sectionId) {
   openSheet();
-  setTimeout(() => { const el = document.getElementById(sectionId); if (el) el.scrollIntoView({ block: "start" }); }, 60);
+  menuGo({ charSec: "chars", skinsSec: "shop" }[sectionId] || sectionId);
 }
+document.querySelectorAll("#sheet .tile").forEach(t => t.addEventListener("click", () => {
+  const go = t.dataset.go;
+  if (go === "brain") { openBrain(); return; }
+  if (go === "steps") { closeSheet(); switchTab("steps"); return; }
+  menuGo(go);
+}));
+document.getElementById("menuBack").addEventListener("click", () => menuGo("home"));
+document.getElementById("menuCoins").addEventListener("click", () => menuGo("shop"));
+function renderProfile() {
+  const c = curChar();
+  const pc = document.getElementById("profileCv");
+  if (pc) drawPreview(pc, activeSkin(), c, "content");
+  document.getElementById("profileName").textContent = S.companionName || c.name;
+  document.getElementById("profileSub").textContent = cap1(c.esp) + (S.rank && RANKS[S.rank] ? " · " + RANKS[S.rank].full.toLowerCase() : "");
+  const st = S.shop.streak || 0;
+  document.getElementById("profileStreak").textContent = st > 1 ? "Série : " + st + " jours d'affilée" : "";
+  document.getElementById("tabName").textContent = S.companionName || c.name;
+}
+
+/* ---------- fenêtre de confirmation ---------- */
+function confirmBox(o) {
+  return new Promise(done => {
+    const m = document.getElementById("ask");
+    document.getElementById("askTitle").textContent = o.title || "";
+    const w = document.getElementById("askWarn");
+    w.hidden = !o.warn; w.textContent = o.warn || "";
+    document.getElementById("askText").textContent = o.text || "";
+    const yes = document.getElementById("askYes"), no = document.getElementById("askNo");
+    yes.textContent = o.ok || "OK";
+    yes.className = "btn " + (o.danger ? "danger" : "primary");
+    no.textContent = o.cancel || "Annuler";
+    no.hidden = o.cancel === false;
+    const end = v => { m.hidden = true; yes.onclick = no.onclick = null; done(v); };
+    yes.onclick = () => end(true);
+    no.onclick = () => end(false);
+    m.hidden = false;
+    yes.focus();
+  });
+}
+
+/* ---------- pièces ---------- */
+function refreshCoins() {
+  if (NATIVE && NATIVE.coinState) { try { S.shop = JSON.parse(NATIVE.coinState()); } catch (e) {} }
+  const n = String(S.shop.coins || 0);
+  document.querySelectorAll("#coinPill span, #menuCoins span").forEach(e => { e.textContent = n; });
+  const wc = document.getElementById("walletCoins"); if (wc) wc.textContent = n;
+  const et = document.getElementById("earnToday");
+  if (et) et.textContent = "Aujourd'hui : " + (S.shop.playToday || 0) + " / " + (S.shop.playCap || 200) + " pièces gagnées en jouant, " + (S.shop.stepsToday || 0) + " / " + (S.shop.stepsCap || 100) + " en marchant.";
+}
+/** Petite pièce qui s'envole jusqu'au compteur. */
+function coinPop(n) {
+  if (!n) return;
+  refreshCoins();
+  const pill = document.getElementById("coinPill");
+  pill.classList.remove("bump"); void pill.offsetWidth; pill.classList.add("bump");
+  const [x, y] = facePoint(32, 10);
+  spark("+" + n + " pièce" + (n > 1 ? "s" : ""), "coinpop", x, y, { dy: -60 });
+  tone(1320, 1760, 0.12, "square", 0.025); tone(1760, 2093, 0.12, "square", 0.02, 0.08);
+}
+/** Récompense de fin de partie. */
+function reward(win) {
+  if (!NATIVE || !NATIVE.earnCoins) return;
+  coinPop(NATIVE.earnCoins(win ? "win" : "game"));
+}
+document.getElementById("coinPill").addEventListener("click", () => { openSheet(); menuGo("shop"); });
+document.getElementById("langBtn").addEventListener("click", () => { openSheet(); menuGo("lang"); });
+
+
+/* ---------- langues ---------- */
+// L'appli est écrite en français. Pour les autres langues, tous les textes affichés sont traduits sur le téléphone
+// (ML Kit) et gardés en mémoire. Quelques mots ambigus sont traduits à la main.
+const LANGS = [["fr", "Français"], ["en", "English"], ["es", "Español"], ["pt", "Português"], ["ru", "Русский"], ["zh", "中文"], ["ja", "日本語"], ["ar", "العربية"]];
+let LANG = "fr";
+const TR = new Map(); // texte français → traduction dans la langue actuelle
+const HAND = {
+  en: { "Pas": "Steps", "Échanges": "Chats", "Dé": "Dice", "Chifoumi": "Rock paper scissors", "Morpion": "Tic-tac-toe", "bips": "beeps", "voix": "voice", "muet": "mute", "Porté": "Worn", "À toi": "Yours" },
+  es: { "Pas": "Pasos", "Échanges": "Conversaciones", "Dé": "Dado", "Chifoumi": "Piedra, papel o tijera", "Morpion": "Tres en raya", "bips": "pitidos", "voix": "voz", "muet": "silencio", "Porté": "Puesto", "À toi": "Tuyo" },
+  pt: { "Pas": "Passos", "Échanges": "Conversas", "Dé": "Dado", "Chifoumi": "Pedra, papel e tesoura", "Morpion": "Jogo da velha", "bips": "bipes", "voix": "voz", "muet": "mudo", "Porté": "Em uso", "À toi": "Seu" },
+  ru: { "Pas": "Шаги", "Échanges": "Переписка", "Dé": "Кубик", "Chifoumi": "Камень, ножницы, бумага", "Morpion": "Крестики-нолики", "bips": "бипы", "voix": "голос", "muet": "без звука", "Porté": "Надето", "À toi": "Твой" },
+  zh: { "Pas": "步数", "Échanges": "聊天记录", "Dé": "骰子", "Chifoumi": "石头剪刀布", "Morpion": "井字棋", "bips": "哔声", "voix": "语音", "muet": "静音", "Porté": "已穿戴", "À toi": "已拥有" },
+  ja: { "Pas": "歩数", "Échanges": "会話", "Dé": "サイコロ", "Chifoumi": "じゃんけん", "Morpion": "三目並べ", "bips": "ビープ", "voix": "音声", "muet": "ミュート", "Porté": "着用中", "À toi": "所持" },
+  ar: { "Pas": "الخطوات", "Échanges": "المحادثات", "Dé": "النرد", "Chifoumi": "حجر ورقة مقص", "Morpion": "إكس أو", "bips": "صفير", "voix": "صوت", "muet": "صامت", "Porté": "مُرتدى", "À toi": "لك" }
+};
+const NO_TR = "#caption,#live,.log,#fx,#name,#tabName,#profileName,.letters,.langs,script,style,textarea,.boot-title,.boot-ea,.p";
+const SRC = new WeakMap(), OUT = new WeakMap();
+function trNow(t) {
+  if (LANG === "fr") return t;
+  const h = HAND[LANG];
+  return (h && h[t]) || TR.get(t);
+}
+// demandes de traduction à Android, regroupées
+const trWait = new Map();
+let trSeq = 0;
+function trTexts(list, from, to) {
+  return new Promise(res => {
+    if (!NATIVE || !NATIVE.translate || !list.length) { res(list); return; }
+    const id = "t" + (++trSeq);
+    trWait.set(id, res);
+    NATIVE.translate(id, JSON.stringify(list), from, to);
+    setTimeout(() => { if (trWait.has(id)) { trWait.delete(id); res(list); } }, 4000 + list.length * 200);
+  });
+}
+window.onTr = (id, json) => {
+  const r = trWait.get(id);
+  if (!r) return;
+  trWait.delete(id);
+  let a = [];
+  try { a = JSON.parse(json); } catch (e) {}
+  r(a);
+};
+const queue = new Set();
+let qTimer = null, relocTimer = null;
+function want(t) {
+  if (!NATIVE || !NATIVE.translate || LANG === "fr") return;
+  queue.add(t);
+  if (!qTimer) qTimer = setTimeout(flushQueue, 40);
+}
+function flushQueue() {
+  qTimer = null;
+  const lang = LANG;
+  const list = [...queue].filter(t => !TR.has(t));
+  queue.clear();
+  if (!list.length) return;
+  trTexts(list, "fr", lang).then(out => {
+    if (lang !== LANG) return;
+    list.forEach((t, i) => { if (out[i] != null) TR.set(t, out[i]); });
+    clearTimeout(relocTimer); relocTimer = setTimeout(relocalize, 30);
+  });
+}
+function skipEl(el) { return !el || (el.closest && el.closest(NO_TR)); }
+function locNode(node) {
+  const el = node.parentElement;
+  if (skipEl(el)) return;
+  const cur = node.nodeValue;
+  if (OUT.get(node) !== cur) SRC.set(node, cur); // nouveau texte (en français)
+  const src = SRC.get(node);
+  if (!src || !/\p{L}/u.test(src)) return;
+  const core = src.trim();
+  let out = trNow(core);
+  if (out === undefined) { want(core); out = core; }
+  const v = src.replace(core, out);
+  OUT.set(node, v);
+  if (cur !== v) node.nodeValue = v;
+}
+const ATTRS = ["placeholder", "aria-label", "title"];
+function locAttrs(el) {
+  if (!el || el.nodeType !== 1 || skipEl(el)) return;
+  el._trOut = el._trOut || {};
+  ATTRS.forEach(a => {
+    if (!el.hasAttribute(a)) return;
+    const cur = el.getAttribute(a);
+    if (el._trOut[a] !== cur) el["_src_" + a] = cur;
+    const src = el["_src_" + a];
+    if (!src || !/\p{L}/u.test(src)) return;
+    let out = trNow(src);
+    if (out === undefined) { want(src); out = src; }
+    el._trOut[a] = out;
+    if (cur !== out) el.setAttribute(a, out);
+  });
+}
+function localize(root) {
+  if (!root) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = w.nextNode())) locNode(n);
+  if (root.querySelectorAll) root.querySelectorAll("[placeholder],[aria-label],[title]").forEach(locAttrs);
+  locAttrs(root);
+}
+function relocalize() { localize(document.body); }
+new MutationObserver(ms => {
+  for (const m of ms) {
+    if (m.type === "characterData") locNode(m.target);
+    else if (m.type === "attributes") locAttrs(m.target);
+    else m.addedNodes.forEach(n => { if (n.nodeType === 3) locNode(n); else if (n.nodeType === 1) localize(n); });
+  }
+}).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+
+/** Phrase de Canelle dans la langue actuelle (ou undefined si pas encore traduite). */
+function trLine(t) { return trNow(t); }
+
+function applyLangDir() {
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+}
+function setLanguage(code) {
+  if (!LANGS.some(l => l[0] === code)) return;
+  LANG = code; S.lang = code;
+  TR.clear();
+  applyLangDir();
+  const note = document.getElementById("langNote");
+  if (NATIVE && NATIVE.setLang) {
+    NATIVE.setLang(code);
+    note.textContent = code === "fr" ? "" : "Téléchargement du pack de langue (environ 30 Mo)…";
+  }
+  renderLangs();
+  relocalize();
+}
+window.onLangReady = (code, ok) => {
+  if (code !== LANG) return;
+  document.getElementById("langNote").textContent = ok ? "" : "Le pack de langue n'a pas pu être téléchargé. Vérifie ta connexion, puis choisis la langue à nouveau.";
+  TR.clear();
+  relocalize();
+  if (ok && code !== "fr") speak([{ text: "Et voilà, je parle ta langue maintenant !", mood: "emerveille" }]);
+};
+function renderLangs() {
+  const g = document.getElementById("langGrid");
+  if (!g) return;
+  g.replaceChildren(...LANGS.map(([code, label]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "langbtn" + (code === LANG ? " on" : "");
+    b.lang = code; if (code === "ar") b.dir = "rtl";
+    b.setAttribute("aria-pressed", code === LANG ? "true" : "false");
+    b.textContent = label;
+    b.addEventListener("click", () => { if (code !== LANG) setLanguage(code); });
+    return b;
+  }));
+}
+
+/* ---------- onglets : compagnon / pas ---------- */
+let tab = "home", stepsData = null, stepsTimer = null;
+function switchTab(t) {
+  tab = t === "steps" ? "steps" : "home";
+  crtEl.classList.toggle("tab-steps", tab === "steps");
+  document.getElementById("stepsView").hidden = tab !== "steps";
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab ? "true" : "false"));
+  clearInterval(stepsTimer);
+  if (tab === "steps") {
+    hideCard();
+    const c = document.getElementById("stepsCv");
+    if (c) drawPreview(c, activeSkin(), curChar(), "content");
+    if (NATIVE && NATIVE.stepsRefresh) { NATIVE.stepsRefresh(); stepsTimer = setInterval(() => { if (!document.hidden) NATIVE.stepsRefresh(); }, 60000); }
+    else renderSteps({ availability: "ok", granted: true, today: 4230, goal: 6000, days: [5120, 7300, 3900, 8800, 6100, 2500, 4230].map((n, i) => ({ date: "2026-09-" + (18 + i), steps: n })) });
+  }
+}
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+const fmtN = n => Math.round(n).toLocaleString("fr-FR");
+const DAYS_FR = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+function stepsLine(today, goal) {
+  const left = Math.max(0, goal - today), pct = goal ? today / goal : 0;
+  if (today >= goal) return { text: "Objectif atteint ! " + fmtN(today) + " pas, bravo !", mood: "emerveille" };
+  if (pct >= 0.75) return { text: "Presque ! Plus que " + fmtN(left) + " pas.", mood: "fier" };
+  if (pct >= 0.4) return { text: "Bien parti ! Encore " + fmtN(left) + " pas pour l'objectif.", mood: "content" };
+  if (today > 0) return { text: "Bon début ! On se dégourdit encore les pattes ?", mood: "clin" };
+  return { text: "Pas encore de pas aujourd'hui. On va se promener ?", mood: "reflechit" };
+}
+window.onSteps = o => {
+  stepsData = o;
+  if (o.shop) { S.shop = o.shop; refreshCoins(); }
+  renderSteps(o);
+};
+function renderSteps(o) {
+  const box = document.getElementById("stepsConnectBox"), body = document.getElementById("stepsBody");
+  const goal = o.goal || 6000;
+  document.getElementById("stepsGoal").value = String(goal);
+  document.getElementById("stepsGoalTxt").textContent = "objectif " + fmtN(goal);
+  let msg = "", btn = "";
+  if (o.availability === "absent") { msg = "Pour compter tes pas, installe Health Connect (gratuit, par Google). Il récupère les pas de Google Fit, Samsung Health, Fitbit…"; btn = "Installer Health Connect"; }
+  else if (o.availability === "update") { msg = "Health Connect doit être mis à jour pour que je puisse lire tes pas."; btn = "Mettre à jour Health Connect"; }
+  else if (!o.granted) { msg = "Autorise-moi à lire ton nombre de pas. Je ne lis que ça, et rien ne quitte ton téléphone."; btn = "Autoriser la lecture des pas"; }
+  box.hidden = !msg; body.hidden = !!msg;
+  document.getElementById("stepsConnectTxt").textContent = msg;
+  document.getElementById("stepsConnectBtn").textContent = btn;
+  const ring = document.getElementById("stepsRing");
+  if (msg) {
+    document.getElementById("stepsNum").textContent = "—";
+    ring.setAttribute("stroke-dashoffset", "326.7");
+    document.getElementById("stepsSay").textContent = fill("On compte tes pas ensemble ? Il me faut juste ton accord.");
+    return;
+  }
+  const today = o.today || 0;
+  document.getElementById("stepsNum").textContent = fmtN(today);
+  ring.setAttribute("stroke-dashoffset", String(326.7 * (1 - Math.min(1, today / goal))));
+  document.getElementById("stepsSay").textContent = fill(stepsLine(today, goal).text);
+  document.getElementById("stepsKm").textContent = (today * 0.75 / 1000).toFixed(1).replace(".", ",");
+  document.getElementById("stepsKcal").textContent = fmtN(today * 0.04);
+  const days = o.days || [];
+  const max = Math.max(goal, ...days.map(d => d.steps || 0), 1);
+  const avg = days.length ? days.reduce((a, d) => a + (d.steps || 0), 0) / days.length : 0;
+  document.getElementById("stepsAvg").textContent = fmtN(avg);
+  document.getElementById("stepsWeek").innerHTML = days.map((d, i) => {
+    const h = Math.max(3, Math.round(90 * (d.steps || 0) / max));
+    const wd = DAYS_FR[new Date(d.date + "T12:00:00").getDay()];
+    return `<div title="${fmtN(d.steps || 0)} pas"><i class="${(d.steps || 0) >= goal ? "done" : ""}${i === days.length - 1 ? " today" : ""}" style="height:${h}%"></i><span>${wd}</span></div>`;
+  }).join("");
+  const due = (S.shop && S.shop.stepsDue) || 0;
+  const claim = document.getElementById("stepsClaim");
+  claim.hidden = !due;
+  claim.textContent = "Récupérer " + due + " pièce" + (due > 1 ? "s" : "");
+  document.getElementById("stepsCoinTxt").textContent = "10 pièces tous les 1 000 pas (jusqu'à 100 par jour). Aujourd'hui : " + ((S.shop && S.shop.stepsToday) || 0) + " récupérées.";
+}
+document.getElementById("stepsConnectBtn").addEventListener("click", () => { if (NATIVE && NATIVE.stepsConnect) NATIVE.stepsConnect(); });
+document.getElementById("stepsSettings").addEventListener("click", () => { if (NATIVE && NATIVE.stepsSettings) NATIVE.stepsSettings(); });
+document.getElementById("stepsGoal").addEventListener("change", e => {
+  const n = +e.target.value;
+  if (NATIVE && NATIVE.setStepGoal) NATIVE.setStepGoal(n);
+  if (stepsData) { stepsData.goal = n; renderSteps(stepsData); }
+});
+document.getElementById("stepsClaim").addEventListener("click", () => {
+  const g = NATIVE && NATIVE.claimStepCoins ? NATIVE.claimStepCoins() : 0;
+  if (g) { refreshCoins(); tone(1320, 1760, 0.12, "square", 0.025); }
+  if (stepsData) renderSteps(stepsData);
+  const c = document.getElementById("stepsClaim");
+  c.hidden = true;
+  document.getElementById("stepsSay").textContent = g ? "+" + g + " pièces ! Merci d'avoir marché avec moi." : "Rien à récupérer pour l'instant.";
+});
 
 /* ---------- menu : musique ---------- */
 const musicSel = document.getElementById("musicAppSel");
@@ -4215,22 +4821,23 @@ function renderBrain(st) {
   brainWarn.hidden = !low;
   if (low) brainWarn.textContent = "Ton téléphone a " + st.ramGb.toFixed(1).replace(".", ",") + " Go de mémoire : c'est juste assez. Je répondrai plus lentement, et en mode économe si besoin.";
   mobileRow.hidden = !["absent", "failed", "paused"].includes(st.state) && !st.canUpgrade && !st.canDowngrade;
-  let title = "", detail = "", btns = [];
+  let title = "", detail = "", btns = [], showModels = false;
   switch (st.state) {
     case "absent": {
       const big = st.recommended === "e4b";
       title = "Pas encore installé.";
-      detail = (big ? "Ton téléphone est puissant : je vais prendre mon cerveau le plus intelligent, Gemma 4 E4B (" + goN(st.e4bBytes) + ")."
-        : "Je vais prendre Gemma 4 E2B (" + goN(st.e2bBytes) + "), le meilleur compromis pour ton téléphone.") +
-        " À télécharger une seule fois : en wifi, ça prend en général de 5 à 30 minutes, et ça continue même si tu fermes l'appli.";
-      btns = [["Télécharger mon cerveau", true, startDownload]];
+      detail = (big ? "Ton téléphone est puissant : je te conseille mon cerveau le plus intelligent, Gemma 4 E4B."
+        : "Je te conseille Gemma 4 E2B, le meilleur compromis pour ton téléphone.") +
+        " À télécharger une seule fois : en wifi, ça prend en général de 5 à 30 minutes, et ça continue même si tu fermes l'appli. Tu peux aussi choisir l'autre cerveau ci-dessous.";
+      btns = [["Télécharger le cerveau conseillé", true, startDownload]];
+      showModels = true;
       break;
     }
     case "weak":
-      title = "Mon cerveau ne tient pas dans ce téléphone.";
-      detail = "Ton téléphone a " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, et mon cerveau a besoin d'un téléphone de 6 Go au moins. " +
-        "Plutôt qu'un petit cerveau qui répondrait n'importe quoi, je fais sans : la batterie, la météo, les réveils, la musique, les jeux et nos petites phrases marchent quand même.";
-      if (S.rank === "dev" || S.rank === "owner") btns = [["Essayer quand même (tests)", false, forceDownload]];
+      title = "Mon cerveau est trop lourd pour ce téléphone.";
+      detail = "Ton téléphone a " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, et mes cerveaux en demandent au moins 6. " +
+        "Sans cerveau, la batterie, la météo, les réveils, la musique, les jeux et nos petites phrases marchent quand même. Tu peux quand même en essayer un ci-dessous, mais l'application risque de planter.";
+      showModels = true;
       break;
     case "downloading":
       title = "Téléchargement" + (st.modelLabel ? " de " + st.modelLabel : "") + " : " + pct + " %";
@@ -4270,9 +4877,11 @@ function renderBrain(st) {
       btns = [["Réessayer", true, wakeBrain]];
       break;
     case "blocked":
-      title = "Mon cerveau est en pause de sécurité.";
-      detail = "En se chargeant, il a fait fermer l'appli plusieurs fois : ton téléphone ne lui laisse pas assez de mémoire. Il ne se lance donc plus tout seul. Tu peux réessayer en mode économe, en fermant d'abord les autres applis.";
-      btns = [["Réessayer en mode économe", true, wakeBrain]];
+      title = st.risky ? "Cerveau désactivé pour éviter les plantages." : "Mon cerveau est en pause de sécurité.";
+      detail = st.risky
+        ? "Ce cerveau est trop lourd pour ton téléphone : il a fait planter l'application. Je l'ai désactivé tout de suite pour que ça ne recommence pas à chaque ouverture. Tout le reste fonctionne."
+        : "En se chargeant, il a fait fermer l'appli : ton téléphone ne lui laisse pas assez de mémoire. Je l'ai désactivé pour éviter que ça recommence. Tu peux réessayer en mode économe, en fermant d'abord les autres applis.";
+      btns = [[st.risky ? "Réessayer quand même" : "Réessayer en mode économe", !st.risky, st.risky ? retryRisky : wakeBrain]];
       break;
   }
   // changer de cerveau (l'ancien reste utilisable pendant le téléchargement)
@@ -4282,12 +4891,13 @@ function renderBrain(st) {
   } else if (sw && sw.state === "failed") {
     detail += " Le téléchargement du nouveau cerveau a échoué, je garde l'actuel.";
   } else {
-    if (st.canUpgrade) btns.push(["Passer au cerveau E4B (plus intelligent, " + goN(st.e4bBytes) + ")", false, () => switchModel("e4b")]);
-    if (st.canDowngrade) btns.push(["Revenir au cerveau E2B (plus léger, " + goN(st.e2bBytes) + ")", st.state === "blocked", () => switchModel("e2b")]);
+    if (st.canUpgrade) btns.push(["Passer au cerveau E4B (plus intelligent, " + goN(st.e4bBytes) + ")", false, () => chooseModel("e4b")]);
+    if (st.canDowngrade) btns.push(["Revenir au cerveau E2B (plus léger, " + goN(st.e2bBytes) + ")", st.state === "blocked", () => chooseModel("e2b")]);
   }
   if (HAS.includes(st.state)) btns.push(["Supprimer le cerveau", false, armDelete, "danger small"]);
   brainStateEl.textContent = title;
   brainDetail.textContent = detail;
+  renderModels(st, showModels);
   const key = st.state + "|" + (sw ? sw.state : "") + "|" + btns.map(b => b[0]).join();
   if (key !== brainKey) {
     brainKey = key;
@@ -4301,6 +4911,55 @@ function renderBrain(st) {
   const rep0 = st.report || "";
   document.getElementById("brainReport").hidden = !rep0;
   if (rep0) document.getElementById("brainReportTxt").textContent = rep0;
+}
+const MODELS = {
+  e2b: { label: "Gemma 4 E2B", info: "Le meilleur compromis. Conseillé à partir de 6 Go de mémoire.", bytes: "e2bBytes" },
+  e4b: { label: "Gemma 4 E4B", info: "Le plus intelligent. Conseillé à partir de 12 Go de mémoire.", bytes: "e4bBytes" }
+};
+const FIT_LABEL = { ok: "Conseillé", juste: "Juste", risque: "Risqué" };
+function renderModels(st, show) {
+  const box = document.getElementById("brainModels");
+  box.hidden = !show;
+  if (!show) return;
+  const key = "m|" + st.fitE2B + st.fitE4B;
+  if (box.dataset.key === key) return;
+  box.dataset.key = key;
+  box.replaceChildren(...["e2b", "e4b"].map(id => {
+    const m = MODELS[id], fit = st[id === "e2b" ? "fitE2B" : "fitE4B"] || "ok";
+    const d = document.createElement("div"); d.className = "model";
+    const b = document.createElement("b"); b.textContent = m.label + " · " + goN(st[m.bytes] || 0);
+    const f = document.createElement("span"); f.className = "fit " + fit; f.textContent = FIT_LABEL[fit]; b.append(f);
+    const sm = document.createElement("small"); sm.textContent = m.info;
+    d.append(b, sm, button("Choisir", fit === "ok", () => chooseModel(id)));
+    return d;
+  }));
+}
+/** Choix d'un cerveau : avertissement si le téléphone est juste, puis téléchargement. */
+async function chooseModel(id) {
+  const st = lastBrain || {};
+  const fit = st[id === "e2b" ? "fitE2B" : "fitE4B"] || "ok";
+  const ram = (st.ramGb || 0).toFixed(1).replace(".", ",");
+  if (fit !== "ok") {
+    const yes = await confirmBox({
+      title: "Attention : risque de plantage",
+      warn: fit === "risque"
+        ? "Ton téléphone n'a que " + ram + " Go de mémoire, et " + MODELS[id].label + " en demande davantage. L'application risque fortement de planter."
+        : "Ton téléphone a " + ram + " Go de mémoire : c'est juste pour " + MODELS[id].label + ". Il sera plus lent, et l'application peut planter.",
+      text: "Si elle plante, je désactiverai mon cerveau tout de suite pour éviter qu'elle replante à chaque ouverture. Tu pourras toujours revenir en arrière dans « Mon cerveau ». Continuer ?",
+      ok: "Télécharger quand même", cancel: "Annuler", danger: true
+    });
+    if (!yes) return;
+  }
+  switchModel(id);
+}
+async function retryRisky() {
+  const yes = await confirmBox({
+    title: "Réessayer ce cerveau ?",
+    warn: "Il a déjà fait planter l'application sur ce téléphone.",
+    text: "Je vais le relancer en mode économe. S'il plante encore, il sera de nouveau désactivé.",
+    ok: "Réessayer", cancel: "Annuler", danger: true
+  });
+  if (yes) wakeBrain();
 }
 function wakeBrain() {
   if (!NATIVE) return;
@@ -4366,6 +5025,8 @@ brainSheet.addEventListener("click", e => { if (e.target === brainSheet) closeBr
 document.getElementById("openBrain").addEventListener("click", openBrain);
 
 window.onBack = () => {
+  if (!document.getElementById("ask").hidden) { document.getElementById("askNo").click(); return true; }
+  if (!sheet.hidden && document.getElementById("menuBack") && !document.getElementById("menuBack").hidden) { menuGo("home"); return true; }
   if (cutscene) { cancelCutscene(); return true; }
   if (!privacyEl.hidden) { document.getElementById("privOk").click(); return true; }
   if (!brainSheet.hidden) { closeBrain(); return true; }
@@ -4373,11 +5034,13 @@ window.onBack = () => {
   if (!sheet.hidden) { closeSheet(); return true; }
   if (!placesEl.hidden) { hidePlaces(); return true; }
   if (listening && NATIVE) { NATIVE.stopListening(); return true; }
+  if (tab === "steps") { switchTab("home"); return true; }
   return false;
 };
 window.onResumeApp = () => {
   pull(); pollBrain(); lastActive = Date.now();
-  statusCheck(); musicPoll();
+  statusCheck(); musicPoll(); refreshCoins();
+  if (tab === "steps" && NATIVE && NATIVE.stepsRefresh) NATIVE.stepsRefresh();
   if (locked && lockEnd <= Date.now()) { location.reload(); return; }
   if (cutscene === "question" && S.sound !== "muet" && SND.question && SND.question.currentTime > 0 && !SND.question.ended) SND.question.play().catch(() => {});
 };
@@ -4446,6 +5109,13 @@ function greet() {
     if (st && st.state === "downloading") lines.push({ text: "Mon cerveau se télécharge : " + Math.floor(100 * st.done / (st.total || 1)) + " %.", mood: "content" });
     else if (st && !S.hasModel && st.state !== "weak") lines.push({ text: "Mon cerveau n'est pas encore installé : menu, puis « Mon cerveau ».", mood: "reflechit" });
   }
+  const bonus = NATIVE && NATIVE.dailyBonus && !locked ? NATIVE.dailyBonus() : 0;
+  if (bonus) {
+    refreshCoins();
+    const streak = S.shop.streak || 1;
+    lines.push({ text: "Bonus du jour : +" + bonus + " pièces !" + (streak > 1 ? " Ça fait " + streak + " jours d'affilée que tu reviens." : ""), mood: "emerveille" });
+    setTimeout(() => coinPop(0), 10);
+  }
   if (st && st.crashNotice) {
     lines.push(st.tier >= 3
       ? { text: "Au fait : mon cerveau a encore fait fermer l'appli. Je le mets en pause de sécurité.", mood: "inquiet" }
@@ -4468,7 +5138,10 @@ function greet() {
   speak(lines);
 }
 function boot() {
+  LANG = S.lang || "fr"; applyLangDir(); renderLangs();
   updateName(); updateSound(); renderChips(false); renderRank();
+  refreshCoins(); renderProfile();
+  if (LANG !== "fr") relocalize();
   const first = !S.visits;
   if (first) { face.reveal = 0; shadowEl.classList.add("gone"); }
   render();

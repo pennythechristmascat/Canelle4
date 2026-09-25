@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- mesurer le rythme de la musique pour faire danser Canelle (rien n'est enregistré) -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- lire le nombre de pas dans Health Connect (Google Fit, Samsung Health, Fitbit, le téléphone…) -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <!-- réponses depuis la notification sur Android 8 à 11 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -18,6 +20,7 @@
         <package android:name="com.spotify.music" />
         <package android:name="deezer.android.app" />
         <package android:name="com.android.vending" />
+        <package android:name="com.google.android.apps.healthdata" />
         <intent>
             <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
         </intent>
@@ -76,6 +79,27 @@
         <receiver
             android:name=".ReplyReceiver"
             android:exported="false" />
+
+        <!-- Health Connect : explication de l'usage des pas (Android 13 et moins) -->
+        <activity
+            android:name=".StepsRationaleActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+        </activity>
+        <!-- Health Connect : explication de l'usage des pas (Android 14 et plus) -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".StepsRationaleActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- Facultatif : permet à Canelle de connaître le titre de la musique en cours (aucune notification n'est lue ni gardée). -->
         <service

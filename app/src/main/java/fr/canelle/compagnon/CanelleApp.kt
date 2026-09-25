@@ -8,6 +8,8 @@ class CanelleApp : Application() {
         Store.init(this)
         Diagnostics.installCrashHandler()
         Diagnostics.collect(this)
+        Coins.init()
+        Lang.init(this)
         Notifs.channels(this)
         if (Store.lastCheckin == 0L) Store.lastCheckin = System.currentTimeMillis()
         CheckinWorker.schedule(this)

@@ -84,6 +84,43 @@ object Store {
     var character: String
         get() = str("character", "canelle")
         set(v) = putStr("character", v)
+    // --- pièces et boutique de skins
+    var coins: Int
+        get() = p.getInt("coins", 0)
+        set(v) { p.edit().putInt("coins", v.coerceAtLeast(0)).commit() }
+    var coinsInit: Boolean
+        get() = p.getBoolean("coinsInit", false)
+        set(v) = putBool("coinsInit", v)
+    var coinsDay: String
+        get() = str("coinsDay")
+        set(v) = putStr("coinsDay", v)
+    var coinsToday: Int
+        get() = p.getInt("coinsToday", 0)
+        set(v) = putInt("coinsToday", v)
+    var stepsCoinsToday: Int
+        get() = p.getInt("stepsCoinsToday", 0)
+        set(v) = putInt("stepsCoinsToday", v)
+    var lastDaily: String
+        get() = str("lastDaily")
+        set(v) = putStr("lastDaily", v)
+    var streak: Int
+        get() = p.getInt("streak", 0)
+        set(v) = putInt("streak", v)
+    var ownedSkins: String
+        get() = str("ownedSkins", "[]")
+        set(v) { p.edit().putString("ownedSkins", v).commit() }
+    /** Objectif de pas quotidien. */
+    var stepGoal: Int
+        get() = p.getInt("stepGoal", 6000)
+        set(v) = putInt("stepGoal", v)
+    /** Cerveau choisi au-delà de ce que le téléphone peut supporter : au premier plantage, on le désactive. */
+    var riskyModel: Boolean
+        get() = p.getBoolean("riskyModel", false)
+        set(v) { p.edit().putBoolean("riskyModel", v).commit() }
+    /** Langue de l'application : fr, en, es, pt, ru, zh, ja ou ar. */
+    var lang: String
+        get() = str("lang", "fr")
+        set(v) { p.edit().putString("lang", v).commit() }
     var gpuBroken: Boolean
         get() = p.getBoolean("gpuBroken", false)
         set(v) = putBool("gpuBroken", v)
@@ -284,6 +321,8 @@ object Store {
         .put("musicApp", musicApp)
         .put("skin", skin)
         .put("character", character)
+        .put("stepGoal", stepGoal)
+        .put("lang", lang)
         .put("ownerFails", ownerFails)
         .put("lockUntil", Access.lockedUntil())
         .put("now", System.currentTimeMillis())

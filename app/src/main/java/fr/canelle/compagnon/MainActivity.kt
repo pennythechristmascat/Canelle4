@@ -21,6 +21,7 @@ import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.health.connect.client.PermissionController
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -50,6 +51,20 @@ class MainActivity : ComponentActivity(), ToolHost {
     private var tts: TextToSpeech? = null
     @Volatile private var ttsReady = false
     private var permWaiter: CompletableDeferred<Boolean>? = null
+
+    /** Autorisation de lire les pas dans Health Connect. */
+    private val stepsLauncher = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { _ ->
+        pushSteps()
+    }
+
+    /** Lit les pas et les envoie à la page. */
+    private fun pushSteps() {
+        lifecycleScope.launch {
+            val o = runCatching { Steps.read(this@MainActivity) }.getOrNull() ?: JSONObject().put("availability", "absent")
+            o.put("goal", Store.stepGoal).put("shop", Coins.state())
+            js("window.onSteps&&onSteps($o)")
+        }
+    }
 
     private val permLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { res ->
         permWaiter?.complete(res.values.any { it })
@@ -111,7 +126,7 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                tts?.language = Locale.FRANCE
+                tts?.language = Lang.locale()
                 tts?.setPitch(1.3f)
                 tts?.setSpeechRate(1.05f)
                 ttsReady = true
@@ -162,6 +177,7 @@ class MainActivity : ComponentActivity(), ToolHost {
         // En arrière-plan, tout s'arrête : position, mesure du rythme, animations et minuteries de la page.
         LocationKeeper.stop()
         MusicWatcher.release()
+        Lang.save()
         BatteryWatch.uiAlert = null
         if (::web.isInitialized) {
             js("window.onPauseApp&&onPauseApp()")
@@ -265,7 +281,7 @@ class MainActivity : ComponentActivity(), ToolHost {
             })
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, Lang.bcp())
                 .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
             r.startListening(intent)
@@ -289,7 +305,10 @@ class MainActivity : ComponentActivity(), ToolHost {
                 Store.lastSeen = o.optLong("lastSeen", Store.lastSeen)
                 if (o.has("hidePrivacy")) Store.hidePrivacy = o.optBoolean("hidePrivacy", Store.hidePrivacy)
                 if (o.has("musicApp")) Store.musicApp = o.optString("musicApp", Store.musicApp)
-                if (o.has("skin")) Store.skin = o.optString("skin", Store.skin)
+                if (o.has("skin")) {
+                    val sk = o.optString("skin", Store.skin)
+                    if (sk.isBlank() || Coins.owns(sk)) Store.skin = sk // un skin non acheté ne peut pas être porté
+                }
                 if (o.has("character")) {
                     val ch = o.optString("character", Store.character)
                     if (ch != Store.character) {
@@ -328,6 +347,46 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         @JavascriptInterface
         fun confirmOwner(name: String): Boolean = Access.confirmOwner(name).also { LocalModel.markDirty() }
+
+        // ------------------------------------------------ pas (Health Connect)
+
+        @JavascriptInterface
+        fun stepsRefresh() = pushSteps()
+
+        /** Demande l'autorisation de lire les pas, ou propose d'installer Health Connect. */
+        @JavascriptInterface
+        fun stepsConnect() {
+            runOnUiThread {
+                if (Steps.availability(this@MainActivity) == "ok") stepsLauncher.launch(Steps.PERMISSIONS)
+                else Steps.openStore(this@MainActivity)
+            }
+        }
+
+        @JavascriptInterface
+        fun stepsSettings() = Steps.openSettings(this@MainActivity)
+
+        @JavascriptInterface
+        fun setStepGoal(n: Int) {
+            Store.stepGoal = n.coerceIn(1000, 50000)
+        }
+
+        // ------------------------------------------------ pièces et boutique
+
+        @JavascriptInterface
+        fun coinState(): String = Coins.state().toString()
+
+        @JavascriptInterface
+        fun dailyBonus(): Int = Coins.daily()
+
+        @JavascriptInterface
+        fun earnCoins(reason: String): Int = Coins.earn(reason)
+
+        @JavascriptInterface
+        fun claimStepCoins(): Int = Coins.claimSteps()
+
+        /** "ok", "pauvre" ou "inconnu". */
+        @JavascriptInterface
+        fun buySkin(id: String): String = Coins.buy(id)
 
         // ------------------------------------------------ musique
 
@@ -369,11 +428,44 @@ class MainActivity : ComponentActivity(), ToolHost {
         }
 
         @JavascriptInterface
-        fun send(id: String, text: String) {
+        fun send(id: String, text: String) = sendImpl(id, text, false)
+
+        /** Message déjà en français (raccourcis de l'appli) : pas besoin de le traduire. */
+        @JavascriptInterface
+        fun sendFr(id: String, text: String) = sendImpl(id, text, true)
+
+        // ------------------------------------------------ langues
+
+        /** Traduit une liste de textes (JSON) et rend le résultat à la page : onTr(id, [..]). */
+        @JavascriptInterface
+        fun translate(id: String, json: String, from: String, to: String) {
+            lifecycleScope.launch {
+                val a = runCatching { JSONArray(json) }.getOrDefault(JSONArray())
+                val out = JSONArray()
+                for (i in 0 until a.length()) out.put(runCatching { Lang.tr(a.getString(i), from, to) }.getOrDefault(a.getString(i)))
+                js("window.onTr&&onTr(${q(id)}, ${q(out.toString())})")
+            }
+        }
+
+        /** Change la langue et télécharge le pack de traduction si besoin : onLangReady(code, ok). */
+        @JavascriptInterface
+        fun setLang(code: String) {
+            if (code !in Lang.CODES) return
+            Lang.save()
+            Store.lang = code
+            LocalModel.markDirty() // le cerveau repart avec la consigne de langue
+            runOnUiThread { tts?.language = Lang.locale() }
+            lifecycleScope.launch {
+                val ok = Lang.prepare(code)
+                js("window.onLangReady&&onLangReady(${q(code)}, $ok)")
+            }
+        }
+
+        private fun sendImpl(id: String, text: String, alreadyFrench: Boolean) {
             lifecycleScope.launch {
                 try {
                     val r = Brain.reply(
-                        this@MainActivity, text, foreground = true, host = this@MainActivity,
+                        this@MainActivity, text, foreground = true, host = this@MainActivity, alreadyFrench = alreadyFrench,
                         onStatus = { st -> js("window.onReplyStatus&&onReplyStatus(${q(id)}, ${q(st)})") },
                         onLine = { line -> js("window.onReplyLine&&onReplyLine(${q(id)}, ${q(line.toJson().toString())})") }
                     )
@@ -447,14 +539,12 @@ class MainActivity : ComponentActivity(), ToolHost {
         /** Change de cerveau : "e2b" (plus léger) ou "e4b" (plus intelligent). L'ancien reste utilisable pendant le téléchargement. */
         @JavascriptInterface
         fun switchModel(id: String, allowMobile: Boolean): String =
-            LocalModel.startDownload(this@MainActivity, allowMobile, modelId = id) ?: ""
+            LocalModel.startDownload(this@MainActivity, allowMobile, modelId = id, force = true) ?: ""
 
         /** Téléphone jugé trop faible : essai quand même (réservé au gérant et aux développeurs). */
         @JavascriptInterface
-        fun forceDownload(allowMobile: Boolean): String {
-            if (Store.rank != "dev" && Store.rank != "owner") return "faible"
-            return LocalModel.startDownload(this@MainActivity, allowMobile, modelId = LocalModel.E2B.id, force = true) ?: ""
-        }
+        fun forceDownload(allowMobile: Boolean): String =
+            LocalModel.startDownload(this@MainActivity, allowMobile, modelId = LocalModel.E2B.id, force = true) ?: ""
 
         @JavascriptInterface
         fun cancelDownload() = LocalModel.cancelDownload(this@MainActivity)

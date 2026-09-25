@@ -52,13 +52,17 @@ object Brain {
         foreground: Boolean,
         host: ToolHost?,
         onStatus: ((String) -> Unit)? = null,
-        onLine: ((Line) -> Unit)? = null
+        onLine: ((Line) -> Unit)? = null,
+        alreadyFrench: Boolean = false
     ): Reply {
-        val text = userText.trim().take(800)
-        if (text.isEmpty()) throw BrainException("empty")
+        val original = userText.trim().take(800)
+        if (original.isEmpty()) throw BrainException("empty")
         if (Access.isLocked()) {
-            return Reply(listOf(Line("Hmph. Je ne parle pas aux menteurs.", "fache")), null, null, null)
+            return Reply(Lang.lines(listOf(Line("Hmph. Je ne parle pas aux menteurs.", "fache"))), null, null, null)
         }
+        // Les commandes sont comprises en français : on traduit ce que l'utilisateur écrit dans une autre langue.
+        // Le cerveau, lui, reçoit le message d'origine et répond directement dans la langue de l'utilisateur.
+        val text = if (alreadyFrench || Lang.current() == "fr") original else Lang.fromUser(original)
         val n = Intents.norm(text)
         val tools = Tools(ctx, foreground, host)
 
@@ -82,15 +86,17 @@ object Brain {
         val lines: List<Line> = when {
             routedLines != null -> {
                 LocalModel.markDirty()
-                routedLines
+                val extra = if (Lang.current() != "fr" && Intents.isCrisis(n))
+                    listOf(Line("Si tu n'es pas en France, appelle le numéro d'urgence de ton pays.", "inquiet")) else emptyList()
+                Lang.lines(routedLines + extra)
             }
             fact != null && name == null -> {
                 LocalModel.markDirty()
-                listOf(Line(pick("C'est noté, je m'en souviendrai !", "Promis, je le garde dans ma petite tête.", "Retenu ! Je range ça bien au chaud."), "content"))
+                Lang.lines(listOf(Line(pick("C'est noté, je m'en souviendrai !", "Promis, je le garde dans ma petite tête.", "Retenu ! Je range ça bien au chaud."), "content")))
             }
-            else -> chat(ctx, text, n, foreground, name, about.map { it.second }, onStatus, onLine)
+            else -> chat(ctx, if (Lang.current() == "fr") text else original, n, foreground, name, about.map { it.second }, onStatus, onLine)
         }
-        save(text, lines)
+        save(original, lines)
         return Reply(lines, tools.places, tools.placesQuery, if (routedLines != null) tools.card else null)
     }
 
@@ -356,13 +362,22 @@ object Brain {
             if (!a.umbrella) out.add(Line("Risque de pluie : $rain %.", "neutre"))
         }
         val max = d.optDouble("max_c")
-        val min = d.optDouble("min_c")
-        when {
-            !a.umbrella && rain >= 60 -> out.add(Line("Pense au parapluie !", "triste"))
-            !max.isNaN() && max >= 28 -> out.add(Line(pick("Il va faire chaud : bois de l'eau !", "Canicule en vue ! Moi, je reste à l'ombre."), "surpris"))
-            !min.isNaN() && min <= 2 -> out.add(Line(pick("Brr, couvre-toi bien !", "Heureusement que j'ai ma grosse queue pour me tenir chaud."), "surpris"))
-            rain < 20 && !max.isNaN() && max in 17.0..27.0 -> out.add(Line(pick("Parfait pour une petite balade.", "Il fait trop bon, profites-en !", "Temps idéal pour grimper aux arbres !"), "content"))
+        // Paliers de température : la température actuelle pour aujourd'hui, la maximale pour les jours suivants.
+        //   moins de 0 : gel · 0 à 10 : très froid · 10 à 20 : froid · 20 à 30 : doux à chaud · 30 à 35 : chaud · 35 et plus : canicule
+        val nowT = cur.optDouble("temperature_c")
+        val ref = if (a.day == 0 && !nowT.isNaN()) nowT else max
+        val fait = if (a.day == 0) "Il fait" else "Il va faire"
+        val heat: Line? = when {
+            ref.isNaN() -> null
+            ref < 0 -> Line(pick("$fait moins de zéro : ça gèle ! Bonnet, gants et écharpe.", "Gel au programme : couvre-toi de la tête aux pieds !"), "froid")
+            ref < 10 -> Line(pick("$fait très froid : couvre-toi bien !", "$fait très froid : manteau obligatoire."), "froid")
+            ref < 20 -> Line(pick("$fait froid : prends une veste.", "$fait plutôt froid : une petite veste ne sera pas de trop."), "neutre")
+            ref < 30 -> Line(pick("$fait doux, voire chaud : parfait pour sortir.", "$fait bon, entre doux et chaud."), "content")
+            ref < 35 -> Line(pick("$fait chaud : bois de l'eau et reste à l'ombre.", "$fait chaud : pense à bien t'hydrater !"), "surpris")
+            else -> Line(pick("Canicule ! Bois beaucoup d'eau et évite le soleil aux heures chaudes.", "C'est la canicule : reste au frais et hydrate-toi !"), "inquiet")
         }
+        if (heat != null) out.add(heat)
+        if (!a.umbrella && rain >= 60) out.add(Line("Pense au parapluie !", "triste"))
         return out.take(MAX_LINES)
     }
 
@@ -453,15 +468,15 @@ object Brain {
     ): List<Line> {
         LocalModel.status(ctx) // termine un téléchargement fini pendant que l'appli était fermée
         if (!LocalModel.isDownloaded(ctx)) {
-            smallTalk(n, newName)?.let { return it }
+            smallTalk(n, newName)?.let { return Lang.lines(it) }
             if (learned.isNotEmpty()) {
-                return listOf(
+                return Lang.lines(listOf(
                     Line(pick("Oh ! Je retiens ça.", "C'est noté dans ma petite tête !", "Intéressant… je m'en souviendrai."), "content"),
                     Line(learned.first(), "clin")
-                )
+                ))
             }
             if (fg) throw BrainException("no_model")
-            return fallback(n)
+            return Lang.lines(fallback(n))
         }
         if (LocalModel.state != "loaded") onStatus?.invoke("loading")
         val splitter = Splitter(onLine)
@@ -487,10 +502,10 @@ object Brain {
             LocalModel.markDirty()
             if (splitter.lines.isNotEmpty()) return splitter.lines
             if (fg) throw BrainException("timeout")
-            return fallback(n)
+            return Lang.lines(fallback(n))
         }
         splitter.feed(result, final = true)
-        return splitter.lines.ifEmpty { fallback(n) }
+        return splitter.lines.ifEmpty { Lang.lines(fallback(n)) }
     }
 
     /** Historique récent pour le modèle (vrai = message de l'utilisateur). */
@@ -553,6 +568,7 @@ Règles :
 - Fais court : une à trois phrases simples. Au plus une question.
 - Commence ta réponse par ton émotion entre crochets, parmi : [content], [rigole], [amoureux], [timide], [fier], [surpris], [emerveille], [emu], [reflechit], [inquiet], [triste], [pleure], [fache], [degoute], [gourmand], [froid], [zen], [clin] ou [neutre].
 - Ne répète pas une phrase que tu viens de dire : varie tes formulations.
+- Réponds toujours en ${Lang.promptName()} (sauf si l'utilisateur te demande une autre langue), mais garde les étiquettes d'émotion exactement comme ci-dessus, en français et entre crochets.
 - Pas d'emoji, pas de listes, pas de mise en forme.
 - Écoute d'abord. Pour remonter le moral, propose une petite chose concrète (boire de l'eau, sortir cinq minutes, écrire à un ami), sans faire la leçon.
 - Encourage les liens avec de vraies personnes. Pour la santé, conseille un professionnel, sans diagnostic.

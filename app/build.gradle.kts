@@ -14,8 +14,8 @@ android {
         // Le cerveau local (LiteRT-LM) demande Android 12 ou plus récent.
         minSdk = 31
         targetSdk = 35
-        versionCode = 530
-        versionName = "5.3.0"
+        versionCode = 550
+        versionName = "5.5.0"
         ndk {
             // Les téléphones capables de faire tourner le modèle sont tous en 64 bits.
             abiFilters += listOf("arm64-v8a")
@@ -58,6 +58,8 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
+    implementation("androidx.health.connect:connect-client:1.1.0")
+    implementation("com.google.mlkit:translate:17.0.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     // Moteur d'IA local de Google (fait tourner Gemma directement sur le téléphone).
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.17.1")

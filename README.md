@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.3.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.5.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -35,6 +35,9 @@ Et aussi : **prises de nouvelles** par notification (tu réponds directement dan
 Les réponses météo, batterie, heure, réveil, minuteur et calcul s'affichent avec une **carte animée** : Canelle se pousse sur le côté et la carte apparaît (soleil qui tourne, pluie qui tombe, éclairs, horloge qui avance, minuteur qui décompte…). Touche la carte pour la fermer.
 
 ## Météo précise
+
+Paliers de température (température actuelle pour aujourd'hui, maximale pour les jours suivants) : moins de 0 °C gel · 0 à 10 °C très froid · 10 à 20 °C froid · 20 à 30 °C doux à chaud · 30 à 35 °C chaud · 35 °C et plus canicule.
+
 
 « Maintenant » vient du modèle **AROME de Météo-France** (maille de 1,5 km, un point toutes les 15 minutes, recalculé chaque heure), via Open-Meteo, gratuit et sans clé, en France et autour. Le ciel affiché est corrigé avec la pluie qui tombe vraiment et la couverture nuageuse du moment. Les prévisions des jours suivants viennent du meilleur modèle Open-Meteo. La carte indique le ressenti, le vent, l'humidité, la source et l'heure des données. Si Météo-France ne répond pas, Canelle se rabat automatiquement sur Open-Meteo.
 
@@ -91,12 +94,42 @@ Le cerveau adopte la personnalité du personnage choisi. Changer de personnage l
 
 Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas, ton âge, ta ville, ton travail ou tes études, le nom de ton animal ou de tes proches, tes préférés, ton anniversaire, tes sports… Tout apparaît dans **Menu → Ce qu'il retient de toi**, et le bouton × efface un souvenir. Si tu redonnes une information (ton âge, ta ville…), l'ancienne est remplacée.
 
+## Langues
+
+Bouton **globe** en haut de l'écran (ou Menu → Langue) : **français, anglais, espagnol, portugais, russe, chinois, japonais et arabe**.
+
+- **L'interface et les phrases de ton compagnon** sont traduites automatiquement **sur le téléphone** par Google ML Kit (les mêmes modèles que le mode hors ligne de Google Traduction). Un pack d'environ 30 Mo est téléchargé une fois par langue ; ensuite, tout se fait sans internet et rien n'est envoyé à un serveur. Les traductions sont gardées sur le téléphone : la deuxième fois, elles sont instantanées. Quelques mots ambigus (« Pas », « Échanges », « Dé »…) sont traduits à la main.
+- **Ce que tu écris** dans une autre langue est traduit en français en coulisses, pour que toutes les commandes marchent (météo, réveils, jeux, interactions, musique…).
+- **Le cerveau IA** répond directement dans ta langue (sans passer par la traduction).
+- La **voix** et le **micro** passent dans la langue choisie ; l'**arabe** s'affiche de droite à gauche.
+- Limites : la traduction automatique n'est pas toujours parfaite ; les mots mélangés et les devinettes restent basés sur des mots français ; le numéro d'urgence 3114 est français (hors de France, Canelle conseille d'appeler le numéro d'urgence du pays).
+
+## Menu
+
+Le menu s'ouvre sur une fiche du compagnon (dessin, nom, série de jours) et des tuiles : Personnages, Boutique, Mon cerveau, Pas, Souvenirs, Échanges, Musique, Réglages (et Outils dev pour l'équipe). Chaque tuile ouvre sa page ; la flèche ou le bouton retour d'Android ramène à l'accueil du menu.
+
 ## Démarrage
 
 L'application s'appelle désormais **Canelle AI**. L'écran de chargement montre Canelle, le nom « Canelle AI » et la mention **Early Access**.
 
 - À chaque ouverture : un **écran de chargement**, puis l'avertissement de confidentialité (case **Ne plus montrer** pour ne plus le voir).
 - Au tout premier lancement, Canelle **se matérialise** : faisceau lumineux, pixels qui apparaissent un à un, étincelles.
+
+## Pièces et boutique
+
+Les skins s'achètent avec des **pièces** (le look classique reste gratuit ; le gérant et les développeurs ont tout). On en gagne :
+- **bonus du jour** : 20 pièces à la première ouverture, +5 par jour d'affilée (jusqu'à 50) ;
+- **jeux** : 5 par partie, 15 par victoire ; **interactions** : 1 pièce (au total 200 pièces par jour au maximum en jouant) ;
+- **marche** : 10 pièces tous les 1 000 pas, à récupérer dans l'onglet « Pas » (100 par jour au maximum).
+
+Prix : 50 (Neige, Minuit, Menthe, Chocolat, Océan, Forêt), 120 (Sakura, Panda, Bonbon, Chrome, Aurore, Magma), 200 (Doré, Cyber, Pirate, Galaxie), 300 (Fantôme, Citrouille, Noël). Chacun démarre avec 100 pièces, et le skin déjà porté avant la mise à jour reste acquis. Les pièces sont comptées par la partie Android de l'appli (pas par la page), et restent sur le téléphone.
+
+## Compteur de pas (onglet « Pas »)
+
+En haut de l'écran, deux onglets : le compagnon, et **Pas**. Les pas viennent de **Health Connect**, le service d'Android qui rassemble ceux de Google Fit, Samsung Health, Fitbit… et, depuis Android 14, ceux comptés par le téléphone lui-même (pas besoin d'autre appli). Google Fit est remplacé par Health Connect (ses API s'arrêtent fin 2026).
+- Anneau de progression vers l'objectif du jour (réglable), distance et calories estimées, moyenne et graphique des 7 derniers jours.
+- Ton compagnon commente ta progression.
+- Au premier passage : bouton pour autoriser la lecture des pas (ou installer Health Connect sur Android 12 et 13). Canelle AI ne lit que le nombre de pas ; rien ne quitte le téléphone.
 
 ## Skins (pour tout le monde)
 
@@ -123,6 +156,12 @@ Si tu as déjà installé la version 0.2 (celle avec le cerveau local), installe
 Si tu viens d'une version plus ancienne (0.1, avec la clé API), désinstalle-la **une seule fois** avant : elle avait une signature différente. Depuis la 0.2, la signature est fixe (`app/canelle.keystore`).
 
 Ensuite, ouvre l'APK sur le téléphone et accepte l'installation depuis cette source si Android le demande.
+
+## Choisir son cerveau
+
+Chacun peut choisir le cerveau qu'il veut dans « Mon cerveau », même si le téléphone n'est pas assez puissant. Chaque cerveau est marqué **Conseillé**, **Juste** ou **Risqué** selon la mémoire du téléphone ; pour « Juste » ou « Risqué », une fenêtre prévient que l'application risque de planter.
+
+**Anti-plantage en boucle** : si un cerveau choisi malgré l'avertissement fait planter l'appli, il est **désactivé dès le lancement suivant**. Pour un cerveau conseillé, Canelle retente une fois sur le processeur si la puce graphique a planté, puis le désactive s'il replante. Dans les deux cas, « Mon cerveau » explique ce qui s'est passé et propose de réessayer ou de passer à un cerveau plus léger.
 
 ## Un cerveau adapté à chaque téléphone
 

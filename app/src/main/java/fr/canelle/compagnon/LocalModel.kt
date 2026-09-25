@@ -59,6 +59,23 @@ object LocalModel {
     /** En dessous (moins de 6 Go), le cerveau ne tient pas : Canelle fonctionne sans lui. */
     const val RAM_E2B_MIN = 5.2
 
+    /**
+     * Ce cerveau tient-il dans ce téléphone ? "ok", "juste" (possible mais serré) ou "risque" (l'appli risque de planter).
+     */
+    fun fit(ctx: Context, id: String): String {
+        val ram = ramGb(ctx)
+        if (ram <= 0.0) return "ok"
+        return if (id == E4B.id) when {
+            ram >= RAM_E4B_AUTO -> "ok"
+            ram >= RAM_E4B_POSSIBLE -> "juste"
+            else -> "risque"
+        } else when {
+            ram >= RAM_E4B_POSSIBLE -> "ok"
+            ram >= RAM_E2B_MIN -> "juste"
+            else -> "risque"
+        }
+    }
+
     /** Cerveau conseillé pour ce téléphone : "e4b", "e2b" ou "none". */
     fun recommended(ctx: Context): String {
         val ram = ramGb(ctx)
@@ -209,6 +226,7 @@ object LocalModel {
         val old = if (Store.modelId.isNotBlank() && Store.modelId != sp.id) File(dir(ctx), spec(Store.modelId).fileName) else null
         Store.modelId = sp.id
         Store.pendingModel = ""
+        Store.riskyModel = fit(ctx, sp.id) == "risque"
         Store.brainTier = TIER_GPU
         Store.gpuBroken = false
         Store.brainOkOnce = false
@@ -285,8 +303,11 @@ object LocalModel {
             .put("e2bBytes", E2B.approxBytes)
             .put("e4bBytes", E4B.approxBytes)
             // passer au cerveau E4B : possible à partir de 8 Go, si le E2B est installé
-            .put("canUpgrade", installed && cur.id == E2B.id && ram >= RAM_E4B_POSSIBLE)
+            .put("canUpgrade", installed && cur.id == E2B.id)
             .put("canDowngrade", installed && cur.id == E4B.id)
+            .put("fitE2B", fit(ctx, E2B.id))
+            .put("fitE4B", fit(ctx, E4B.id))
+            .put("risky", installed && Store.riskyModel)
             .put("report", Store.lastExitReport)
             .put("memoryCrash", Store.lastExitMemory)
             .put("crashNotice", Store.brainCrashNotice)
@@ -337,7 +358,14 @@ object LocalModel {
             r == android.app.ApplicationExitInfo.REASON_USER_STOPPED || r == 15 || r == 16
         if (harmless) return
         if (crashed == TIER_GPU) Store.gpuBroken = true
-        Store.brainTier = maxOf(Store.brainTier, crashed + 1)
+        Store.brainTier = when {
+            // cerveau choisi malgré l'avertissement : on le désactive au premier plantage, pour éviter les plantages en boucle
+            Store.riskyModel -> TIER_BLOCKED
+            // sur la puce graphique, on retente une fois sur le processeur
+            crashed == TIER_GPU -> maxOf(Store.brainTier, TIER_CPU)
+            // sur le processeur : on désactive le cerveau (il ne se relance plus tout seul)
+            else -> TIER_BLOCKED
+        }
         Store.brainCrashNotice = true
     }
 
