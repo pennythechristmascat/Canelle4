@@ -45,8 +45,8 @@ object Lang {
 
     private val bg = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val clients = HashMap<String, Translator>()
-    private val cache = object : LinkedHashMap<String, String>(512, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>?): Boolean = size > 4000
+    private val cache = object : LinkedHashMap<String, String>(2048, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>?): Boolean = size > 8000
     }
     private var appCtx: Context? = null
     private var loadedFor = ""
@@ -91,7 +91,7 @@ object Lang {
         if (lang == "fr") return
         val prefix = "fr>$lang|"
         val o = JSONObject()
-        cache.entries.filter { it.key.startsWith(prefix) }.takeLast(3000).forEach { o.put(it.key.removePrefix(prefix), it.value) }
+        synchronized(cache) { cache.entries.filter { it.key.startsWith(prefix) }.takeLast(6000).forEach { o.put(it.key.removePrefix(prefix), it.value) } }
         runCatching { cacheFile(ctx, lang).writeText(o.toString()) }
     }
 
@@ -109,14 +109,43 @@ object Lang {
         }.getOrDefault(false)
     }
 
-    /** Traduit un texte (renvoie le texte d'origine si la traduction échoue). */
-    suspend fun tr(text: String, from: String, to: String): String {
+    /** Traduit un texte, ou null si la traduction a échoué (jamais mise en cache dans ce cas). */
+    suspend fun tryTr(text: String, from: String, to: String): String? {
         if (from == to || text.isBlank() || !text.any { it.isLetter() }) return text
         val key = "$from>$to|$text"
         synchronized(cache) { cache[key] }?.let { return it }
-        val out = withTimeoutOrNull(8_000L) { runCatching { client(from, to).translate(text).await() }.getOrNull() } ?: return text
+        val out = withTimeoutOrNull(8_000L) { runCatching { client(from, to).translate(text).await() }.getOrNull() } ?: return null
         synchronized(cache) { cache[key] = out }
         return out
+    }
+
+    /** Traduit un texte (renvoie le texte d'origine si la traduction échoue). */
+    suspend fun tr(text: String, from: String, to: String): String = tryTr(text, from, to) ?: text
+
+    /**
+     * Traduit d'avance tous les textes de l'appli dans la langue choisie (avec la progression),
+     * pour que rien ne reste en français ensuite. Renvoie le nombre de textes non traduits.
+     */
+    suspend fun pretranslate(texts: List<String>, lang: String, progress: (Int, Int) -> Unit): Int {
+        if (lang == "fr") return 0
+        var failed = 0
+        texts.forEachIndexed { i, t ->
+            if (lang != current()) return failed // la langue a changé entre-temps
+            if (tryTr(t, "fr", lang) == null) failed++
+            if (i % 25 == 0 || i == texts.size - 1) progress(i + 1, texts.size)
+        }
+        save()
+        return failed
+    }
+
+    /** Toutes les traductions connues (français → langue actuelle), pour la page. */
+    fun dump(): String {
+        val lang = current()
+        val o = JSONObject()
+        if (lang == "fr") return o.toString()
+        val prefix = "fr>$lang|"
+        synchronized(cache) { cache.entries.filter { it.key.startsWith(prefix) }.forEach { o.put(it.key.removePrefix(prefix), it.value) } }
+        return o.toString()
     }
 
     suspend fun toUser(text: String): String = tr(text, "fr", current())

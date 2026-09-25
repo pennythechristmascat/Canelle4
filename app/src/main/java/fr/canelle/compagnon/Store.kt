@@ -119,8 +119,14 @@ object Store {
         set(v) { p.edit().putBoolean("riskyModel", v).commit() }
     /** Langue de l'application : fr, en, es, pt, ru, zh, ja ou ar. */
     var lang: String
-        get() = str("lang", "fr")
+        get() = p.getString("lang", null)
+            // anglais par défaut ; les personnes qui utilisaient déjà l'appli (en français) gardent le français
+            ?: if (coinsInit || p.getInt("visits", 0) > 0 || str("modelId").isNotBlank()) "fr" else "en"
         set(v) { p.edit().putString("lang", v).commit() }
+    /** Visite guidée terminée (ou passée). */
+    var tourDone: Boolean
+        get() = p.getBoolean("tourDone", false)
+        set(v) = putBool("tourDone", v)
     var gpuBroken: Boolean
         get() = p.getBoolean("gpuBroken", false)
         set(v) = putBool("gpuBroken", v)
@@ -323,6 +329,7 @@ object Store {
         .put("character", character)
         .put("stepGoal", stepGoal)
         .put("lang", lang)
+        .put("tourDone", tourDone)
         .put("ownerFails", ownerFails)
         .put("lockUntil", Access.lockedUntil())
         .put("now", System.currentTimeMillis())

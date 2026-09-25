@@ -265,6 +265,22 @@ select.field{appearance:auto}
 .steps-row p{margin:0;font-weight:700;font-size:.9rem;line-height:1.35}
 .connect{padding:16px;border-radius:18px;border:1px solid var(--line);background:rgba(126,226,154,.08);margin-top:12px}
 .connect p{margin:0 0 10px;line-height:1.45;font-weight:700}
+/* ---------- visite guidée ---------- */
+.tour{position:fixed;inset:0;z-index:70}
+.tour[hidden]{display:none}
+.tour-hole{position:fixed;border-radius:18px;box-shadow:0 0 0 9999px rgba(2,6,14,.8);outline:2px solid var(--accent);transition:all .4s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.tour-hole.none{outline:0;width:0!important;height:0!important;left:50%!important;top:50%!important}
+.tour-card{position:fixed;left:50%;transform:translateX(-50%);width:min(360px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;
+  background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.55);transition:top .4s,bottom .4s}
+.tour-card h2{font:500 1.15rem var(--f-px);margin:0 0 8px}
+.tour-card p{margin:0 0 12px;line-height:1.45;font-weight:600}
+.tour-card .btnrow{display:flex;gap:8px}
+.tour-card .btnrow .btn{flex:1;margin:0}
+.langs[hidden]{display:none}
+.tour-dots{display:flex;gap:6px;justify-content:center;margin:4px 0 12px}
+.tour-dots i{width:7px;height:7px;border-radius:50%;background:rgba(236,232,220,.25)}
+.tour-dots i.on{background:var(--accent)}
+
 /* ---------- fenêtre de confirmation ---------- */
 .ask .modal-box h2{display:flex;align-items:center;gap:8px}
 .ask .warnbox{padding:10px 12px;border-radius:12px;background:rgba(255,107,90,.12);border:1px solid rgba(255,107,90,.4);color:#ffc2b8;font-weight:700;line-height:1.45;margin:0 0 10px}
@@ -822,6 +838,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
           <div class="btns">
             <button class="btn primary" id="saveSettings" type="button">Enregistrer</button>
             <button class="btn" id="testNotif" type="button">Tester une notification</button>
+          <button class="btn" id="replayTour" type="button">Revoir la visite guidée</button>
           </div>
           <p class="ok" id="settingsMsg" aria-live="polite"></p>
         </div>
@@ -861,6 +878,18 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
   </div>
 </div>
 
+<div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-card" id="tourCard">
+    <h2 id="tourTitle"></h2>
+    <p id="tourText"></p>
+    <div class="langs" id="tourLangs" hidden></div>
+    <p class="note" id="tourProgress" hidden aria-live="polite"></p>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="btnrow"><button class="btn" id="tourSkip" type="button"></button><button class="btn primary" id="tourNext" type="button"></button></div>
+  </div>
+</div>
+
 <div class="modal ask" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askTitle">
   <div class="modal-box">
     <h2 id="askTitle"></h2>
@@ -873,12 +902,12 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 <div class="modal" id="privacy" hidden role="dialog" aria-modal="true" aria-labelledby="privTitle">
   <div class="modal-box">
     <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-    <h2 id="privTitle">Ta vie privée est protégée</h2>
-    <p>Canelle ne collecte <b>aucune information personnelle</b>.</p>
-    <p>Tout ce que tu lui dis, ce qu'il retient de toi et tes réglages sont stockés <b>uniquement sur ce téléphone</b>. Son cerveau fonctionne sans internet : tes messages ne sont envoyés à personne.</p>
-    <p class="note">Seules la météo et la recherche de lieux utilisent internet, et seulement quand tu les demandes : ta position est alors envoyée à Open-Meteo et à OpenStreetMap.</p>
-    <label class="check"><input type="checkbox" id="privNever"> Ne plus montrer</label>
-    <button class="btn primary" id="privOk" type="button">J'ai compris</button>
+    <h2 id="privTitle"></h2>
+    <p><b id="privP1"></b></p>
+    <p id="privP2"></p>
+    <p class="note" id="privP3"></p>
+    <label class="check"><input type="checkbox" id="privNever"> <span id="privNeverTxt"></span></label>
+    <button class="btn primary" id="privOk" type="button"></button>
   </div>
 </div>
 
@@ -907,6 +936,8 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
   </div>
 </div>
 
+<script src="i18n-hand.js"></script>
+<script src="i18n-strings.js"></script>
 <script>
 (() => {
 "use strict";
@@ -914,7 +945,7 @@ const NATIVE = window.Android || null;
 
 /* ---------- état (gardé par l'application Android) ---------- */
 const S = { companionName: "Canelle", userName: "", facts: [], log: [], sound: "bips", visits: 0, lastSeen: 0, hasModel: false,
-  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "", character: "canelle", lang: "fr" };
+  rank: "", ownerName: "", hidePrivacy: false, ownerFails: 0, lockUntil: 0, now: 0, musicApp: "", skin: "", character: "canelle", lang: "en", tourDone: false };
 // Choisit au hasard en évitant ce qui vient d'être dit dans la même liste (pas deux fois la même chose d'affilée).
 const PICKED = new Map();
 function pick(a) {
@@ -4313,7 +4344,9 @@ const DEV = [
   ["Rappel de nuit", () => { closeSheet(); speak(nightLines(1)); }],
   ["Canelle s'ennuie", () => { closeSheet(); setTimeout(() => pick(IDLE_ACTIONS)(), 300); }],
   ["Canelle s'endort", () => { closeSheet(); setTimeout(fallAsleep, 300); }],
-  ["Avertissement vie privée", () => { closeSheet(); askPrivacy(() => {}, true); }]
+  ["Avertissement vie privée", () => { closeSheet(); askPrivacy(() => {}, true); }],
+  ["Visite guidée", () => setTimeout(startTourSteps, 200)],
+  ["Choix de la langue (visite)", () => { closeSheet(); tourLangStep(() => {}); }]
 ];
 document.getElementById("devBtns").append(...DEV.map(([label, fn]) => button(label, false, fn)));
 
@@ -4497,16 +4530,8 @@ document.getElementById("langBtn").addEventListener("click", () => { openSheet()
 const LANGS = [["fr", "Français"], ["en", "English"], ["es", "Español"], ["pt", "Português"], ["ru", "Русский"], ["zh", "中文"], ["ja", "日本語"], ["ar", "العربية"]];
 let LANG = "fr";
 const TR = new Map(); // texte français → traduction dans la langue actuelle
-const HAND = {
-  en: { "Pas": "Steps", "Échanges": "Chats", "Dé": "Dice", "Chifoumi": "Rock paper scissors", "Morpion": "Tic-tac-toe", "bips": "beeps", "voix": "voice", "muet": "mute", "Porté": "Worn", "À toi": "Yours" },
-  es: { "Pas": "Pasos", "Échanges": "Conversaciones", "Dé": "Dado", "Chifoumi": "Piedra, papel o tijera", "Morpion": "Tres en raya", "bips": "pitidos", "voix": "voz", "muet": "silencio", "Porté": "Puesto", "À toi": "Tuyo" },
-  pt: { "Pas": "Passos", "Échanges": "Conversas", "Dé": "Dado", "Chifoumi": "Pedra, papel e tesoura", "Morpion": "Jogo da velha", "bips": "bipes", "voix": "voz", "muet": "mudo", "Porté": "Em uso", "À toi": "Seu" },
-  ru: { "Pas": "Шаги", "Échanges": "Переписка", "Dé": "Кубик", "Chifoumi": "Камень, ножницы, бумага", "Morpion": "Крестики-нолики", "bips": "бипы", "voix": "голос", "muet": "без звука", "Porté": "Надето", "À toi": "Твой" },
-  zh: { "Pas": "步数", "Échanges": "聊天记录", "Dé": "骰子", "Chifoumi": "石头剪刀布", "Morpion": "井字棋", "bips": "哔声", "voix": "语音", "muet": "静音", "Porté": "已穿戴", "À toi": "已拥有" },
-  ja: { "Pas": "歩数", "Échanges": "会話", "Dé": "サイコロ", "Chifoumi": "じゃんけん", "Morpion": "三目並べ", "bips": "ビープ", "voix": "音声", "muet": "ミュート", "Porté": "着用中", "À toi": "所持" },
-  ar: { "Pas": "الخطوات", "Échanges": "المحادثات", "Dé": "النرد", "Chifoumi": "حجر ورقة مقص", "Morpion": "إكس أو", "bips": "صفير", "voix": "صوت", "muet": "صامت", "Porté": "مُرتدى", "À toi": "لك" }
-};
-const NO_TR = "#caption,#live,.log,#fx,#name,#tabName,#profileName,.letters,.langs,script,style,textarea,.boot-title,.boot-ea,.p";
+const HAND = window.I18N_HAND || {};
+const NO_TR = "#caption,#live,.log,#fx,#name,#tabName,#profileName,.letters,.langs,script,style,textarea,.boot-title,.boot-ea,.p,.tour,#privacy";
 const SRC = new WeakMap(), OUT = new WeakMap();
 function trNow(t) {
   if (LANG === "fr") return t;
@@ -4607,26 +4632,160 @@ function applyLangDir() {
   document.documentElement.lang = LANG;
   document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
 }
-function setLanguage(code) {
+function setLanguage(code, force) {
   if (!LANGS.some(l => l[0] === code)) return;
+  if (code === LANG && !force) return;
   LANG = code; S.lang = code;
   TR.clear();
   applyLangDir();
-  const note = document.getElementById("langNote");
-  if (NATIVE && NATIVE.setLang) {
-    NATIVE.setLang(code);
-    note.textContent = code === "fr" ? "" : "Téléchargement du pack de langue (environ 30 Mo)…";
-  }
+  loadDump();
+  if (NATIVE && NATIVE.setLang) NATIVE.setLang(code); // télécharge le pack si besoin, puis onLangReady → tout est traduit d'avance
+  trProgress = code === "fr" ? -1 : 0;
+  showLangStatus();
   renderLangs();
+  renderPrivacy();
+  if (typeof renderTour === "function") renderTour();
   relocalize();
 }
+const tourT = () => (window.I18N_TOUR || {})[LANG] || (window.I18N_TOUR || {}).en || {};
+let trProgress = -1; // -1 : rien en cours ; sinon pourcentage
+function langStatusText() {
+  const t = tourT();
+  if (trProgress === -2) return t.offline || "";
+  if (trProgress >= 100) return t.ready || "";
+  if (trProgress >= 0) return (t.dl || "{}%").replace("{}", trProgress);
+  return "";
+}
+function showLangStatus() {
+  const txt = langStatusText();
+  const note = document.getElementById("langNote"); if (note) note.textContent = txt;
+  const tp = document.getElementById("tourProgress"); if (tp) { tp.textContent = txt; tp.hidden = !txt; }
+}
+/** Charge toutes les traductions déjà faites (ouverture instantanée dans la bonne langue). */
+function loadDump() {
+  if (!NATIVE || !NATIVE.trDump || LANG === "fr") return;
+  try { const o = JSON.parse(NATIVE.trDump()); Object.keys(o).forEach(k => TR.set(k, o[k])); } catch (e) {}
+}
+/** Traduit d'avance tous les textes de l'appli qui ne le sont pas encore. */
+function pretranslateAll() {
+  if (!NATIVE || !NATIVE.pretranslate || LANG === "fr") return;
+  const all = new Set(window.I18N_STRINGS || []);
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = w.nextNode())) { const src = (SRC.get(n) || n.nodeValue || "").trim(); if (src && /\p{L}/u.test(src) && !skipEl(n.parentElement)) all.add(src); }
+  const list = [...all].filter(t => !TR.has(t) && !(HAND[LANG] && HAND[LANG][t]));
+  if (!list.length) { trProgress = 100; showLangStatus(); return; }
+  trProgress = 0; showLangStatus();
+  NATIVE.pretranslate(JSON.stringify(list));
+}
+window.onTrProgress = (done, total) => { trProgress = Math.min(99, Math.floor(100 * done / Math.max(1, total))); showLangStatus(); };
+window.onTrDone = (code, failed) => {
+  if (code !== LANG) return;
+  loadDump();
+  trProgress = 100; showLangStatus();
+  relocalize();
+  setTimeout(() => { if (trProgress === 100) { trProgress = -1; showLangStatus(); } }, 4000);
+};
 window.onLangReady = (code, ok) => {
   if (code !== LANG) return;
-  document.getElementById("langNote").textContent = ok ? "" : "Le pack de langue n'a pas pu être téléchargé. Vérifie ta connexion, puis choisis la langue à nouveau.";
-  TR.clear();
+  if (!ok) { trProgress = -2; showLangStatus(); return; }
+  loadDump();
   relocalize();
-  if (ok && code !== "fr") speak([{ text: "Et voilà, je parle ta langue maintenant !", mood: "emerveille" }]);
+  pretranslateAll();
 };
+/* ---------- visite guidée (premier lancement) ---------- */
+const TOUR_TARGETS = [null, "#face", ".composer", "#chips", ".tabset", "#coinPill", "#menuBtn", "#menuBtn"];
+let tourIdx = -1, tourAfter = null, tourLangChosen = false;
+function renderTour() {
+  if (tourIdx < 0) return;
+  const t = tourT(), st = (t.steps || [])[tourIdx] || ["", ""];
+  document.getElementById("tourTitle").textContent = st[0];
+  document.getElementById("tourText").textContent = st[1];
+  const last = tourIdx === TOUR_TARGETS.length - 1;
+  document.getElementById("tourNext").textContent = last ? t.go : t.next;
+  const skip = document.getElementById("tourSkip");
+  skip.textContent = t.skip; skip.hidden = tourIdx === 0;
+  document.getElementById("tourDots").innerHTML = TOUR_TARGETS.map((_, i) => '<i class="' + (i === tourIdx ? "on" : "") + '"></i>').join("");
+  const lg = document.getElementById("tourLangs");
+  lg.hidden = tourIdx !== 0;
+  if (tourIdx === 0) {
+    lg.replaceChildren(...LANGS.map(([code, label]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "langbtn" + (code === LANG ? " on" : "");
+      b.lang = code; if (code === "ar") b.dir = "rtl";
+      b.textContent = label;
+      b.addEventListener("click", () => { tourLangChosen = true; setLanguage(code, true); });
+      return b;
+    }));
+  }
+  showLangStatus();
+  positionTour();
+}
+function positionTour() {
+  const hole = document.getElementById("tourHole"), card = document.getElementById("tourCard");
+  const sel = TOUR_TARGETS[tourIdx], el = sel && document.querySelector(sel);
+  if (!el) {
+    hole.className = "tour-hole none";
+    card.style.top = "50%"; card.style.bottom = "auto"; card.style.transform = "translate(-50%,-50%)";
+    return;
+  }
+  const r = el.getBoundingClientRect(), pad = 8;
+  hole.className = "tour-hole";
+  Object.assign(hole.style, { left: (r.left - pad) + "px", top: (r.top - pad) + "px", width: (r.width + pad * 2) + "px", height: (r.height + pad * 2) + "px" });
+  card.style.transform = "translateX(-50%)";
+  const below = innerHeight - r.bottom, above = r.top;
+  if (below >= above) { card.style.top = Math.min(r.bottom + pad + 14, innerHeight - card.offsetHeight - 12) + "px"; card.style.bottom = "auto"; }
+  else { card.style.bottom = Math.min(innerHeight - r.top + pad + 14, innerHeight - card.offsetHeight - 12) + "px"; card.style.top = "auto"; }
+}
+/** Étape 1 : choix de la langue, avant l'avertissement de confidentialité. */
+function tourLangStep(done) {
+  tourIdx = 0; tourAfter = done; tourLangChosen = false;
+  document.getElementById("tour").hidden = false;
+  renderTour();
+}
+/** Étapes suivantes : les éléments de l'écran. */
+function startTourSteps() {
+  closeSheet(); hideCard(); switchTab("home");
+  tourIdx = 1;
+  document.getElementById("tour").hidden = false;
+  renderTour();
+}
+function endTour() {
+  document.getElementById("tour").hidden = true;
+  tourIdx = -1;
+  S.tourDone = true;
+  if (NATIVE && NATIVE.setTourDone) NATIVE.setTourDone();
+}
+document.getElementById("tourNext").addEventListener("click", () => {
+  ensureAudio();
+  if (tourIdx === 0) {
+    if (!tourLangChosen) setLanguage(LANG, true); // langue par défaut gardée : on prépare quand même sa traduction
+    document.getElementById("tour").hidden = true;
+    tourIdx = -1;
+    const f = tourAfter; tourAfter = null;
+    if (f) f();
+    return;
+  }
+  if (tourIdx >= TOUR_TARGETS.length - 1) { endTour(); return; }
+  tourIdx++;
+  renderTour();
+});
+document.getElementById("tourSkip").addEventListener("click", endTour);
+document.getElementById("replayTour").addEventListener("click", () => setTimeout(startTourSteps, 200));
+addEventListener("resize", () => { if (tourIdx > 0) positionTour(); });
+/** Après le premier bonjour, on lance la visite des éléments de l'écran. */
+function tourAfterGreeting() {
+  let k = 0;
+  const t = setInterval(() => {
+    if ((speech.state === "idle" || ++k > 40) && !busy) { clearInterval(t); if (!S.tourDone) startTourSteps(); }
+  }, 500);
+}
+
+function renderPrivacy() {
+  const t = tourT(), p = t.privacy || [];
+  const set = (id, v) => { const e = document.getElementById(id); if (e && v) e.textContent = v; };
+  set("privTitle", p[0]); set("privP1", p[1]); set("privP2", p[2]); set("privP3", p[3]); set("privNeverTxt", p[4]); set("privOk", p[5]);
+}
 function renderLangs() {
   const g = document.getElementById("langGrid");
   if (!g) return;
@@ -4636,7 +4795,7 @@ function renderLangs() {
     b.lang = code; if (code === "ar") b.dir = "rtl";
     b.setAttribute("aria-pressed", code === LANG ? "true" : "false");
     b.textContent = label;
-    b.addEventListener("click", () => { if (code !== LANG) setLanguage(code); });
+    b.addEventListener("click", () => setLanguage(code));
     return b;
   }));
 }
@@ -5138,7 +5297,9 @@ function greet() {
   speak(lines);
 }
 function boot() {
-  LANG = S.lang || "fr"; applyLangDir(); renderLangs();
+  LANG = S.lang || "en"; applyLangDir(); loadDump(); renderLangs(); renderPrivacy();
+  // traductions incomplètes (première ouverture, mise à jour de l'appli…) : on termine le travail en arrière-plan
+  if (LANG !== "fr" && NATIVE && NATIVE.setLang && TR.size < (window.I18N_STRINGS || []).length * 0.9 && S.visits) NATIVE.setLang(LANG);
   updateName(); updateSound(); renderChips(false); renderRank();
   refreshCoins(); renderProfile();
   if (LANG !== "fr") relocalize();
@@ -5150,7 +5311,8 @@ function boot() {
   const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   showLoader(reduced ? 500 : 2100, () => {
     crtEl.classList.add("on");
-    setTimeout(() => askPrivacy(() => lockEnd > Date.now() ? enterLocked() : first ? materialize(greet) : greet()), first ? 800 : 950);
+    const go = () => askPrivacy(() => lockEnd > Date.now() ? enterLocked() : first ? materialize(() => { greet(); if (!S.tourDone) tourAfterGreeting(); }) : greet());
+    setTimeout(() => (first && !S.tourDone ? tourLangStep(go) : go()), first ? 800 : 950);
   });
 }
 boot();

@@ -442,9 +442,31 @@ class MainActivity : ComponentActivity(), ToolHost {
             lifecycleScope.launch {
                 val a = runCatching { JSONArray(json) }.getOrDefault(JSONArray())
                 val out = JSONArray()
-                for (i in 0 until a.length()) out.put(runCatching { Lang.tr(a.getString(i), from, to) }.getOrDefault(a.getString(i)))
+                for (i in 0 until a.length()) out.put(runCatching { Lang.tryTr(a.getString(i), from, to) }.getOrNull() ?: JSONObject.NULL)
                 js("window.onTr&&onTr(${q(id)}, ${q(out.toString())})")
             }
+        }
+
+        /** Traduit d'avance une liste de textes (JSON) : onTrProgress(fait, total) puis onTrDone(ratés). */
+        @JavascriptInterface
+        fun pretranslate(json: String) {
+            val list = runCatching { JSONArray(json) }.getOrDefault(JSONArray())
+            val texts = (0 until list.length()).map { list.optString(it) }.filter { it.isNotBlank() }
+            val lang = Lang.current()
+            lifecycleScope.launch {
+                val failed = Lang.pretranslate(texts, lang) { done, total -> js("window.onTrProgress&&onTrProgress($done,$total)") }
+                js("window.onTrDone&&onTrDone(${q(lang)},$failed)")
+            }
+        }
+
+        /** Toutes les traductions déjà faites pour la langue actuelle. */
+        @JavascriptInterface
+        fun trDump(): String = Lang.dump()
+
+        /** Visite guidée terminée. */
+        @JavascriptInterface
+        fun setTourDone() {
+            Store.tourDone = true
         }
 
         /** Change la langue et télécharge le pack de traduction si besoin : onLangReady(code, ok). */

@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.5.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.6.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -96,13 +96,17 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 ## Langues
 
-Bouton **globe** en haut de l'écran (ou Menu → Langue) : **français, anglais, espagnol, portugais, russe, chinois, japonais et arabe**.
+**Anglais par défaut** pour les nouveaux utilisateurs (ceux qui utilisaient déjà l'appli gardent le français). Bouton **globe** en haut de l'écran, ou Menu → Langue : **anglais, français, espagnol, portugais, russe, chinois, japonais, arabe**.
 
-- **L'interface et les phrases de ton compagnon** sont traduites automatiquement **sur le téléphone** par Google ML Kit (les mêmes modèles que le mode hors ligne de Google Traduction). Un pack d'environ 30 Mo est téléchargé une fois par langue ; ensuite, tout se fait sans internet et rien n'est envoyé à un serveur. Les traductions sont gardées sur le téléphone : la deuxième fois, elles sont instantanées. Quelques mots ambigus (« Pas », « Échanges », « Dé »…) sont traduits à la main.
-- **Ce que tu écris** dans une autre langue est traduit en français en coulisses, pour que toutes les commandes marchent (météo, réveils, jeux, interactions, musique…).
-- **Le cerveau IA** répond directement dans ta langue (sans passer par la traduction).
-- La **voix** et le **micro** passent dans la langue choisie ; l'**arabe** s'affiche de droite à gauche.
-- Limites : la traduction automatique n'est pas toujours parfaite ; les mots mélangés et les devinettes restent basés sur des mots français ; le numéro d'urgence 3114 est français (hors de France, Canelle conseille d'appeler le numéro d'urgence du pays).
+- **Traduit à la main dans les 8 langues** : les libellés de l'interface (onglets, menu, boutons, noms des jeux, cartes, boutique…), la visite guidée et l'avertissement de confidentialité.
+- **Tout le reste est traduit d'avance** au moment où l'on choisit la langue : 1 300 textes (interface, phrases du compagnon, jeux, réponses toutes faites) sont traduits sur le téléphone par Google ML Kit, avec une barre de progression, puis gardés. À l'ouverture suivante, l'appli démarre directement dans la bonne langue. Une traduction ratée n'est jamais gardée : elle est refaite.
+- Un pack d'environ 30 Mo est téléchargé une fois par langue (il faut internet pour ça) ; ensuite, rien ne quitte le téléphone.
+- **Ce que tu écris** est compris dans toutes les langues ; le **cerveau IA** répond directement dans ta langue ; la **voix** et le **micro** suivent la langue ; l'**arabe** s'affiche de droite à gauche.
+- Limites : la traduction automatique n'est pas toujours parfaite ; les mots mélangés et les devinettes restent basés sur des mots français ; le numéro 3114 est français (hors de France, Canelle conseille d'appeler le numéro d'urgence du pays).
+
+## Visite guidée
+
+Au premier lancement : choix de la langue (anglais présélectionné, la traduction se prépare pendant la suite), avertissement de confidentialité, apparition du compagnon, puis visite de l'écran (le compagnon, la zone de message, les raccourcis, l'onglet Pas, les pièces, le menu et le cerveau). Menu → Réglages → « Revoir la visite guidée » pour la relancer.
 
 ## Menu
 
