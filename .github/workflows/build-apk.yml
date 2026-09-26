@@ -1,4 +1,4 @@
-name: Canelle APK
+name: Canelle AI (APK et AAB)
 
 on:
   push:
@@ -19,11 +19,41 @@ jobs:
         with:
           gradle-version: "8.14.3"
 
-      - name: Compiler
+      # Facultatif : clé d'envoi Google Play rangée dans les secrets du dépôt
+      # (UPLOAD_KEYSTORE_BASE64, UPLOAD_STORE_PASSWORD, UPLOAD_KEY_ALIAS, UPLOAD_KEY_PASSWORD).
+      # Sans ces secrets, c'est la clé du projet (app/canelle.keystore) qui signe.
+      - name: Clé d'envoi (secrets)
+        env:
+          KS_B64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PW: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+            echo "CANELLE_KEYSTORE=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_ENV"
+            echo "CANELLE_STORE_PASSWORD=$STORE_PW" >> "$GITHUB_ENV"
+            echo "CANELLE_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "CANELLE_KEY_PASSWORD=$KEY_PW" >> "$GITHUB_ENV"
+            echo "Signature avec la clé des secrets."
+          else
+            echo "Signature avec la clé du projet (app/canelle.keystore)."
+          fi
+
+      - name: Compiler l'APK (installation directe)
         run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Compiler l'AAB (Google Play)
+        run: gradle bundleRelease --no-daemon --stacktrace
 
       - name: Recuperer l'APK
         uses: actions/upload-artifact@v4
         with:
           name: Canelle-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Recuperer l'AAB (Google Play)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Canelle-aab-google-play
+          path: app/build/outputs/bundle/release/app-release.aab

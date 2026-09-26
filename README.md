@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.8.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.9.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -194,6 +194,24 @@ Le cerveau pèse 2,6 Go. Sur certains téléphones, surtout sous Android 16 et 1
 3. Le cerveau ne se charge plus automatiquement tant qu'il n'a jamais démarré avec succès : il se réveille à la première question.
 4. Il rend sa mémoire une minute après que l'appli passe en arrière-plan.
 5. « Mon cerveau » affiche le rapport d'Android sur le dernier arrêt (raison, mémoire utilisée, modèle du téléphone), avec un bouton **Copier le rapport**. Il reste sur le téléphone.
+
+## Publier sur Google Play (AAB)
+
+Google Play demande un **AAB** (Android App Bundle) et, depuis le 31 août 2026, des applis qui visent **Android 16 (API 36)** : c'est le cas.
+
+1. Dans GitHub → **Actions**, lance la construction. Elle produit deux fichiers : `Canelle-apk` (installation directe) et **`Canelle-aab-google-play`** (le fichier `app-release.aab` à envoyer).
+2. Dans la Play Console : Tests → **Test fermé** → Créer une version → envoie `app-release.aab`. Accepte **Play App Signing** (Google garde la clé de signature finale ; la clé du projet sert seulement de clé d'envoi).
+3. À chaque nouvel envoi, le `versionCode` (dans `app/build.gradle.kts`) doit être plus grand que le précédent.
+
+**Clé d'envoi.** Par défaut, l'AAB est signé avec `app/canelle.keystore` (mot de passe dans `build.gradle.kts`). Si ton dépôt GitHub est **public**, rends-le privé (Settings → Danger Zone → Change visibility), ou range la clé dans les secrets du dépôt (Settings → Secrets and variables → Actions) : `UPLOAD_KEYSTORE_BASE64` (le fichier .keystore en base64), `UPLOAD_STORE_PASSWORD`, `UPLOAD_KEY_ALIAS`, `UPLOAD_KEY_PASSWORD`. Garde toujours la même clé d'envoi : en changer demande une réinitialisation auprès de Google.
+
+**À remplir dans la Play Console** (l'appli utilise des autorisations sensibles) :
+- une **politique de confidentialité** (URL publique, par exemple une page du site Cloudflare) ;
+- la **sécurité des données** : rien n'est collecté par l'appli elle-même, mais la position est envoyée à Open-Meteo et OpenStreetMap quand on demande la météo ou un lieu, et la dictée vocale passe par le service de reconnaissance vocale du téléphone (Google) ;
+- la déclaration **Health Connect** (lecture des pas), celle des **autorisations de localisation** et du **micro** ;
+- le **nom du paquet** `fr.canelle.compagnon` est définitif une fois l'appli créée.
+
+Les testeurs qui avaient installé l'APK directement devront le **désinstaller une fois** avant d'installer la version du Play Store (signature différente).
 
 ## Si la construction échoue
 

@@ -13,9 +13,10 @@ android {
         applicationId = "fr.canelle.compagnon"
         // Le cerveau local (LiteRT-LM) demande Android 12 ou plus récent.
         minSdk = 31
-        targetSdk = 35
-        versionCode = 580
-        versionName = "5.8.0"
+        // Google Play exige Android 16 (API 36) pour les nouvelles applis et les mises à jour depuis le 31 août 2026.
+        targetSdk = 36
+        versionCode = 590
+        versionName = "5.9.0"
         ndk {
             // Les téléphones capables de faire tourner le modèle sont tous en 64 bits.
             abiFilters += listOf("arm64-v8a")
@@ -23,12 +24,15 @@ android {
     }
 
     // Toujours la même signature : les mises à jour s'installent par-dessus l'ancienne version.
+    // Pour Google Play, la clé d'envoi peut venir des secrets GitHub (variables CANELLE_*) ;
+    // sinon, on utilise la clé du projet (app/canelle.keystore).
     signingConfigs {
         create("canelle") {
-            storeFile = file("canelle.keystore")
-            storePassword = "canelle-poche"
-            keyAlias = "canelle"
-            keyPassword = "canelle-poche"
+            val ks = System.getenv("CANELLE_KEYSTORE")
+            storeFile = if (!ks.isNullOrBlank()) file(ks) else file("canelle.keystore")
+            storePassword = System.getenv("CANELLE_STORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "canelle-poche"
+            keyAlias = System.getenv("CANELLE_KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "canelle"
+            keyPassword = System.getenv("CANELLE_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "canelle-poche"
         }
     }
 
