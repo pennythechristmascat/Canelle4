@@ -31,16 +31,16 @@ object Notifs {
     fun channels(ctx: Context) {
         if (Build.VERSION.SDK_INT < 26) return
         val nm = ctx.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel(CH_CHECKIN, "Prendre de tes nouvelles", NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "Canelle te demande régulièrement si tu vas bien. Tu peux répondre directement depuis la notification."
+        nm.createNotificationChannel(NotificationChannel(CH_CHECKIN, Lang.t("Prendre de tes nouvelles"), NotificationManager.IMPORTANCE_HIGH).apply {
+            description = Lang.t("Canelle te demande régulièrement si tu vas bien. Tu peux répondre directement depuis la notification.")
         })
-        nm.createNotificationChannel(NotificationChannel(CH_BATTERY, "Batterie", NotificationManager.IMPORTANCE_DEFAULT).apply {
-            description = "Rappels quand la batterie est presque vide."
+        nm.createNotificationChannel(NotificationChannel(CH_BATTERY, Lang.t("Batterie"), NotificationManager.IMPORTANCE_DEFAULT).apply {
+            description = Lang.t("Rappels quand la batterie est presque vide.")
         })
-        nm.createNotificationChannel(NotificationChannel(CH_BATTERY_CRIT, "Batterie presque vide", NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "Alerte quand il reste 5 % : le téléphone va bientôt s'éteindre."
+        nm.createNotificationChannel(NotificationChannel(CH_BATTERY_CRIT, Lang.t("Batterie presque vide"), NotificationManager.IMPORTANCE_HIGH).apply {
+            description = Lang.t("Alerte quand il reste 5 % : le téléphone va bientôt s'éteindre.")
         })
-        nm.createNotificationChannel(NotificationChannel(CH_WORK, "Réflexion en cours", NotificationManager.IMPORTANCE_LOW))
+        nm.createNotificationChannel(NotificationChannel(CH_WORK, Lang.t("Réflexion en cours"), NotificationManager.IMPORTANCE_LOW))
     }
 
     fun canPost(ctx: Context): Boolean =
@@ -72,10 +72,10 @@ object Notifs {
         }
         if (thinking) style.addMessage("…", System.currentTimeMillis(), canelle)
 
-        val remote = RemoteInput.Builder(KEY_REPLY).setLabel("Répondre à $name").build()
+        val remote = RemoteInput.Builder(KEY_REPLY).setLabel(Lang.t("Répondre à") + " $name").build()
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE else 0)
         val replyIntent = PendingIntent.getBroadcast(ctx, 7, Intent(ctx, ReplyReceiver::class.java), flags)
-        val action = NotificationCompat.Action.Builder(R.drawable.ic_notif, "Répondre", replyIntent)
+        val action = NotificationCompat.Action.Builder(R.drawable.ic_notif, Lang.t("Répondre"), replyIntent)
             .addRemoteInput(remote)
             .setAllowGeneratedReplies(true)
             .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_REPLY)
@@ -106,8 +106,8 @@ object Notifs {
         val n = NotificationCompat.Builder(ctx, CH_BATTERY)
             .setSmallIcon(R.drawable.ic_notif)
             .setColor(0xFFE8743B.toInt())
-            .setContentTitle("Batterie à $level %")
-            .setContentText("$name a besoin d'énergie : pense à brancher ton téléphone !")
+            .setContentTitle(Lang.t("Batterie à $level %"))
+            .setContentText(Lang.t("$name a besoin d'énergie : pense à brancher ton téléphone !"))
             .setContentIntent(openApp(ctx))
             .setAutoCancel(true)
             .build()
@@ -151,7 +151,7 @@ object Notifs {
 
     fun working(ctx: Context): Notification = NotificationCompat.Builder(ctx, CH_WORK)
         .setSmallIcon(R.drawable.ic_notif)
-        .setContentTitle("${Store.companionName} réfléchit…")
+        .setContentTitle(Lang.t("${Store.companionName} réfléchit…"))
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .build()
 }

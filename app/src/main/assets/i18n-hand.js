@@ -80,6 +80,8 @@
   const HAND = {};
   Object.keys(T).forEach(l => { HAND[l] = {}; KEYS.forEach((k, i) => { HAND[l][k] = T[l][i]; }); });
   window.I18N_HAND = HAND;
+  // Langues qui ont leur patch complet (assets/i18n/<langue>.js). Les autres passent par le traducteur du téléphone.
+  window.I18N_PATCHES = ["en"];
 
   // Visite guidée et confidentialité, dans les 8 langues (affichées avant le téléchargement du pack de langue).
   window.I18N_TOUR = {

@@ -260,7 +260,7 @@ object Brain {
     private suspend fun time(tools: Tools, city: String?, dateOnly: Boolean): List<Line> {
         if (city == null) {
             val now = ZonedDateTime.now()
-            val date = now.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Locale.FRENCH))
+            val date = now.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Lang.locale()))
             val hhmm = now.format(DateTimeFormatter.ofPattern("HH:mm"))
             tools.card = JSONObject().put("type", "time").put("big", if (dateOnly) now.dayOfMonth.toString() else hhmm)
                 .put("desc", date.replaceFirstChar { it.uppercase() }).put("place", "Ici").put("dateOnly", dateOnly)
@@ -293,7 +293,7 @@ object Brain {
     }
 
     private fun dayName(iso: String): String = runCatching {
-        LocalDate.parse(iso).dayOfWeek.getDisplayName(TextStyle.FULL, Locale.FRENCH).replaceFirstChar { it.uppercase() }
+        LocalDate.parse(iso).dayOfWeek.getDisplayName(TextStyle.FULL, Lang.locale()).replaceFirstChar { it.uppercase() }
     }.getOrDefault(iso)
 
     private suspend fun weather(tools: Tools, a: Ask.Weather): List<Line> {
@@ -419,7 +419,7 @@ object Brain {
         days.isEmpty() -> ""
         else -> " le " + days.map { d ->
             val dow = if (d == Calendar.SUNDAY) DayOfWeek.SUNDAY else DayOfWeek.of(d - 1)
-            dow.getDisplayName(TextStyle.FULL, Locale.FRENCH)
+            dow.getDisplayName(TextStyle.FULL, Lang.locale())
         }.joinToString(", ")
     }
 

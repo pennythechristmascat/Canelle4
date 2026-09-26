@@ -76,7 +76,7 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
         return JSONObject()
             .put("lieu", label)
             .put("heure", now.format(DateTimeFormatter.ofPattern("HH:mm", Locale.FRENCH)))
-            .put("date", now.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Locale.FRENCH)))
+            .put("date", now.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Lang.locale())))
             .put("fuseau", zone.id)
     }
 

@@ -866,7 +866,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="note">Choisis la langue de l'application et de ton compagnon.</p>
       <div class="langs" id="langGrid"></div>
       <p class="note" id="langNote" aria-live="polite"></p>
-      <p class="note">Les langues autres que le français sont traduites automatiquement sur ton téléphone (Google ML Kit). Un pack d'environ 30 Mo est téléchargé une seule fois par langue ; ensuite, rien ne quitte ton téléphone. Le cerveau de ton compagnon répond directement dans ta langue.</p>
+      <p class="note">Toutes les langues sont intégrées à l'appli. Le cerveau de ton compagnon répond directement dans ta langue.</p>
     </div>
 
     <div class="mpage" data-page="dev" data-title="Outils dev" hidden>
@@ -937,7 +937,15 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 </div>
 
 <script src="i18n-hand.js"></script>
-<script src="i18n-strings.js"></script>
+<script src="i18n/keys.js"></script>
+<script>
+// charge le patch de la langue enregistrée avant le démarrage (l'appli s'ouvre directement dans la bonne langue)
+(function () {
+  var l = "en";
+  try { if (window.Android && Android.getState) l = JSON.parse(Android.getState()).lang || "en"; } catch (e) {}
+  if ((window.I18N_PATCHES || []).indexOf(l) >= 0) document.write('<script src="i18n/' + l + '.js"><\/script>');
+})();
+</script>
 <script>
 (() => {
 "use strict";
@@ -1403,10 +1411,11 @@ function fill(t) {
   const c = curChar();
   return t.replace(/\{(\w+)\}/g, (m, k) => {
     if (k === "nom") return S.companionName || c.name;
-    if (k === "CRI") return c.cri.toUpperCase();
-    if (k === "Unsnack") return cap1(c.unsnack);
+    const loc = v => (LANG !== "fr" ? (trNow(v) || v) : v);
+    if (k === "CRI") return loc(c.cri).toUpperCase();
+    if (k === "Unsnack") return cap1(loc(c.unsnack));
     const v = c[k];
-    return typeof v === "string" ? v : m;
+    return typeof v === "string" ? (LANG !== "fr" ? (trNow(v) || v) : v) : m;
   });
 }
 
@@ -1690,10 +1699,18 @@ const LETTER = /[\p{L}\p{N}]/u;
 
 let speakSeq = 0;
 function speak(lines) {
-  // jetons du personnage ({nom}, {cri}…) : on remplace dans une copie, sans toucher aux listes de phrases
+  // jetons du personnage ({nom}, {cri}…) : la phrase est d'abord traduite telle quelle (avec ses jetons),
+  // puis les jetons sont remplacés — dans une copie, sans toucher aux listes de phrases
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
-    if (l && l.text && l.text.indexOf("{") >= 0) lines[i] = Object.assign({}, l, { text: fill(l.text) });
+    if (!l || !l.text) continue;
+    let t = l.text, done = !!l.nt;
+    if (!done && LANG !== "fr") {
+      const tt = trNow(t) || fragTr(t);
+      if (tt !== undefined) { t = tt; done = true; }
+    }
+    if (t.indexOf("{") >= 0) t = fill(t);
+    if (t !== l.text || done !== !!l.nt) lines[i] = Object.assign({}, l, { text: t, nt: done || l.nt });
   }
   const my = ++speakSeq;
   // autre langue : on traduit les phrases écrites en français (les réponses du cerveau sont déjà dans la bonne langue)
@@ -1706,7 +1723,7 @@ function speak(lines) {
       if (t !== undefined) lines[i] = Object.assign({}, l, { text: t, nt: true });
       else missing.push(i);
     }
-    if (missing.length && NATIVE && NATIVE.translate) {
+    if (missing.length && NATIVE && NATIVE.translate && !hasPatch(LANG)) {
       const texts = missing.map(i => lines[i].text), lang = LANG;
       trTexts(texts, "fr", lang).then(out => {
         missing.forEach((i, k) => {
@@ -1877,7 +1894,11 @@ async function send(preset, fromChip) {
   ensureAudio(); hidePlaces();
   // les commandes (jeux, interactions, musique) sont comprises en français : on traduit ce qui est écrit dans une autre langue
   let cmd = text;
-  if (LANG !== "fr" && !fromChip && !awaitingOwner && NATIVE && NATIVE.translate) cmd = (await trTexts([text], LANG, "fr"))[0] || text;
+  if (LANG !== "fr" && !fromChip && !awaitingOwner) {
+    const r = revCmd(text);
+    if (r) cmd = r;
+    else if (NATIVE && NATIVE.translate) cmd = (await trTexts([text], LANG, "fr"))[0] || text;
+  }
   if (game && game.onText && !fromChip && !awaitingOwner && !cutscene && !locked) {
     const nn = deaccent(cmd.toLowerCase()).trim();
     const clear = () => { if (typeof preset !== "string") msgEl.value = ""; updateSend(); };
@@ -2619,8 +2640,9 @@ function calm() {
     privacyEl.hidden && !touch.petting && !cardShown && document.visibilityState === "visible";
 }
 function murmur(text, mood, ms = 2600) {
+  if (LANG !== "fr") { const tt = trNow(text) || fragTr(text); if (tt !== undefined) text = tt; }
   text = fill(text);
-  if (LANG !== "fr") { const t = trLine(text); if (t === undefined) { want(text); return; } text = t; }
+  if (LANG !== "fr") { const t = trLine(text); if (t === undefined) { if (!hasPatch(LANG)) want(text); return; } text = t; }
   capEl.classList.add("dim"); capEl.textContent = text; liveEl.textContent = text;
   if (mood) idleMood(mood, ms);
 }
@@ -3587,15 +3609,18 @@ function gMath() {
   speak([{ text: "Calcul mental ! Cinq questions. Écris tes réponses.", mood: "clin" }]);
 }
 // 3. Mots mélangés
-const WORDS = ["BAMBOU", "PANDA", "BANDANA", "ETOILE", "MUSIQUE", "CHOCOLAT", "GIRAFE", "PLANETE", "CHATEAU", "DRAGON", "SOLEIL", "NUAGE",
+const WORDS_FR = ["BAMBOU", "PANDA", "BANDANA", "ETOILE", "MUSIQUE", "CHOCOLAT", "GIRAFE", "PLANETE", "CHATEAU", "DRAGON", "SOLEIL", "NUAGE",
   "JARDIN", "PIRATE", "BISCUIT", "TORTUE", "VOLCAN", "ORANGE", "FUSEE", "CITRON", "LICORNE", "FORET", "RIVIERE", "CROISSANT"];
 function shuffleWord(w) {
   let s2 = w;
   for (let k = 0; k < 10 && s2 === w; k++) s2 = [...w].sort(() => Math.random() - 0.5).join("");
   return s2;
 }
+const WORDS_EN = ["BAMBOO", "PANDA", "BANDANA", "STAR", "MUSIC", "CHOCOLATE", "GIRAFFE", "PLANET", "CASTLE", "DRAGON", "SUN", "CLOUD",
+  "GARDEN", "PIRATE", "COOKIE", "TURTLE", "VOLCANO", "ORANGE", "ROCKET", "LEMON", "UNICORN", "FOREST", "RIVER", "CROISSANT"];
 function gAnagram() {
   if (busyNow()) return;
+  const WORDS = LANG === "en" ? WORDS_EN : WORDS_FR;
   let word = pick(WORDS), shown = 1, round = 0, score = 0;
   const show = () => {
     gq("[data-w]").textContent = shuffleWord(word);
@@ -3636,18 +3661,18 @@ function gAnagram() {
 }
 // 4. Devinettes
 const RIDDLES = [
-  ["Je suis plein de trous, mais je retiens l'eau. Qui suis-je ?", ["eponge"], "une éponge"],
+  ["Je suis plein de trous, mais je retiens l'eau. Qui suis-je ?", ["eponge", "sponge"], "une éponge"],
   ["Plus j'ai de gardiens, moins je suis gardé. Qui suis-je ?", ["secret"], "un secret"],
   ["Qu'est-ce qui monte et ne redescend jamais ?", ["age"], "l'âge"],
   ["Je réponds à tout le monde, mais je n'ai pas de bouche. Qui suis-je ?", ["echo"], "l'écho"],
-  ["Qu'est-ce qui a des dents mais ne mange jamais ?", ["peigne", "scie", "fourchette"], "un peigne"],
-  ["Plus on m'enlève de terre, plus je deviens grand. Qui suis-je ?", ["trou"], "un trou"],
-  ["J'ai des aiguilles, mais je ne couds jamais. Qui suis-je ?", ["horloge", "montre", "pendule", "sapin", "herisson", "reveil"], "une horloge"],
-  ["Qu'est-ce qui court sans avoir de jambes ?", ["riviere", "eau", "fleuve", "ruisseau", "vent", "temps"], "une rivière"],
-  ["Il est à toi, mais les autres l'utilisent plus que toi. Qu'est-ce que c'est ?", ["prenom", "nom"], "ton prénom"],
-  ["Qu'est-ce qui a un cou, mais pas de tête ?", ["bouteille", "pull", "chemise"], "une bouteille"],
-  ["Je tombe sans jamais me faire mal. Qui suis-je ?", ["pluie", "nuit", "neige", "feuille"], "la pluie"],
-  ["Qu'est-ce qui a quatre pattes le matin, deux à midi et trois le soir ?", ["homme", "humain", "personne", "etre humain"], "l'être humain (à quatre pattes bébé, puis avec une canne)"]
+  ["Qu'est-ce qui a des dents mais ne mange jamais ?", ["peigne", "scie", "fourchette", "comb", "saw", "fork"], "un peigne"],
+  ["Plus on m'enlève de terre, plus je deviens grand. Qui suis-je ?", ["trou", "hole"], "un trou"],
+  ["J'ai des aiguilles, mais je ne couds jamais. Qui suis-je ?", ["horloge", "montre", "pendule", "sapin", "herisson", "reveil", "clock", "watch"], "une horloge"],
+  ["Qu'est-ce qui court sans avoir de jambes ?", ["riviere", "eau", "fleuve", "ruisseau", "vent", "temps", "river", "water", "stream", "wind", "time"], "une rivière"],
+  ["Il est à toi, mais les autres l'utilisent plus que toi. Qu'est-ce que c'est ?", ["prenom", "nom", "name"], "ton prénom"],
+  ["Qu'est-ce qui a un cou, mais pas de tête ?", ["bouteille", "pull", "chemise", "bottle", "shirt", "sweater"], "une bouteille"],
+  ["Je tombe sans jamais me faire mal. Qui suis-je ?", ["pluie", "nuit", "neige", "feuille", "rain", "night", "snow", "leaf"], "la pluie"],
+  ["Qu'est-ce qui a quatre pattes le matin, deux à midi et trois le soir ?", ["homme", "humain", "personne", "etre humain", "human", "man", "person"], "l'être humain (à quatre pattes bébé, puis avec une canne)"]
 ];
 function gRiddle() {
   if (busyNow()) return;
@@ -4533,11 +4558,47 @@ const TR = new Map(); // texte français → traduction dans la langue actuelle
 const HAND = window.I18N_HAND || {};
 const NO_TR = "#caption,#live,.log,#fx,#name,#tabName,#profileName,.letters,.langs,script,style,textarea,.boot-title,.boot-ea,.p,.tour,#privacy";
 const SRC = new WeakMap(), OUT = new WeakMap();
+const hasPatch = l => (window.I18N_PATCHES || []).includes(l);
+let DICT = {}, FRAG = null, REV = {};
+const SHORT = ["À", "à", "de"]; // mots courts traduits aussi à l'intérieur des phrases composées
+/** Active le patch d'une langue : traductions exactes, morceaux de phrases, et commandes comprises dans cette langue. */
+function useDict(lang) {
+  DICT = ((window.I18N_DATA || {})[lang]) || {};
+  const keys = Object.keys(DICT).filter(k => k.length >= 3 || SHORT.includes(k)).sort((a, b) => b.length - a.length);
+  FRAG = keys.length ? new RegExp("(?<!\\p{L})(?:" + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?!\\p{L})", "gu") : null;
+  REV = {};
+  Object.keys(DICT).forEach(k => { REV[DICT[k].toLowerCase().replace(/[\s!?.…]+$/, "")] = k; });
+  const h = HAND[lang] || {};
+  Object.keys(h).forEach(k => { REV[h[k].toLowerCase()] = k; });
+}
+/** Charge le fichier du patch d'une langue (s'il n'est pas déjà là). */
+function loadPatch(lang, done) {
+  if (!hasPatch(lang) || (window.I18N_DATA || {})[lang]) { done(); return; }
+  const sc = document.createElement("script");
+  sc.src = "i18n/" + lang + ".js";
+  sc.onload = sc.onerror = () => done();
+  document.head.append(sc);
+}
 function trNow(t) {
   if (LANG === "fr") return t;
   const h = HAND[LANG];
-  return (h && h[t]) || TR.get(t);
+  const hit = (h && h[t]) || DICT[t] || TR.get(t);
+  if (hit !== undefined || !t) return hit;
+  // même texte avec une majuscule ou une minuscule au début (« Ciel dégagé » / « ciel dégagé »)
+  const alt = t[0] === t[0].toUpperCase() ? t[0].toLowerCase() + t.slice(1) : t[0].toUpperCase() + t.slice(1);
+  const a2 = (h && h[alt]) || DICT[alt];
+  if (a2 === undefined) return undefined;
+  return t[0] === t[0].toUpperCase() ? a2.charAt(0).toUpperCase() + a2.slice(1) : a2.charAt(0).toLowerCase() + a2.slice(1);
 }
+/** Phrase composée (« Ta batterie est à 64 % ») : on traduit chacun de ses morceaux connus. */
+function fragTr(t) {
+  if (!FRAG || LANG === "fr") return undefined;
+  let hit = false;
+  const out = t.replace(FRAG, m => { hit = true; return DICT[m] || m; });
+  return hit ? out : undefined;
+}
+/** Texte écrit par l'utilisateur dans sa langue → commande en français (sans traducteur). */
+function revCmd(t) { return REV[t.toLowerCase().trim().replace(/[\s!?.…]+$/, "")]; }
 // demandes de traduction à Android, regroupées
 const trWait = new Map();
 let trSeq = 0;
@@ -4587,7 +4648,8 @@ function locNode(node) {
   if (!src || !/\p{L}/u.test(src)) return;
   const core = src.trim();
   let out = trNow(core);
-  if (out === undefined) { want(core); out = core; }
+  if (out === undefined) out = fragTr(core);
+  if (out === undefined) { if (!hasPatch(LANG)) want(core); out = core; }
   const v = src.replace(core, out);
   OUT.set(node, v);
   if (cur !== v) node.nodeValue = v;
@@ -4603,7 +4665,8 @@ function locAttrs(el) {
     const src = el["_src_" + a];
     if (!src || !/\p{L}/u.test(src)) return;
     let out = trNow(src);
-    if (out === undefined) { want(src); out = src; }
+    if (out === undefined) out = fragTr(src);
+    if (out === undefined) { if (!hasPatch(LANG)) want(src); out = src; }
     el._trOut[a] = out;
     if (cur !== out) el.setAttribute(a, out);
   });
@@ -4626,7 +4689,13 @@ new MutationObserver(ms => {
 }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
 
 /** Phrase de Canelle dans la langue actuelle (ou undefined si pas encore traduite). */
-function trLine(t) { return trNow(t); }
+function trLine(t) {
+  const x = trNow(t);
+  if (x !== undefined) return x;
+  const f = fragTr(t);
+  if (f !== undefined) return f;
+  return hasPatch(LANG) ? t : undefined; // langue patchée : on garde la phrase telle quelle plutôt que d'attendre un traducteur
+}
 
 function applyLangDir() {
   document.documentElement.lang = LANG;
@@ -4635,12 +4704,16 @@ function applyLangDir() {
 function setLanguage(code, force) {
   if (!LANGS.some(l => l[0] === code)) return;
   if (code === LANG && !force) return;
+  loadPatch(code, () => applyLanguage(code));
+}
+function applyLanguage(code) {
   LANG = code; S.lang = code;
   TR.clear();
+  useDict(code);
   applyLangDir();
   loadDump();
-  if (NATIVE && NATIVE.setLang) NATIVE.setLang(code); // télécharge le pack si besoin, puis onLangReady → tout est traduit d'avance
-  trProgress = code === "fr" ? -1 : 0;
+  if (NATIVE && NATIVE.setLang) NATIVE.setLang(code); // langue sans patch : télécharge le pack, puis tout est traduit d'avance
+  trProgress = code === "fr" || hasPatch(code) ? -1 : 0;
   showLangStatus();
   renderLangs();
   renderPrivacy();
@@ -4668,8 +4741,8 @@ function loadDump() {
 }
 /** Traduit d'avance tous les textes de l'appli qui ne le sont pas encore. */
 function pretranslateAll() {
-  if (!NATIVE || !NATIVE.pretranslate || LANG === "fr") return;
-  const all = new Set(window.I18N_STRINGS || []);
+  if (!NATIVE || !NATIVE.pretranslate || LANG === "fr" || hasPatch(LANG)) { if (hasPatch(LANG)) { trProgress = -1; showLangStatus(); } return; }
+  const all = new Set(window.I18N_KEYS || []);
   const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let n;
   while ((n = w.nextNode())) { const src = (SRC.get(n) || n.nodeValue || "").trim(); if (src && /\p{L}/u.test(src) && !skipEl(n.parentElement)) all.add(src); }
@@ -4688,6 +4761,7 @@ window.onTrDone = (code, failed) => {
 };
 window.onLangReady = (code, ok) => {
   if (code !== LANG) return;
+  if (hasPatch(code)) { trProgress = -1; showLangStatus(); return; } // langue patchée : rien à préparer
   if (!ok) { trProgress = -2; showLangStatus(); return; }
   loadDump();
   relocalize();
@@ -5297,9 +5371,9 @@ function greet() {
   speak(lines);
 }
 function boot() {
-  LANG = S.lang || "en"; applyLangDir(); loadDump(); renderLangs(); renderPrivacy();
-  // traductions incomplètes (première ouverture, mise à jour de l'appli…) : on termine le travail en arrière-plan
-  if (LANG !== "fr" && NATIVE && NATIVE.setLang && TR.size < (window.I18N_STRINGS || []).length * 0.9 && S.visits) NATIVE.setLang(LANG);
+  LANG = S.lang || "en"; useDict(LANG); applyLangDir(); loadDump(); renderLangs(); renderPrivacy();
+  // langue sans patch et traductions incomplètes : on termine le travail en arrière-plan
+  if (LANG !== "fr" && !hasPatch(LANG) && NATIVE && NATIVE.setLang && TR.size < (window.I18N_KEYS || []).length * 0.9 && S.visits) NATIVE.setLang(LANG);
   updateName(); updateSound(); renderChips(false); renderRank();
   refreshCoins(); renderProfile();
   if (LANG !== "fr") relocalize();

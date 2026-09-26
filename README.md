@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.6.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.7.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -96,13 +96,19 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 ## Langues
 
-**Anglais par défaut** pour les nouveaux utilisateurs (ceux qui utilisaient déjà l'appli gardent le français). Bouton **globe** en haut de l'écran, ou Menu → Langue : **anglais, français, espagnol, portugais, russe, chinois, japonais, arabe**.
+**Anglais par défaut** pour les nouveaux utilisateurs (ceux qui utilisaient déjà l'appli gardent le français). Bouton **globe** en haut de l'écran, ou Menu → Langue.
 
-- **Traduit à la main dans les 8 langues** : les libellés de l'interface (onglets, menu, boutons, noms des jeux, cartes, boutique…), la visite guidée et l'avertissement de confidentialité.
-- **Tout le reste est traduit d'avance** au moment où l'on choisit la langue : 1 300 textes (interface, phrases du compagnon, jeux, réponses toutes faites) sont traduits sur le téléphone par Google ML Kit, avec une barre de progression, puis gardés. À l'ouverture suivante, l'appli démarre directement dans la bonne langue. Une traduction ratée n'est jamais gardée : elle est refaite.
-- Un pack d'environ 30 Mo est téléchargé une fois par langue (il faut internet pour ça) ; ensuite, rien ne quitte le téléphone.
-- **Ce que tu écris** est compris dans toutes les langues ; le **cerveau IA** répond directement dans ta langue ; la **voix** et le **micro** suivent la langue ; l'**arabe** s'affiche de droite à gauche.
-- Limites : la traduction automatique n'est pas toujours parfaite ; les mots mélangés et les devinettes restent basés sur des mots français ; le numéro 3114 est français (hors de France, Canelle conseille d'appeler le numéro d'urgence du pays).
+Chaque langue a son **patch** : un fichier `app/src/main/assets/i18n/<langue>.js` qui contient la traduction complète de **tous** les textes de l'appli (interface, phrases du compagnon, jeux, réponses de la partie Android). Aucune traduction automatique pour ces langues : tout est immédiat, hors ligne et relu.
+
+| Langue | Patch |
+|---|---|
+| Français | langue d'origine |
+| Anglais | ✅ complet (1 526 textes) |
+| Espagnol, portugais, russe, chinois, japonais, arabe | à venir, un patch par langue ; en attendant, traduction automatique sur le téléphone |
+
+- `i18n/keys.js` : la liste de tous les textes (en français) et `I18N_PATCHES`, la liste des langues livrées. Pour ajouter une langue : créer `i18n/<code>.js` avec toutes les clés de `keys.js`, puis ajouter son code dans `I18N_PATCHES`.
+- Les phrases composées (« Ta batterie est à 64 % », « À Paris, il est 14 h 05 ») sont traduites morceau par morceau.
+- Ce que tu écris dans ta langue est compris pour les commandes ; le cerveau IA répond directement dans ta langue ; la voix, le micro et les dates suivent la langue ; l'arabe s'affiche de droite à gauche.
 
 ## Visite guidée
 

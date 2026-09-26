@@ -195,7 +195,7 @@ object LocalModel {
         partFile(ctx, sp).delete()
         return try {
             val req = DownloadManager.Request(Uri.parse(sp.url))
-                .setTitle("Cerveau de ${Store.companionName}")
+                .setTitle(Lang.t("Cerveau de") + " ${Store.companionName}")
                 .setDescription("${sp.label} (environ ${String.format(java.util.Locale.FRANCE, "%.1f", sp.approxBytes / 1e9)} Go)")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationInExternalFilesDir(ctx, null, sp.fileName + ".part")

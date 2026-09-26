@@ -9,13 +9,13 @@ class StepsRationaleActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AlertDialog.Builder(this)
-            .setTitle("Pourquoi Canelle AI lit tes pas")
-            .setMessage(
+            .setTitle(Lang.t("Pourquoi Canelle AI lit tes pas"))
+            .setMessage(Lang.t(
                 "Canelle AI lit seulement ton nombre de pas, pour l'afficher dans l'onglet « Pas », " +
                     "suivre ton objectif du jour et te donner des pièces. Rien n'est envoyé sur internet : " +
                     "tout reste sur ton téléphone. Tu peux retirer l'autorisation à tout moment dans Health Connect."
-            )
-            .setPositiveButton("J'ai compris") { _, _ -> finish() }
+            ))
+            .setPositiveButton(Lang.t("J'ai compris")) { _, _ -> finish() }
             .setOnCancelListener { finish() }
             .show()
     }

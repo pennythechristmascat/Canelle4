@@ -51,6 +51,70 @@ object Lang {
     private var appCtx: Context? = null
     private var loadedFor = ""
 
+    // ---------------------------------------------------------------- patchs de langue (assets/i18n/<langue>.js)
+    // Chaque langue patchée a tous les textes de l'appli traduits à l'avance : aucune traduction automatique pour eux.
+
+    @Volatile private var dict: Map<String, String> = emptyMap()
+    @Volatile private var rev: Map<String, String> = emptyMap()
+    @Volatile private var frag: Regex? = null
+    private var dictLang = ""
+
+    /** Mots courts traduits aussi à l'intérieur des phrases composées. */
+    private val SHORT = setOf("À", "à", "de")
+
+    private fun norm(t: String) = t.lowercase(Locale.ROOT).trim().trimEnd('!', '?', '.', '…', ' ')
+
+    @Synchronized
+    private fun ensureDict() {
+        val lang = current()
+        if (dictLang == lang) return
+        dictLang = lang
+        dict = emptyMap(); rev = emptyMap(); frag = null
+        if (lang == "fr") return
+        val ctx = appCtx ?: return
+        val txt = runCatching { ctx.assets.open("i18n/$lang.js").bufferedReader().use { it.readText() } }.getOrNull() ?: return
+        val start = txt.indexOf('{')
+        val end = txt.lastIndexOf('}')
+        if (start < 0 || end <= start) return
+        val o = runCatching { JSONObject(txt.substring(start, end + 1)) }.getOrNull() ?: return
+        val m = HashMap<String, String>()
+        o.keys().forEach { k -> m[k] = o.optString(k) }
+        dict = m
+        rev = m.entries.associate { norm(it.value) to it.key }
+        val keys = m.keys.filter { it.length >= 3 || it in SHORT }.sortedByDescending { it.length }
+        frag = if (keys.isEmpty()) null else Regex("(?<!\\p{L})(?:" + keys.joinToString("|") { Regex.escape(it) } + ")(?!\\p{L})")
+    }
+
+    /** La langue actuelle a-t-elle son patch complet ? */
+    fun hasPatch(): Boolean {
+        ensureDict()
+        return dict.isNotEmpty()
+    }
+
+    /** Traduction par le patch : phrase exacte, sinon chacun des morceaux connus d'une phrase composée. */
+    fun staticTr(text: String): String? {
+        ensureDict()
+        if (dict.isEmpty()) return null
+        val core = text.trim()
+        dict[core]?.let { return text.replace(core, it) }
+        // même texte avec une majuscule ou une minuscule au début
+        if (core.isNotEmpty()) {
+            val up = core[0].isUpperCase()
+            val alt = if (up) core[0].lowercaseChar() + core.substring(1) else core[0].uppercaseChar() + core.substring(1)
+            dict[alt]?.let { v ->
+                val fixed = if (v.isEmpty()) v else if (up) v[0].uppercaseChar() + v.substring(1) else v[0].lowercaseChar() + v.substring(1)
+                return text.replace(core, fixed)
+            }
+        }
+        val re = frag ?: return null
+        var hit = false
+        val out = re.replace(text) { m -> hit = true; dict[m.value] ?: m.value }
+        return if (hit) out else null
+    }
+
+    /** Traduction immédiate d'un texte de l'appli (notifications, fenêtres…). */
+    fun t(text: String): String = if (current() == "fr") text else staticTr(text) ?: text
+
     private suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { c ->
         addOnSuccessListener { c.resume(it) }
         addOnFailureListener { c.resumeWithException(it) }
@@ -102,7 +166,8 @@ object Lang {
         if (lang == "fr") return true
         appCtx?.let { loadCache(it, lang) }
         return runCatching {
-            val cond = DownloadConditions.Builder().build()
+            // langue patchée : le traducteur ne sert qu'aux commandes tapées librement, on attend donc le wifi
+            val cond = if (hasPatch()) DownloadConditions.Builder().requireWifi().build() else DownloadConditions.Builder().build()
             client("fr", lang).downloadModelIfNeeded(cond).await()
             client(lang, "fr").downloadModelIfNeeded(cond).await()
             true
@@ -148,8 +213,19 @@ object Lang {
         return o.toString()
     }
 
-    suspend fun toUser(text: String): String = tr(text, "fr", current())
-    suspend fun fromUser(text: String): String = tr(text, current(), "fr")
+    suspend fun toUser(text: String): String {
+        if (current() == "fr") return text
+        staticTr(text)?.let { return it }
+        return if (hasPatch()) text else tr(text, "fr", current())
+    }
+
+    /** Ce que l'utilisateur écrit → français, pour comprendre les commandes (le patch d'abord, sinon le traducteur). */
+    suspend fun fromUser(text: String): String {
+        if (current() == "fr") return text
+        ensureDict()
+        rev[norm(text)]?.let { return it }
+        return tr(text, current(), "fr")
+    }
 
     /** Traduit des répliques écrites en français vers la langue de l'utilisateur. */
     suspend fun lines(lines: List<Line>): List<Line> =
