@@ -25,20 +25,19 @@ import kotlin.coroutines.resumeWithException
  * Les traductions sont gardées en mémoire (et sur le téléphone) pour être instantanées la fois suivante.
  */
 object Lang {
-    val CODES = listOf("fr", "en", "es", "pt", "ru", "zh", "ja", "ar")
+    /** Langues de l'application : anglais (par défaut) et français. */
+    val CODES = listOf("en", "fr")
 
     /** Nom de la langue, pour la consigne donnée au cerveau. */
     private val PROMPT_NAME = mapOf(
-        "fr" to "français", "en" to "anglais", "es" to "espagnol", "pt" to "portugais",
-        "ru" to "russe", "zh" to "chinois simplifié", "ja" to "japonais", "ar" to "arabe"
+        "fr" to "français", "en" to "anglais"
     )
     /** Langue de la voix et de la reconnaissance vocale. */
     private val BCP = mapOf(
-        "fr" to "fr-FR", "en" to "en-US", "es" to "es-ES", "pt" to "pt-BR",
-        "ru" to "ru-RU", "zh" to "zh-CN", "ja" to "ja-JP", "ar" to "ar"
+        "fr" to "fr-FR", "en" to "en-US"
     )
 
-    fun current(): String = Store.lang.takeIf { it in CODES } ?: "fr"
+    fun current(): String = Store.lang.takeIf { it in CODES } ?: "en"
     fun promptName(): String = PROMPT_NAME[current()] ?: "français"
     fun bcp(): String = BCP[current()] ?: "fr-FR"
     fun locale(): Locale = Locale.forLanguageTag(bcp())

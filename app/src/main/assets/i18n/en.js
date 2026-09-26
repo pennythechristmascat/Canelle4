@@ -20,7 +20,6 @@
 "Échanges": "Chats",
 "Vos derniers messages": "Your latest messages",
 "Spotify et Deezer": "Spotify and Deezer",
-"8 langues": "8 languages",
 "Réglages": "Settings",
 "Notifications, code, nom": "Notifications, code, name",
 "Outils dev": "Dev tools",
@@ -1525,5 +1524,7 @@
 "Toucher pour changer.": "Tap to change.",
 "Toucher pour en parler.": "Tap to talk about it.",
 "Tu peux fermer l'appli, ça continue.": "You can close the app, it keeps going.",
-"coûte": "costs"
+"coûte": "costs",
+"English, français": "English, French",
+"Canelle AI est disponible en anglais et en français. Le cerveau de ton compagnon répond directement dans la langue choisie.": "Canelle AI is available in English and French. Your companion's brain replies directly in the chosen language."
 };

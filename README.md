@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.7.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.8.0 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -96,19 +96,14 @@ Canelle retient tout seul ce que tu dis de toi : ce que tu aimes ou n'aimes pas,
 
 ## Langues
 
-**Anglais par défaut** pour les nouveaux utilisateurs (ceux qui utilisaient déjà l'appli gardent le français). Bouton **globe** en haut de l'écran, ou Menu → Langue.
+Canelle AI existe en **anglais** (langue par défaut pour les nouveaux utilisateurs) et en **français** (langue d'origine ; ceux qui utilisaient déjà l'appli la gardent). Bouton **globe** en haut de l'écran, ou Menu → Langue.
 
-Chaque langue a son **patch** : un fichier `app/src/main/assets/i18n/<langue>.js` qui contient la traduction complète de **tous** les textes de l'appli (interface, phrases du compagnon, jeux, réponses de la partie Android). Aucune traduction automatique pour ces langues : tout est immédiat, hors ligne et relu.
-
-| Langue | Patch |
-|---|---|
-| Français | langue d'origine |
-| Anglais | ✅ complet (1 526 textes) |
-| Espagnol, portugais, russe, chinois, japonais, arabe | à venir, un patch par langue ; en attendant, traduction automatique sur le téléphone |
-
-- `i18n/keys.js` : la liste de tous les textes (en français) et `I18N_PATCHES`, la liste des langues livrées. Pour ajouter une langue : créer `i18n/<code>.js` avec toutes les clés de `keys.js`, puis ajouter son code dans `I18N_PATCHES`.
+- L'anglais a son **patch complet** : `app/src/main/assets/i18n/en.js` contient la traduction de tous les textes de l'appli (interface, phrases du compagnon, jeux, réponses de la partie Android). Tout est immédiat et hors ligne.
+- `i18n/keys.js` liste tous les textes (en français). Quand tu ajoutes ou modifies un texte en français, ajoute sa traduction dans `en.js`.
 - Les phrases composées (« Ta batterie est à 64 % », « À Paris, il est 14 h 05 ») sont traduites morceau par morceau.
-- Ce que tu écris dans ta langue est compris pour les commandes ; le cerveau IA répond directement dans ta langue ; la voix, le micro et les dates suivent la langue ; l'arabe s'affiche de droite à gauche.
+- Le cerveau IA répond directement dans la langue choisie ; la voix, le micro et les dates suivent la langue.
+- Pour comprendre les commandes tapées librement en anglais (« what's the weather in Paris? »), l'appli peut télécharger une fois un petit pack de traduction Google (sur le téléphone, rien n'est envoyé).
+- Les autres langues (espagnol, portugais, russe, chinois, japonais, arabe) ont été retirées ; si l'une d'elles avait été choisie, l'appli repasse en anglais.
 
 ## Visite guidée
 

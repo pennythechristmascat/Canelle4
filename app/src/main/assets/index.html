@@ -761,7 +761,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         <button class="tile" type="button" data-go="memory" style="--c:#ff9ec7"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3z"/><path d="M9 22h6"/></svg></span><b>Souvenirs</b><small data-sub="memory">Ce qu'il sait de toi</small></button>
         <button class="tile" type="button" data-go="chats" style="--c:#8fe3ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><b>Échanges</b><small data-sub="chats">Vos derniers messages</small></button>
         <button class="tile" type="button" data-go="music" style="--c:#7ee2c0"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><b>Musique</b><small data-sub="music">Spotify et Deezer</small></button>
-        <button class="tile" type="button" data-go="lang" style="--c:#8fb4ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><b>Langue</b><small data-sub="lang">8 langues</small></button>
+        <button class="tile" type="button" data-go="lang" style="--c:#8fb4ff"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><b>Langue</b><small data-sub="lang">English, français</small></button>
         <button class="tile" type="button" data-go="settings" style="--c:#c6cbd6"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span><b>Réglages</b><small data-sub="settings">Notifications, code, nom</small></button>
         <button class="tile" type="button" data-go="dev" style="--c:#ff6b5a" hidden id="devTile"><span class="tico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg></span><b>Outils dev</b><small data-sub="dev">Tests et animations</small></button>
       </div>
@@ -866,7 +866,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
       <p class="note">Choisis la langue de l'application et de ton compagnon.</p>
       <div class="langs" id="langGrid"></div>
       <p class="note" id="langNote" aria-live="polite"></p>
-      <p class="note">Toutes les langues sont intégrées à l'appli. Le cerveau de ton compagnon répond directement dans ta langue.</p>
+      <p class="note">Canelle AI est disponible en anglais et en français. Le cerveau de ton compagnon répond directement dans la langue choisie.</p>
     </div>
 
     <div class="mpage" data-page="dev" data-title="Outils dev" hidden>
@@ -943,6 +943,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 (function () {
   var l = "en";
   try { if (window.Android && Android.getState) l = JSON.parse(Android.getState()).lang || "en"; } catch (e) {}
+  if (l !== "fr" && (window.I18N_PATCHES || []).indexOf(l) < 0) l = "en"; // langue retirée : anglais
   if ((window.I18N_PATCHES || []).indexOf(l) >= 0) document.write('<script src="i18n/' + l + '.js"><\/script>');
 })();
 </script>
@@ -4552,7 +4553,7 @@ document.getElementById("langBtn").addEventListener("click", () => { openSheet()
 /* ---------- langues ---------- */
 // L'appli est écrite en français. Pour les autres langues, tous les textes affichés sont traduits sur le téléphone
 // (ML Kit) et gardés en mémoire. Quelques mots ambigus sont traduits à la main.
-const LANGS = [["fr", "Français"], ["en", "English"], ["es", "Español"], ["pt", "Português"], ["ru", "Русский"], ["zh", "中文"], ["ja", "日本語"], ["ar", "العربية"]];
+const LANGS = [["en", "English"], ["fr", "Français"]];
 let LANG = "fr";
 const TR = new Map(); // texte français → traduction dans la langue actuelle
 const HAND = window.I18N_HAND || {};
@@ -5371,7 +5372,9 @@ function greet() {
   speak(lines);
 }
 function boot() {
-  LANG = S.lang || "en"; useDict(LANG); applyLangDir(); loadDump(); renderLangs(); renderPrivacy();
+  LANG = LANGS.some(l => l[0] === S.lang) ? S.lang : "en";
+  if (S.lang !== LANG && NATIVE && NATIVE.setLang) NATIVE.setLang(LANG); // langue retirée : on enregistre l'anglais
+  S.lang = LANG; useDict(LANG); applyLangDir(); loadDump(); renderLangs(); renderPrivacy();
   // langue sans patch et traductions incomplètes : on termine le travail en arrière-plan
   if (LANG !== "fr" && !hasPatch(LANG) && NATIVE && NATIVE.setLang && TR.size < (window.I18N_KEYS || []).length * 0.9 && S.visits) NATIVE.setLang(LANG);
   updateName(); updateSound(); renderChips(false); renderRank();

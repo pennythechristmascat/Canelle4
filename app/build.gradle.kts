@@ -14,8 +14,8 @@ android {
         // Le cerveau local (LiteRT-LM) demande Android 12 ou plus récent.
         minSdk = 31
         targetSdk = 35
-        versionCode = 570
-        versionName = "5.7.0"
+        versionCode = 580
+        versionName = "5.8.0"
         ndk {
             // Les téléphones capables de faire tourner le modèle sont tous en 64 bits.
             abiFilters += listOf("arm64-v8a")
