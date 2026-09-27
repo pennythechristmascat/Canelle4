@@ -15,8 +15,8 @@ android {
         minSdk = 31
         // Google Play exige Android 16 (API 36) pour les nouvelles applis et les mises à jour depuis le 31 août 2026.
         targetSdk = 36
-        versionCode = 600
-        versionName = "5.10.0"
+        versionCode = 601
+        versionName = "5.10.1"
         ndk {
             // Les téléphones capables de faire tourner le modèle sont tous en 64 bits.
             abiFilters += listOf("arm64-v8a")

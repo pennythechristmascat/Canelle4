@@ -58,8 +58,12 @@ object Device {
             BatteryManager.BATTERY_PLUGGED_WIRELESS -> "sans fil"
             else -> null
         }
-        val temp = (sticky?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10.0
-        val volts = (sticky?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) ?: 0).let { if (it > 100) it / 1000.0 else it.toDouble() }
+        // valeurs impossibles écartées (null = « — » dans l'appli plutôt qu'un chiffre faux)
+        val temp: Double? = (sticky?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, Int.MIN_VALUE) ?: Int.MIN_VALUE)
+            .takeIf { it != Int.MIN_VALUE && it != 0 }?.let { it / 10.0 }?.takeIf { it in -20.0..90.0 }
+        val voltsRaw = (sticky?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) ?: 0).let { if (it > 100) it / 1000.0 else it.toDouble() }
+        // une batterie de téléphone est entre 2,5 et 4,8 V (5 V, c'est la tension du chargeur, pas de la batterie)
+        val volts = voltsRaw.takeIf { it in 2.5..4.8 } ?: 0.0
         val health = when (sticky?.getIntExtra(BatteryManager.EXTRA_HEALTH, 0) ?: 0) {
             BatteryManager.BATTERY_HEALTH_GOOD -> "bonne"
             BatteryManager.BATTERY_HEALTH_OVERHEAT -> "surchauffe"
@@ -75,37 +79,42 @@ object Device {
         var currentMa: Double? = null
         if (rawNow != 0 && rawNow != Int.MIN_VALUE && rawNow != Int.MAX_VALUE) {
             val a0 = abs(rawNow.toDouble())
-            currentMa = if (a0 > 20_000) a0 / 1000.0 else a0
+            currentMa = (if (a0 > 20_000) a0 / 1000.0 else a0).takeIf { it in 5.0..10_000.0 }
         }
         val watts = if (currentMa != null && volts > 0) volts * currentMa / 1000.0 else null
+        // Capacité : d'abord celle d'origine déclarée par le fabricant (quand Android la donne),
+        // sinon une estimation (charge restante ÷ niveau), seulement si elle est plausible.
+        val design = designCapacity(ctx)
         val counter = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) // µAh
-        val capacityMah = if (counter > 0 && level in 5..100) (counter / 1000.0) / (level / 100.0) else null
+        val estimated = if (counter > 0 && level in 10..100) ((counter / 1000.0) / (level / 100.0)).takeIf { it in 1000.0..20_000.0 } else null
+        val capacityMah = design ?: estimated
+        val capacitySource = if (design != null) "origine" else if (estimated != null) "estimation" else null
 
         BatteryWatch.sample(level, charging)
         val measured = BatteryWatch.rate(charging)
 
         var minutes: Int? = null
         var method: String? = null
+        // temps plausible : au moins 1/3 de minute par % restant (3 %/min au maximum), au plus 24 h
+        fun plausible(m: Int) = m >= (100 - level) / 3 && m <= 24 * 60
         if (charging && !full) {
-            // 1) la vitesse réellement mesurée sur ce téléphone, avec ce chargeur (le plus fiable)
-            if (measured != null) {
-                minutes = BatteryWatch.minutesToFull(level, measured)
-                method = "mesure"
+            // 1) l'estimation d'Android, celle que le téléphone affiche dans ses réglages
+            val ms = bm.computeChargeTimeRemaining()
+            if (ms > 0) {
+                val m = (ms / 60_000L).toInt().coerceAtLeast(1)
+                if (plausible(m)) { minutes = m; method = "android" }
             }
-            // 2) l'estimation d'Android (quand le fabricant la fournit)
-            if (minutes == null) {
-                val ms = bm.computeChargeTimeRemaining()
-                if (ms > 0) {
-                    minutes = (ms / 60_000L).toInt().coerceAtLeast(1)
-                    method = "android"
-                }
+            // 2) la vitesse réellement mesurée sur ce téléphone, avec ce chargeur
+            if (minutes == null && measured != null) {
+                val m = BatteryWatch.minutesToFull(level, measured)
+                if (plausible(m)) { minutes = m; method = "mesure" }
             }
             // 3) capacité restante / courant de charge, avec le ralentissement après 80 %
             if (minutes == null && currentMa != null && currentMa > 50 && capacityMah != null && level in 1..99) {
                 val perMin = currentMa / capacityMah * 100.0 / 60.0 // % par minute au courant actuel
                 if (perMin > 0.01) {
-                    minutes = BatteryWatch.minutesToFull(level, perMin)
-                    method = "courant"
+                    val m = BatteryWatch.minutesToFull(level, perMin)
+                    if (plausible(m)) { minutes = m; method = "courant" }
                 }
             }
         }
@@ -126,19 +135,37 @@ object Device {
             .put("en_charge", charging)
             .put("pleine", full)
             .put("source", source ?: JSONObject.NULL)
-            .put("temperature_c", temp)
+            .put("temperature_c", temp ?: JSONObject.NULL)
             .put("tension_v", if (volts > 0) r1(volts) else JSONObject.NULL)
             .put("courant_ma", currentMa?.roundToInt() ?: JSONObject.NULL)
             .put("puissance_w", watts?.let { r1(it) } ?: JSONObject.NULL)
             .put("sante", health ?: JSONObject.NULL)
             .put("cycles", if (cycles >= 0) cycles else JSONObject.NULL)
             .put("capacite_mah", capacityMah?.roundToInt() ?: JSONObject.NULL)
+            .put("capacite_source", capacitySource ?: JSONObject.NULL)
             .put("vitesse_pct_heure", measured?.let { r1(it * 60) } ?: JSONObject.NULL)
             .put("minutes_avant_pleine_charge", minutes ?: JSONObject.NULL)
             .put("methode_estimation", method ?: JSONObject.NULL)
-            .put("estimation_approximative", method != "mesure")
+            .put("estimation_approximative", method != "android" && method != "mesure")
             .put("autonomie_minutes", autonomy ?: JSONObject.NULL)
             .put("conseil", advice)
+    }
+
+    /**
+     * Capacité d'origine de la batterie (mAh), déclarée par le fabricant dans le profil d'alimentation d'Android.
+     * Ce n'est pas une API publique : si le téléphone la refuse, on renvoie null.
+     */
+    private var designCache: Double? = null
+    private var designTried = false
+    private fun designCapacity(ctx: Context): Double? {
+        if (designTried) return designCache
+        designTried = true
+        designCache = runCatching {
+            val cls = Class.forName("com.android.internal.os.PowerProfile")
+            val profile = cls.getConstructor(Context::class.java).newInstance(ctx)
+            (cls.getMethod("getBatteryCapacity").invoke(profile) as Double).takeIf { it in 1000.0..20_000.0 }
+        }.getOrNull()
+        return designCache
     }
 
     // ---------------------------------------------------------------- position

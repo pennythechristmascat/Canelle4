@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.10.0 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.10.1 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -200,7 +200,7 @@ Le cerveau pèse 2,6 Go. Sur certains téléphones, surtout sous Android 16 et 1
 Quand on demande la météo, la batterie ou l'heure (ou qu'on touche l'indicateur de batterie en haut), un écran complet s'ouvre, avec le compagnon en bas qui dit ses répliques et change d'humeur selon la situation. La croix ou le bouton retour d'Android le referme.
 
 - **Météo** (façon Météo d'iPhone) : le ciel change selon le temps et le moment de la journée (jour, nuit étoilée, lumière dorée au lever et au coucher du soleil), avec pluie, neige, nuages, brouillard ou éclairs animés. Température, résumé des prochaines heures, prévisions heure par heure sur 24 h et sur 10 jours, ressenti, humidité, vent, lever et coucher du soleil. Données Open-Meteo, et Météo-France (AROME) pour la France.
-- **Batterie** : jauge liquide animée (verte, orange puis rouge), état de charge et puissance, santé, température, tension, capacité, courant, puissance, temps avant la charge complète ou autonomie estimée, cycles de charge.
+- **Batterie** (valeurs lues dans Android ; une valeur impossible est remplacée par « — ») : temps avant la charge complète donné en priorité par l'estimation du téléphone lui-même, puis par une mesure fiable (au moins 5 min, sans saut de niveau), puis par le courant ; capacité d'origine du fabricant quand Android la donne, sinon estimée (≈). Jauge liquide animée (verte, orange puis rouge), état de charge et puissance, santé, température, tension, capacité, courant, puissance, temps avant la charge complète ou autonomie estimée, cycles de charge.
 - **Heure** : grande horloge et la **Terre en pixels en temps réel**, centrée sur ta position, avec le jour et la nuit calculés d'après la position du soleil (les villes s'allument la nuit), l'heure du lever et du coucher du soleil, et l'heure à New York, Londres, Tokyo et Sydney. Les continents sont dessinés dans l'appli (fichier `earth-land.js`) : rien n'est téléchargé.
 
 ## Tutoriel musique

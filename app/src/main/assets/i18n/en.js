@@ -1612,5 +1612,7 @@
 "Écran heure": "Time screen",
 "Tutoriel musique": "Music tutorial",
 "Premier lancement (suite)": "First launch (next steps)",
-"en pixels.": "made of pixels."
+"en pixels.": "made of pixels.",
+"Capacité d'origine": "Design capacity",
+"Capacité (estimée)": "Capacity (estimated)"
 };

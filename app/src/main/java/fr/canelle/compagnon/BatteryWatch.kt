@@ -83,17 +83,21 @@ object BatteryWatch {
         val window = if (charging) 45 * 60_000L else 3 * 3_600_000L
         val recent = steps.filter { now - it.first <= window }
         if (recent.size < 3) return null
+        // un saut de plus de 3 % d'un coup (redémarrage, téléphone de test…) rend la mesure fausse
+        for (i in 1 until recent.size) if (kotlin.math.abs(recent[i].second - recent[i - 1].second) > 3) return null
         // le premier point est l'arrivée sur un nouveau pourcentage : on part du 2e pour avoir des paliers complets
         val first = recent[1]
         val last = recent.last()
         val delta = kotlin.math.abs(last.second - first.second)
-        if (delta < 1) return null
+        if (delta < 2) return null
         val span = (last.first - first.first).toDouble()
         val step = span / delta
         val late = (now - last.first - step).coerceAtLeast(0.0) // on attend le palier suivant depuis plus longtemps que prévu
         val minutes = (span + late) / 60_000.0
-        if (minutes < 1.0) return null
-        return delta / minutes
+        if (minutes < 5.0) return null // pas assez de recul pour être fiable
+        val r = delta / minutes
+        // vitesses plausibles : un téléphone ne charge pas plus vite que 3 % par minute, ne se vide pas plus vite que 2 % par minute
+        return if (charging) r.takeIf { it in 0.05..3.0 } else r.takeIf { it in 0.003..2.0 }
     }
 
     /** Minutes avant 100 % d'après la vitesse mesurée (la charge ralentit après 80 %). */

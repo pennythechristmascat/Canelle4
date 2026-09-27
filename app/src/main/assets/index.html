@@ -330,8 +330,8 @@ select.field{appearance:auto}
 .dy .di{display:flex;flex-direction:column;align-items:center}
 .dy .ico{width:30px;height:30px;overflow:visible}
 .dmin{opacity:.65;text-align:right}.dmax{text-align:right}
-.bar{position:relative;height:6px;border-radius:3px;background:rgba(0,0,0,.2)}
-.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#6ec6ff,#7ee29a,#ffd166,#ff9b4a)}
+.rng{position:relative;height:6px;border-radius:3px;background:rgba(0,0,0,.2)}
+.rng i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#6ec6ff,#7ee29a,#ffd166,#ff9b4a)}
 .tiles2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tile2{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:12px 14px;backdrop-filter:blur(12px)}
 .tile2 span{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:800}
@@ -5469,6 +5469,7 @@ function openView(kind, data) {
   closeView(true);
   hideCard(); closeSheet();
   viewKind = kind; viewSeq++;
+  cancelAnimationFrame(viewAnim); clearFx();
   viewEl.className = "view v-" + kind;
   viewEl.hidden = false;
   viewEl.scrollTop = 0;
@@ -5477,8 +5478,10 @@ function openView(kind, data) {
   else if (kind === "battery") batteryView();
   else if (kind === "time") timeView();
 }
+function clearFx() { const c = viewFx.getContext("2d"); c.clearRect(0, 0, viewFx.width, viewFx.height); }
 function closeView(silent) {
   if (viewEl.hidden) return;
+  clearFx();
   viewEl.hidden = true; viewKind = "";
   clearInterval(viewTimer); viewTimer = null;
   cancelAnimationFrame(viewAnim); viewAnim = 0;
@@ -5591,7 +5594,7 @@ function renderWeather(w) {
     const a = (d.min - lo) / Math.max(1, hi - lo) * 100, b = (d.max - lo) / Math.max(1, hi - lo) * 100;
     const name = i === 0 ? "Aujourd'hui" : cap1(new Date(d.date + "T12:00:00").toLocaleDateString(LOC(), { weekday: "short" }).replace(".", ""));
     return `<div class="dy"><span class="dn">${esc(name)}</span><span class="di">${wxIcon(wxIconName(d.code, true), "ico")}<em>${(d.rain || 0) >= 30 ? Math.round(d.rain) + " %" : ""}</em></span>
-      <span class="dmin">${Math.round(d.min)}°</span><span class="bar"><i style="left:${a}%;width:${Math.max(4, b - a)}%"></i></span><span class="dmax">${Math.round(d.max)}°</span></div>`;
+      <span class="dmin">${Math.round(d.min)}°</span><span class="rng"><i style="left:${a}%;width:${Math.max(4, b - a)}%"></i></span><span class="dmax">${Math.round(d.max)}°</span></div>`;
   }).join("");
   const tile = (label, value, sub) => `<div class="tile2"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
   viewBody.innerHTML = `<div class="wx-top"><div class="wx-place">${esc(w.place || "")}</div><div class="wx-temp">${Math.round(now.t)}°</div>
@@ -5708,7 +5711,8 @@ function batteryView() {
       card("heart", esc(cap1(b.sante || "—")), "Santé", "#ff6b8a") +
       card("temp", dash(b.temperature_c != null ? b.temperature_c + " °C" : null), "Température", "#ffb347") +
       card("volt", dash(b.tension_v != null ? b.tension_v + " V" : null), "Tension", "#ffd166") +
-      card("cap", dash(b.capacite_mah != null ? b.capacite_mah + " mAh" : null), "Capacité", "#8fe3ff") +
+      card("cap", dash(b.capacite_mah != null ? (b.capacite_source === "estimation" ? "≈ " : "") + b.capacite_mah + " mAh" : null),
+        b.capacite_source === "origine" ? "Capacité d'origine" : b.capacite_source === "estimation" ? "Capacité (estimée)" : "Capacité", "#8fe3ff") +
       card("cur", dash(b.courant_ma != null ? b.courant_ma + " mA" : null), "Courant", "#b9a8ff") +
       card("power", dash(b.puissance_w != null ? b.puissance_w + " W" : null), "Puissance", "#7ee29a") +
       card("time", mins ? hm(mins) : "—", b.en_charge ? "Avant la charge complète" : "Autonomie estimée", "#8fb4ff") +
