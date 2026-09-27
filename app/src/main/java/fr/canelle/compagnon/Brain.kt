@@ -321,7 +321,7 @@ object Brain {
                 days.put(JSONObject().put("d", name).put("icon", iconOf(d.optInt("code", -1), true))
                     .put("min", rnd(d.optDouble("min_c"))).put("max", rnd(d.optDouble("max_c"))))
             }
-            tools.card = JSONObject().put("type", "weather").put("mode", "week").put("place", place)
+            tools.card = JSONObject().put("type", "weather").put("mode", "week").put("place", place).put("city", a.city ?: "")
                 .put("icon", iconOf(cur.optInt("code", -1), isDay)).put("days", days)
             out.add(Line("Les prochains jours à $place :", "neutre"))
             for (i in 1 until minOf(list.length(), 6)) {
@@ -340,7 +340,7 @@ object Brain {
                 else Line("Pas besoin de parapluie $w, seulement $rain % de risque de pluie.", "content")
             )
         }
-        val card = JSONObject().put("type", "weather").put("place", place).put("rain", rain)
+        val card = JSONObject().put("type", "weather").put("place", place).put("rain", rain).put("city", a.city ?: "").put("day", a.day)
             .put("min", rnd(d.optDouble("min_c"))).put("max", rnd(d.optDouble("max_c")))
         tools.card = card
         if (a.day == 0) {

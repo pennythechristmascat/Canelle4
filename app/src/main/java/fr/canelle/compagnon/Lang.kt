@@ -59,7 +59,7 @@ object Lang {
     private var dictLang = ""
 
     /** Mots courts traduits aussi à l'intérieur des phrases composées. */
-    private val SHORT = setOf("À", "à", "de")
+    private val SHORT = setOf("À", "à", "de", "Go")
 
     private fun norm(t: String) = t.lowercase(Locale.ROOT).trim().trimEnd('!', '?', '.', '…', ' ')
 

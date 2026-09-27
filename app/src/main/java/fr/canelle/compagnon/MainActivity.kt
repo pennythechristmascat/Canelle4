@@ -151,12 +151,8 @@ class MainActivity : ComponentActivity(), ToolHost {
             }
         })
 
-        if (firstLaunch && Build.VERSION.SDK_INT >= 33) {
-            lifecycleScope.launch {
-                delay(4000)
-                requestPerms(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
-            }
-        }
+        // L'autorisation des notifications n'est plus demandée au démarrage :
+        // la page la demande au bon moment, en expliquant à quoi elle sert (premier lancement).
     }
 
     override fun onStart() {
@@ -410,6 +406,44 @@ class MainActivity : ComponentActivity(), ToolHost {
 
         @JavascriptInterface
         fun openMusicAccess() = MusicWatcher.openTitleAccess(this@MainActivity)
+
+        /** Ouvre la page « Infos sur l'appli » d'Android (pour autoriser les paramètres restreints). */
+        @JavascriptInterface
+        fun openAppInfo() {
+            runCatching {
+                startActivity(Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:$packageName"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+        }
+
+        /** L'accès au titre de la musique est-il accordé ? */
+        @JavascriptInterface
+        fun musicAccessGranted(): Boolean = runCatching {
+            androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(this@MainActivity).contains(packageName)
+        }.getOrDefault(false)
+
+        /** Demande l'autorisation des notifications, puis onNotifPerm(accordée). */
+        @JavascriptInterface
+        fun requestNotifications() {
+            lifecycleScope.launch {
+                val ok = if (Build.VERSION.SDK_INT >= 33) requestPerms(arrayOf(Manifest.permission.POST_NOTIFICATIONS)) else true
+                js("window.onNotifPerm&&onNotifPerm($ok)")
+            }
+        }
+
+        /** Météo complète pour l'écran météo : onWeatherFull(id, données). */
+        @JavascriptInterface
+        fun weatherFull(id: String, city: String) {
+            lifecycleScope.launch {
+                val r = runCatching { Tools(this@MainActivity, true, this@MainActivity).weatherFull(city) }.getOrElse { JSONObject().put("erreur", "reseau") }
+                js("window.onWeatherFull&&onWeatherFull(${q(id)}, ${q(r.toString())})")
+            }
+        }
+
+        /** Dernière position connue (pour centrer la Terre sur l'utilisateur). */
+        @JavascriptInterface
+        fun lastPosition(): String =
+            if (Store.lastLat == 0.0 && Store.lastLon == 0.0) "" else JSONObject().put("lat", Store.lastLat).put("lon", Store.lastLon).toString()
 
         /** Vrai quand la voix de Canelle parle (pour ne pas la confondre avec de la musique). */
         @JavascriptInterface

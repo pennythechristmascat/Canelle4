@@ -296,6 +296,106 @@ select.field{appearance:auto}
 .fit{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font-size:.7rem;font-weight:800;vertical-align:middle}
 .fit.ok{background:rgba(126,226,154,.2);color:#7ee29a}.fit.juste{background:rgba(255,209,102,.2);color:#ffd166}.fit.risque{background:rgba(255,107,90,.2);color:#ff8a7a}
 
+/* ---------- écrans plein écran : météo, batterie, heure ---------- */
+.view{position:fixed;inset:0;z-index:36;overflow-y:auto;overflow-x:hidden;color:#fff;background:#0b1426;
+  padding:calc(var(--sat,0px) + 14px) calc(var(--sar,0px) + 16px) calc(var(--sab,0px) + 118px) calc(var(--sal,0px) + 16px);animation:viewIn .35s ease-out}
+.view[hidden]{display:none}
+@keyframes viewIn{from{opacity:0;transform:scale(1.03)}}
+.view-fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.view-body{position:relative;z-index:1;max-width:560px;margin:0 auto}
+.view-close{position:fixed;z-index:3;top:calc(var(--sat,0px) + 10px);right:calc(var(--sar,0px) + 12px);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(8px)}
+.view-mate{position:fixed;z-index:2;left:calc(var(--sal,0px) + 10px);right:calc(var(--sar,0px) + 10px);bottom:calc(var(--sab,0px) + 10px);display:flex;align-items:center;gap:10px;
+  padding:8px 14px 8px 8px;border-radius:20px;background:rgba(8,14,28,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);max-width:560px;margin:0 auto}
+.view-mate canvas{width:74px;image-rendering:pixelated;flex:none;animation:mateBob 2.6s ease-in-out infinite}
+@keyframes mateBob{50%{transform:translateY(-4px)}}
+.view-mate p{margin:0;font-weight:800;line-height:1.35;font-size:.95rem;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:12px 14px;margin:12px 0;backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.gh{margin:0 0 6px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:800}
+/* météo */
+.wx-top{text-align:center;padding:36px 0 10px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.wx-place{font-size:1.9rem;font-weight:700}
+.wx-temp{font-size:6.2rem;font-weight:200;line-height:1;margin-left:.2em}
+.wx-sky{font-size:1.15rem;font-weight:700;opacity:.92}
+.wx-hl{font-size:1.05rem;font-weight:700;opacity:.92}
+.wx-sum{margin:0 0 8px;font-weight:700;line-height:1.4;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.18)}
+.hours{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-top:2px}
+.hours::-webkit-scrollbar{display:none}
+.hr{flex:0 0 54px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800}
+.hr span{font-size:.8rem;opacity:.9;white-space:nowrap}
+.hr .ico{width:32px;height:32px;overflow:visible}
+.hr em,.dy em{font-style:normal;font-size:.68rem;color:#8fd0ff;min-height:.9em}
+.hr b{font-size:1.02rem}
+.dy{display:grid;grid-template-columns:minmax(6.4em,auto) 42px 2.6em 1fr 2.6em;align-items:center;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.14);font-weight:800}
+.dy:first-of-type{border-top:0}
+.dy .di{display:flex;flex-direction:column;align-items:center}
+.dy .ico{width:30px;height:30px;overflow:visible}
+.dmin{opacity:.65;text-align:right}.dmax{text-align:right}
+.bar{position:relative;height:6px;border-radius:3px;background:rgba(0,0,0,.2)}
+.bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#6ec6ff,#7ee29a,#ffd166,#ff9b4a)}
+.tiles2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile2{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:12px 14px;backdrop-filter:blur(12px)}
+.tile2 span{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:800}
+.tile2 b{display:block;font-size:1.6rem;font-weight:500;margin-top:4px}
+.tile2 small{display:block;font-weight:700;opacity:.8}
+.wx-src{text-align:center;font-size:.75rem;opacity:.65;font-weight:700;margin:14px 0 0}
+/* batterie */
+.bt-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:8px 52px 6px 4px}
+.bt-head h2{margin:0;font-size:1.9rem;font-weight:800}
+.bt-state{font-weight:800;color:#8ef0b0;font-size:.9rem;white-space:nowrap}
+.bt-gauge{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:14px auto 18px}
+.bt-gauge canvas{width:100%;height:100%;filter:drop-shadow(0 12px 30px rgba(0,0,0,.35))}
+.bt-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.bt-mid b{font-size:4.2rem;font-weight:300;line-height:1}
+.bt-mid b small{font-size:1.4rem;font-weight:600;margin-left:2px}
+.bt-mid span{font-weight:700;opacity:.9}
+.bt-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bt-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:3px}
+.bt-card svg{width:26px;height:26px;color:var(--tone,#8ef0b0);margin-bottom:6px}
+.bt-card b{font-size:1.25rem}
+.bt-card span{font-size:.82rem;opacity:.7;font-weight:700}
+/* heure */
+.tm-top{text-align:center;padding:28px 0 4px}
+.tm-place{font-weight:800;opacity:.75;letter-spacing:.06em;text-transform:uppercase;font-size:.85rem}
+.tm-clock b{font-size:4.6rem;font-weight:200;letter-spacing:.02em}
+.tm-clock span{font-size:1.6rem;font-weight:300;opacity:.6}
+.tm-date{font-weight:700;opacity:.85}
+.earth{width:min(70vw,290px);aspect-ratio:1;margin:18px auto 8px;border-radius:50%;box-shadow:0 0 40px rgba(110,170,255,.35),0 0 90px rgba(110,170,255,.18)}
+.earth canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
+.tm-state{text-align:center;font-weight:800;font-size:1.1rem;margin:12px 0 2px}
+.tm-sun{text-align:center;font-weight:700;opacity:.75;margin:0 0 14px}
+.tm-world{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tm-world div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.tm-world span{font-size:.72rem;font-weight:800;opacity:.75}
+.tm-world b{font-size:1.05rem}
+.tm-world i{font-style:normal;opacity:.8}
+/* tutoriel musique */
+.tuto{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.tuto h3{margin:0 0 6px}
+.steps{list-style:none;padding:0;margin:10px 0;display:grid;gap:12px}
+.steps li{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
+.steps p{margin:0;line-height:1.45;font-weight:600;font-size:.92rem}
+.mock{position:relative;height:150px;border-radius:16px;border:3px solid #2a3550;background:#f3f5f9;color:#1b2230;overflow:hidden;font-size:9px;font-weight:700;padding:6px}
+.mbar{position:relative;font-size:10.5px;font-weight:800;padding:4px 2px 8px}
+.mdots{position:absolute;right:2px;top:2px;font-style:normal;font-size:14px;line-height:1}
+.mrow{position:relative;display:flex;align-items:center;gap:6px;background:#fff;border-radius:8px;padding:6px;margin-bottom:5px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.mrow.dim{opacity:.55}
+.mrow span{flex:1}
+.mapp{width:14px;height:14px;border-radius:4px;background:#e8743b;flex:none}
+.mapp.g{background:#4caf6a}
+.msw{width:22px;height:12px;border-radius:6px;background:#c3c8d2;position:relative;flex:none}
+.msw::after{content:"";position:absolute;left:1px;top:1px;width:10px;height:10px;border-radius:50%;background:#fff}
+.msw.on{background:#2f80ed}.msw.on::after{left:11px}
+.tap{position:absolute;right:4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:rgba(232,116,59,.35);border:2px solid #e8743b;animation:tapPulse 1.2s ease-in-out infinite}
+@keyframes tapPulse{50%{transform:scale(1.3);opacity:.6}}
+.mdialog{position:absolute;left:8px;right:8px;top:32px;background:#fff;border-radius:10px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:4px}
+.mdialog b{font-size:10px}.mdialog em{align-self:flex-end;font-style:normal;color:#2f80ed;font-weight:800}
+.mock:has(.mdialog){background:#8a93a3}
+.mmenu{position:absolute;right:6px;top:22px;left:22px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:2;display:flex;flex-direction:column}
+.mmenu span{position:relative;padding:7px 8px}
+.mmenu .hl{background:#fde7da}
+.mhead{position:absolute;right:10px;bottom:8px;font-size:26px}
+@media (max-width:380px){.steps li{grid-template-columns:1fr}.mock{height:130px}}
+
 /* ---------- interactions ---------- */
 .face.dance{animation:danceAnim .8s ease-in-out infinite}
 @keyframes danceAnim{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-14px) translateY(-8px) rotate(-8deg)}50%{transform:translateX(0) translateY(0) rotate(0)}75%{transform:translateX(14px) translateY(-8px) rotate(8deg)}}
@@ -814,6 +914,30 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
         <option value="deezer">Deezer</option>
       </select>
       <button class="btn" id="musicAccessBtn" type="button" style="margin-top:10px">Autoriser Canelle à voir Spotify et Deezer</button>
+      <section class="tuto" id="musicTuto">
+        <h3>Tutoriel : l'autorisation est bloquée ?</h3>
+        <p class="note">Pour voir le titre joué par Spotify ou Deezer, Canelle a besoin de « l'accès aux notifications ». Sur certains téléphones, Android bloque cette autorisation, surtout pour les applis installées en dehors du Play Store. Voici comment la débloquer.</p>
+        <ol class="steps">
+          <li>
+            <div class="mock"><div class="mbar">Accès aux notifications</div><div class="mrow"><i class="mapp"></i><span>Canelle AI</span><i class="msw"></i><i class="tap"></i></div><div class="mrow dim"><i class="mapp g"></i><span>Messages</span><i class="msw on"></i></div></div>
+            <p><b>1.</b> Touche « Ouvrir l'accès aux notifications » ci-dessous, puis active Canelle AI dans la liste.</p>
+          </li>
+          <li>
+            <div class="mock"><div class="mdialog"><b>Paramètre restreint</b><span>Pour votre sécurité, ce paramètre n'est pas disponible pour le moment.</span><em>OK</em></div></div>
+            <p><b>2.</b> Si l'interrupteur est grisé ou qu'un message « Paramètre restreint » apparaît, touche OK : Android a bloqué l'autorisation.</p>
+          </li>
+          <li>
+            <div class="mock"><div class="mbar">Infos sur l'appli<i class="mdots">⋮</i></div><div class="mmenu"><span>Désinstaller pour tous les utilisateurs</span><span class="hl">Autoriser les paramètres restreints<i class="tap"></i></span></div><div class="mrow dim"><i class="mapp"></i><span>Canelle AI</span></div></div>
+            <p><b>3.</b> Touche « Ouvrir les infos de l'appli », puis les trois points ⋮ en haut à droite, et « Autoriser les paramètres restreints ». Confirme avec ton code ou ton empreinte.</p>
+          </li>
+          <li>
+            <div class="mock"><div class="mbar">Accès aux notifications</div><div class="mrow"><i class="mapp"></i><span>Canelle AI</span><i class="msw on"></i></div><div class="mhead">🎧</div></div>
+            <p><b>4.</b> Recommence l'étape 1 : cette fois, l'interrupteur s'active. Lance ta musique, et ton compagnon met son casque !</p>
+          </li>
+        </ol>
+        <div class="btns"><button class="btn primary" id="tutoAccess" type="button">Ouvrir l'accès aux notifications</button><button class="btn" id="tutoAppInfo" type="button">Ouvrir les infos de l'appli</button></div>
+        <p class="note">Le menu ⋮ n'apparaît qu'après avoir essayé une première fois d'activer l'autorisation. Selon la marque du téléphone (Samsung, Xiaomi…), les noms peuvent être un peu différents.</p>
+      </section>
     </div>
 
     <div class="mpage" data-page="settings" data-title="Réglages" hidden>
@@ -878,6 +1002,15 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
   </div>
 </div>
 
+<section class="view" id="view" hidden role="dialog" aria-modal="true" aria-label="Écran détaillé">
+  <canvas class="view-fx" id="viewFx" aria-hidden="true"></canvas>
+  <button class="view-close" id="viewClose" type="button" aria-label="Fermer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+  <div class="view-body" id="viewBody"></div>
+  <div class="view-mate"><canvas id="viewCv" width="64" height="54" aria-hidden="true"></canvas><p id="viewSay" aria-live="polite"></p></div>
+</section>
+
 <div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
   <div class="tour-hole" id="tourHole"></div>
   <div class="tour-card" id="tourCard">
@@ -937,6 +1070,7 @@ body.locked .vig{opacity:1;background:radial-gradient(ellipse at 50% 45%, transp
 </div>
 
 <script src="i18n-hand.js"></script>
+<script src="earth-land.js"></script>
 <script src="i18n/keys.js"></script>
 <script>
 // charge le patch de la langue enregistrée avant le démarrage (l'appli s'ouvre directement dans la bonne langue)
@@ -1932,7 +2066,7 @@ async function send(preset, fromChip) {
     const lines = normalize(r);
     if (!lines.length) throw { code: "upstream" };
     lines.forEach(l => S.log.push({ w: "bip", t: l.text }));
-    if (r.card) showCard(r.card);
+    if (r.card) showCardOrView(r.card);
     if (!streamGot) { stopThinking(); speak(lines); }
     else {
       for (let i = streamGot; i < lines.length; i++) pushLine(lines[i]);
@@ -2115,7 +2249,7 @@ battEl.addEventListener("click", () => {
   const b = refreshBattery();
   if (!b) return;
   hidePlaces();
-  showCard(batteryCard(b));
+  openView("battery");
   speak(batteryLines(b));
 });
 
@@ -4372,6 +4506,11 @@ const DEV = [
   ["Canelle s'endort", () => { closeSheet(); setTimeout(fallAsleep, 300); }],
   ["Avertissement vie privée", () => { closeSheet(); askPrivacy(() => {}, true); }],
   ["Visite guidée", () => setTimeout(startTourSteps, 200)],
+  ["Écran météo", () => { closeSheet(); openView("weather", { place: "Saint-Brieuc", big: "17°", desc: "Partiellement nuageux", icon: "partly", min: 11, max: 19 }); }],
+  ["Écran batterie", () => { closeSheet(); openView("battery"); }],
+  ["Écran heure", () => { closeSheet(); openView("time"); }],
+  ["Tutoriel musique", () => { menuGo("music"); setTimeout(() => document.getElementById("musicTuto").scrollIntoView({ block: "start" }), 200); }],
+  ["Premier lancement (suite)", () => { closeSheet(); onboardPending = true; runOnboarding(); }],
   ["Choix de la langue (visite)", () => { closeSheet(); tourLangStep(() => {}); }]
 ];
 document.getElementById("devBtns").append(...DEV.map(([label, fn]) => button(label, false, fn)));
@@ -4561,7 +4700,7 @@ const NO_TR = "#caption,#live,.log,#fx,#name,#tabName,#profileName,.letters,.lan
 const SRC = new WeakMap(), OUT = new WeakMap();
 const hasPatch = l => (window.I18N_PATCHES || []).includes(l);
 let DICT = {}, FRAG = null, REV = {};
-const SHORT = ["À", "à", "de"]; // mots courts traduits aussi à l'intérieur des phrases composées
+const SHORT = ["À", "à", "de", "Go"]; // mots courts traduits aussi à l'intérieur des phrases composées
 /** Active le patch d'une langue : traductions exactes, morceaux de phrases, et commandes comprises dans cette langue. */
 function useDict(lang) {
   DICT = ((window.I18N_DATA || {})[lang]) || {};
@@ -4830,6 +4969,7 @@ function endTour() {
   tourIdx = -1;
   S.tourDone = true;
   if (NATIVE && NATIVE.setTourDone) NATIVE.setTourDone();
+  if (onboardPending) setTimeout(runOnboarding, 400);
 }
 document.getElementById("tourNext").addEventListener("click", () => {
   ensureAudio();
@@ -5259,6 +5399,7 @@ brainSheet.addEventListener("click", e => { if (e.target === brainSheet) closeBr
 document.getElementById("openBrain").addEventListener("click", openBrain);
 
 window.onBack = () => {
+  if (!viewEl.hidden && document.getElementById("ask").hidden) { closeView(); return true; }
   if (!document.getElementById("ask").hidden) { document.getElementById("askNo").click(); return true; }
   if (!sheet.hidden && document.getElementById("menuBack") && !document.getElementById("menuBack").hidden) { menuGo("home"); return true; }
   if (cutscene) { cancelCutscene(); return true; }
@@ -5273,7 +5414,7 @@ window.onBack = () => {
 };
 window.onResumeApp = () => {
   pull(); pollBrain(); lastActive = Date.now();
-  statusCheck(); musicPoll(); refreshCoins();
+  statusCheck(); musicPoll(); refreshCoins(); checkMusicAccess();
   if (tab === "steps" && NATIVE && NATIVE.stepsRefresh) NATIVE.stepsRefresh();
   if (locked && lockEnd <= Date.now()) { location.reload(); return; }
   if (cutscene === "question" && S.sound !== "muet" && SND.question && SND.question.currentTime > 0 && !SND.question.ended) SND.question.play().catch(() => {});
@@ -5301,6 +5442,487 @@ function showLoader(ms, then) {
     if (then) then();
   }, ms);
 }
+
+/* ---------- écrans plein écran : météo, batterie, heure ---------- */
+const viewEl = document.getElementById("view"), viewBody = document.getElementById("viewBody");
+const viewCv = document.getElementById("viewCv"), viewSay = document.getElementById("viewSay"), viewFx = document.getElementById("viewFx");
+let viewKind = "", viewTimer = null, viewAnim = 0, viewMood = "", viewSeq = 0, viewBase = "";
+const LOC = () => (LANG === "en" ? "en-US" : "fr-FR");
+function viewMate(mood, line, fromSpeech) {
+  if (mood && !fromSpeech) viewBase = mood;
+  if (mood && mood !== viewMood) { viewMood = mood; drawPreview(viewCv, activeSkin(), curChar(), mood); }
+  if (line !== undefined) viewSay.textContent = line;
+}
+/** Quel écran pour cette carte ? (demandes de l'utilisateur seulement) */
+function viewFor(c) {
+  if (!c) return "";
+  if (c.type === "weather" && (c.mode === "week" || !c.day)) return "weather";
+  if (c.type === "battery") return "battery";
+  if (c.type === "time" && c.place === "Ici") return "time";
+  return "";
+}
+function showCardOrView(c) {
+  const k = viewFor(c);
+  if (k) openView(k, c); else showCard(c);
+}
+function openView(kind, data) {
+  closeView(true);
+  hideCard(); closeSheet();
+  viewKind = kind; viewSeq++;
+  viewEl.className = "view v-" + kind;
+  viewEl.hidden = false;
+  viewEl.scrollTop = 0;
+  viewMood = ""; viewBase = ""; viewMate(face.mood || "content", capEl.textContent || "", true);
+  if (kind === "weather") weatherView(data || {});
+  else if (kind === "battery") batteryView();
+  else if (kind === "time") timeView();
+}
+function closeView(silent) {
+  if (viewEl.hidden) return;
+  viewEl.hidden = true; viewKind = "";
+  clearInterval(viewTimer); viewTimer = null;
+  cancelAnimationFrame(viewAnim); viewAnim = 0;
+  viewEl.style.background = "";
+}
+document.getElementById("viewClose").addEventListener("click", () => closeView());
+// Canelle dans l'écran : ses répliques et son humeur suivent celles de l'écran principal
+new MutationObserver(() => { if (!viewEl.hidden && capEl.textContent) viewSay.textContent = capEl.textContent; })
+  .observe(capEl, { childList: true, characterData: true, subtree: true });
+setInterval(() => {
+  if (viewEl.hidden) return;
+  const want = speech.state !== "idle" ? face.mood : (viewBase || face.mood);
+  if (want !== viewMood) viewMate(want, undefined, true);
+}, 300);
+function fitFx() { const r = viewEl.getBoundingClientRect(); viewFx.width = Math.max(1, Math.round(r.width)); viewFx.height = Math.max(1, Math.round(r.height)); }
+
+/* --- météo --- */
+function wxKind(code) {
+  if (code === 0 || code === 1) return "clear";
+  if (code === 2) return "partly";
+  if (code === 45 || code === 48) return "fog";
+  if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "rain";
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "snow";
+  if ([95, 96, 99].includes(code)) return "storm";
+  return "cloudy";
+}
+function wxIconName(code, day) {
+  const k = wxKind(code);
+  if (k === "clear") return day ? "sun" : "moon";
+  if (k === "partly") return day ? "partly" : "cloud";
+  if (k === "cloudy") return "cloud";
+  return k;
+}
+const SKY = {
+  clear: { day: ["#2f80d8", "#7cc0f0"], night: ["#070b24", "#1b2a5c"], golden: ["#2c3e70", "#f09a6a"] },
+  partly: { day: ["#4a8fd0", "#9cc7e8"], night: ["#0c1230", "#2a3558"], golden: ["#3b4a78", "#e8a07a"] },
+  cloudy: { day: ["#6f7f95", "#aebccb"], night: ["#1b202c", "#3a4150"], golden: ["#4b4f66", "#b58c80"] },
+  fog: { day: ["#8f979f", "#cfd4d8"], night: ["#23262c", "#474b52"], golden: ["#6d6a70", "#c7a99a"] },
+  drizzle: { day: ["#5d6d80", "#95a4b4"], night: ["#171c26", "#353d4c"], golden: ["#4b4f66", "#a48a86"] },
+  rain: { day: ["#465466", "#7b8898"], night: ["#10141c", "#2b323f"], golden: ["#3d4257", "#8f7b7c"] },
+  snow: { day: ["#7f98b4", "#d5e1ec"], night: ["#1c2536", "#4a5870"], golden: ["#6a7392", "#e0c2c0"] },
+  storm: { day: ["#2b2742", "#57506e"], night: ["#0c0a18", "#2a2440"], golden: ["#2b2742", "#6b4f6a"] }
+};
+const hourOf = iso => +String(iso).slice(11, 13);
+function fmtHour(iso) {
+  const h = hourOf(iso), m = String(iso).slice(14, 16) || "00";
+  if (LANG === "en") return ((h % 12) || 12) + (m !== "00" ? ":" + m : "") + (h < 12 ? " AM" : " PM");
+  return h + " h" + (m !== "00" ? " " + m : "");
+}
+function wxSummary(w) {
+  const hrs = w.hours || [], now = w.now || {};
+  const wet = h => (h.rain || 0) >= 50 || ["rain", "drizzle", "storm", "snow"].includes(wxKind(h.code));
+  if (hrs[0] && wet(hrs[0]) && ["rain", "drizzle", "storm", "snow"].includes(wxKind(now.code))) {
+    const stop = hrs.slice(1).find(h => !wet(h)), snow = wxKind(now.code) === "snow";
+    if (stop) return (snow ? "Il neige en ce moment, ça devrait s'arrêter vers " : "Il pleut en ce moment, ça devrait s'arrêter vers ") + fmtHour(stop.time) + ".";
+    return snow ? "Temps neigeux pour les prochaines heures." : "Temps pluvieux pour les prochaines heures.";
+  }
+  const next = hrs.slice(1, 13).find(wet);
+  if (next) {
+    const k = wxKind(next.code);
+    return (k === "snow" ? "Neige possible vers " : k === "storm" ? "Orages possibles vers " : "Pluie possible vers ") + fmtHour(next.time) + ".";
+  }
+  const k = wxKind(now.code);
+  if (k === "clear") return now.day ? "Grand soleil pour les prochaines heures." : "Ciel dégagé cette nuit : parfait pour voir les étoiles.";
+  if (k === "partly") return "Quelques nuages, mais pas de pluie prévue.";
+  if (k === "fog") return "Brouillard : prudence sur la route.";
+  return "Temps couvert et calme pour les prochaines heures.";
+}
+function wxMood(w) {
+  const k = wxKind((w.now || {}).code), t = (w.now || {}).t;
+  if (t != null && t < 5) return "froid";
+  if (k === "storm") return "inquiet";
+  if (k === "rain" || k === "drizzle") return "triste";
+  if (k === "snow") return "emerveille";
+  if (t != null && t >= 30) return "surpris";
+  return k === "clear" ? "content" : "neutre";
+}
+window.onWeatherFull = (id, json) => {
+  if (id !== "w" + viewSeq || viewKind !== "weather") return;
+  let w; try { w = JSON.parse(json); } catch (e) { return; }
+  if (w.erreur) { document.getElementById("wxLoad").textContent = "Impossible de charger les prévisions détaillées."; return; }
+  renderWeather(w);
+};
+function weatherView(c) {
+  const t = c.big || "", sky = c.desc || "", place = c.place || "";
+  viewBody.innerHTML = `<div class="wx-top"><div class="wx-place">${esc(place)}</div><div class="wx-temp">${esc(t)}</div>
+    <div class="wx-sky">${esc(sky)}</div>${c.max != null ? `<div class="wx-hl">Max ${esc(c.max)}° · Min ${esc(c.min)}°</div>` : ""}</div>
+    <div class="glass"><p class="wx-sum" id="wxLoad">Chargement des prévisions…</p></div>`;
+  const k0 = { sun: "clear", moon: "clear", partly: "partly", cloud: "cloudy" }[c.icon] || c.icon || "cloudy";
+  setSky(SKY[k0] ? k0 : "cloudy", c.icon === "moon" ? "night" : "day");
+  if (NATIVE && NATIVE.weatherFull) NATIVE.weatherFull("w" + viewSeq, c.city || "");
+}
+function setSky(kind, phase) {
+  const p = (SKY[kind] || SKY.cloudy)[phase] || SKY.cloudy.day;
+  viewEl.style.background = `linear-gradient(180deg, ${p[0]} 0%, ${p[1]} 100%)`;
+  startWxFx(kind, phase);
+}
+function renderWeather(w) {
+  const now = w.now || {}, days = w.days || [], today = days[0] || {};
+  // moment de la journée : nuit, jour, ou lumière dorée autour du lever et du coucher
+  const tNow = Date.parse(now.time || ""), rise = Date.parse(today.sunrise || ""), set = Date.parse(today.sunset || "");
+  const near = x => !isNaN(tNow) && !isNaN(x) && Math.abs(tNow - x) < 45 * 60000;
+  const phase = near(rise) || near(set) ? "golden" : now.day ? "day" : "night";
+  setSky(wxKind(now.code), phase);
+  const lo = Math.min(...days.map(d => d.min)), hi = Math.max(...days.map(d => d.max));
+  const hours = (w.hours || []).map((h, i) => `<div class="hr"><span>${i === 0 ? "Maint." : esc(fmtHour(h.time))}</span>${wxIcon(wxIconName(h.code, h.day), "ico")}
+      <em>${(h.rain || 0) >= 20 ? Math.round(h.rain) + " %" : ""}</em><b>${Math.round(h.t)}°</b></div>`).join("");
+  const rows = days.map((d, i) => {
+    const a = (d.min - lo) / Math.max(1, hi - lo) * 100, b = (d.max - lo) / Math.max(1, hi - lo) * 100;
+    const name = i === 0 ? "Aujourd'hui" : cap1(new Date(d.date + "T12:00:00").toLocaleDateString(LOC(), { weekday: "short" }).replace(".", ""));
+    return `<div class="dy"><span class="dn">${esc(name)}</span><span class="di">${wxIcon(wxIconName(d.code, true), "ico")}<em>${(d.rain || 0) >= 30 ? Math.round(d.rain) + " %" : ""}</em></span>
+      <span class="dmin">${Math.round(d.min)}°</span><span class="bar"><i style="left:${a}%;width:${Math.max(4, b - a)}%"></i></span><span class="dmax">${Math.round(d.max)}°</span></div>`;
+  }).join("");
+  const tile = (label, value, sub) => `<div class="tile2"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  viewBody.innerHTML = `<div class="wx-top"><div class="wx-place">${esc(w.place || "")}</div><div class="wx-temp">${Math.round(now.t)}°</div>
+      <div class="wx-sky">${esc(cap1(now.sky || ""))}</div><div class="wx-hl">Max ${Math.round(today.max)}° · Min ${Math.round(today.min)}°</div></div>
+    <div class="glass"><p class="wx-sum">${esc(wxSummary(w))}</p><div class="hours">${hours}</div></div>
+    <div class="glass"><h3 class="gh">Prévisions sur 10 jours</h3>${rows}</div>
+    <div class="tiles2">
+      ${tile("Ressenti", Math.round(now.feel) + "°")}
+      ${tile("Humidité", Math.round(now.humidity) + " %")}
+      ${tile("Vent", Math.round(now.wind) + " km/h")}
+      ${tile("Soleil", esc(fmtHour(today.sunrise || "")) + " ↑", esc(fmtHour(today.sunset || "")) + " ↓")}
+    </div>
+    <p class="wx-src">Source : ${esc(w.source || "")}</p>`;
+  viewMate(wxMood(w));
+}
+/* particules du ciel : pluie, neige, étoiles, nuages, éclairs, brouillard */
+function startWxFx(kind, phase) {
+  cancelAnimationFrame(viewAnim);
+  fitFx();
+  const ctx = viewFx.getContext("2d"), W2 = viewFx.width, H2 = viewFx.height;
+  const R = (a, b) => a + Math.random() * (b - a);
+  const drops = kind === "rain" || kind === "storm" ? 110 : kind === "drizzle" ? 50 : 0;
+  const P = [];
+  for (let i = 0; i < drops; i++) P.push({ t: "r", x: R(0, W2), y: R(0, H2), v: R(9, 15), l: R(10, 20) });
+  if (kind === "snow") for (let i = 0; i < 80; i++) P.push({ t: "s", x: R(0, W2), y: R(0, H2), v: R(0.6, 1.6), r: R(1.2, 3.2), p: R(0, 6) });
+  if (phase === "night" && (kind === "clear" || kind === "partly")) for (let i = 0; i < 90; i++) P.push({ t: "*", x: R(0, W2), y: R(0, H2 * 0.6), r: R(0.4, 1.4), p: R(0, 6) });
+  const clouds = { partly: 3, cloudy: 5, fog: 0, drizzle: 4, rain: 4, storm: 4, snow: 3 }[kind] || 0;
+  for (let i = 0; i < clouds; i++) P.push({ t: "c", x: R(-100, W2), y: R(20, H2 * 0.35), v: R(0.08, 0.25), w: R(160, 280) });
+  const cloudCol = phase === "night" || kind === "storm" || kind === "rain" ? "70,78,95" : "255,255,255";
+  let flash = 0;
+  const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const frame = () => {
+    ctx.clearRect(0, 0, W2, H2);
+    for (const p of P) {
+      if (p.t === "c") {
+        p.x += p.v; if (p.x > W2 + 150) p.x = -p.w;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.w / 2);
+        g.addColorStop(0, `rgba(${cloudCol},.35)`); g.addColorStop(1, `rgba(${cloudCol},0)`);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(p.x, p.y, p.w / 2, p.w / 5, 0, 0, 7); ctx.fill();
+      } else if (p.t === "r") {
+        p.y += p.v; p.x -= p.v * 0.15; if (p.y > H2) { p.y = -20; p.x = R(0, W2 + 50); }
+        ctx.strokeStyle = "rgba(200,220,255,.45)"; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.l * 0.15, p.y - p.l); ctx.stroke();
+      } else if (p.t === "s") {
+        p.p += 0.02; p.y += p.v; p.x += Math.sin(p.p) * 0.5; if (p.y > H2) { p.y = -5; p.x = R(0, W2); }
+        ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+      } else if (p.t === "*") {
+        p.p += 0.03; ctx.fillStyle = `rgba(255,255,255,${0.35 + 0.35 * Math.sin(p.p)})`; ctx.fillRect(p.x, p.y, p.r * 1.6, p.r * 1.6);
+      }
+    }
+    if (kind === "fog") {
+      for (let i = 0; i < 4; i++) {
+        const y = H2 * (0.2 + i * 0.18) + Math.sin(Date.now() / 3000 + i) * 12;
+        const g = ctx.createLinearGradient(0, y - 40, 0, y + 40);
+        g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(0.5, "rgba(255,255,255,.18)"); g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = g; ctx.fillRect(0, y - 40, W2, 80);
+      }
+    }
+    if (kind === "storm") {
+      if (flash > 0) { ctx.fillStyle = `rgba(230,225,255,${flash})`; ctx.fillRect(0, 0, W2, H2); flash -= 0.04; }
+      else if (Math.random() < 0.004) flash = 0.45;
+    }
+    if (!reduced && !viewEl.hidden) viewAnim = requestAnimationFrame(frame);
+  };
+  frame();
+}
+
+/* --- batterie --- */
+const BT_ICON = {
+  heart: '<path d="M12 21s-7-4.4-9.3-9A5.3 5.3 0 0 1 12 6.5 5.3 5.3 0 0 1 21.3 12C19 16.6 12 21 12 21z"/>',
+  temp: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
+  volt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  cap: '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 11v2"/>',
+  cur: '<path d="M4 12h4l2-6 4 12 2-6h4"/>',
+  cycle: '<path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4"/>',
+  time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  power: '<path d="M12 3v9M7 6a7 7 0 1 0 10 0"/>'
+};
+const btIco = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${BT_ICON[k]}</svg>`;
+function btLine(b) {
+  const p = b.pourcentage;
+  if (b.pleine) return ["Batterie pleine ! Tu peux débrancher.", "fier"];
+  if (b.en_charge) return ["Miam, de l'énergie ! Je me recharge avec toi.", "gourmand"];
+  if (p <= 15) return ["Je commence à fatiguer… Branche-moi vite !", "inquiet"];
+  if (p <= 30) return ["Il faudra recharger bientôt.", "reflechit"];
+  return ["Je suis plein d'énergie !", "content"];
+}
+function batteryView() {
+  const draw = () => {
+    let b = null;
+    try { b = NATIVE && NATIVE.battery ? JSON.parse(NATIVE.battery()) : lastBattery; } catch (e) { b = lastBattery; }
+    if (!b) return;
+    const p = b.pourcentage || 0;
+    const col = p <= 15 ? ["#ff6b5a", "#ff9a8a"] : p <= 30 ? ["#ffb347", "#ffd08a"] : ["#43d17a", "#8ef0b0"];
+    viewEl.style.background = `radial-gradient(120% 70% at 50% 25%, ${col[0]}33 0%, #0c1a2c 55%, #070d19 100%), #070d19`;
+    const card = (ico, value, label, tone) => `<div class="bt-card"${tone ? ` style="--tone:${tone}"` : ""}>${btIco(ico)}<b>${value}</b><span>${label}</span></div>`;
+    const dash = v => (v == null || v === "" ? "—" : v);
+    const mins = b.en_charge ? b.minutes_avant_pleine_charge : b.autonomie_minutes;
+    const hm = m => (m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : m + " min");
+    const state = b.pleine ? "Pleine" : b.en_charge ? "En charge" + (b.puissance_w ? " · " + b.puissance_w + " W" : "") : "Sur batterie";
+    const first = !document.getElementById("btWave");
+    if (first) {
+      viewBody.innerHTML = `<div class="bt-head"><h2>Batterie</h2><span class="bt-state" id="btState"></span></div>
+        <div class="bt-gauge"><canvas id="btWave" width="480" height="480" aria-hidden="true"></canvas>
+          <div class="bt-mid"><b id="btPct"></b><span>Niveau de batterie</span></div></div>
+        <div class="bt-cards" id="btCards"></div>`;
+      waveLoop();
+    }
+    document.getElementById("btPct").innerHTML = p + "<small>%</small>";
+    document.getElementById("btState").textContent = state;
+    document.getElementById("btWave").dataset.level = p;
+    document.getElementById("btWave").dataset.col = col.join(",");
+    document.getElementById("btCards").innerHTML =
+      card("heart", esc(cap1(b.sante || "—")), "Santé", "#ff6b8a") +
+      card("temp", dash(b.temperature_c != null ? b.temperature_c + " °C" : null), "Température", "#ffb347") +
+      card("volt", dash(b.tension_v != null ? b.tension_v + " V" : null), "Tension", "#ffd166") +
+      card("cap", dash(b.capacite_mah != null ? b.capacite_mah + " mAh" : null), "Capacité", "#8fe3ff") +
+      card("cur", dash(b.courant_ma != null ? b.courant_ma + " mA" : null), "Courant", "#b9a8ff") +
+      card("power", dash(b.puissance_w != null ? b.puissance_w + " W" : null), "Puissance", "#7ee29a") +
+      card("time", mins ? hm(mins) : "—", b.en_charge ? "Avant la charge complète" : "Autonomie estimée", "#8fb4ff") +
+      card("cycle", dash(b.cycles), "Cycles de charge", "#c6cbd6");
+    const [line, mood] = btLine(b);
+    viewMate(mood, capEl.textContent && speech.state !== "idle" ? capEl.textContent : line);
+  };
+  draw();
+  viewTimer = setInterval(draw, 3000);
+}
+function waveLoop() {
+  const cv = document.getElementById("btWave");
+  if (!cv) return;
+  const ctx = cv.getContext("2d"), N = cv.width, r = N / 2 - 6;
+  let ph = 0, shown = 0;
+  const frame = () => {
+    if (viewEl.hidden || !document.getElementById("btWave")) return;
+    const level = +cv.dataset.level || 0, col = (cv.dataset.col || "#43d17a,#8ef0b0").split(",");
+    shown += (level - shown) * 0.05; ph += 0.04;
+    ctx.clearRect(0, 0, N, N);
+    ctx.save(); ctx.beginPath(); ctx.arc(N / 2, N / 2, r, 0, 7); ctx.clip();
+    ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fillRect(0, 0, N, N);
+    const top = N / 2 + r - (2 * r) * shown / 100;
+    for (const [amp, sp, alpha, c] of [[10, 1, 0.55, col[1]], [7, 1.6, 1, col[0]]]) {
+      ctx.beginPath(); ctx.moveTo(0, N);
+      for (let x = 0; x <= N; x += 6) ctx.lineTo(x, top + Math.sin(x / 42 + ph * sp) * amp);
+      ctx.lineTo(N, N); ctx.closePath(); ctx.globalAlpha = alpha; ctx.fillStyle = c; ctx.fill();
+    }
+    ctx.globalAlpha = 1; ctx.restore();
+    ctx.lineWidth = 4; ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.arc(N / 2, N / 2, r, 0, 7); ctx.stroke();
+    viewAnim = requestAnimationFrame(frame);
+  };
+  frame();
+}
+
+/* --- heure : la Terre en temps réel --- */
+const LAND = (() => { try { const s = atob(window.EARTH_LAND || ""); const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; } catch (e) { return new Uint8Array(0); } })();
+function isLand(lat, lon) {
+  const r = Math.min(179, Math.max(0, Math.floor(90 - lat)));
+  const c = ((Math.floor(lon + 180) % 360) + 360) % 360;
+  const k = r * 360 + c;
+  return (LAND[k >> 3] >> (k & 7)) & 1;
+}
+/** Position du soleil : déclinaison et longitude du point où il est au zénith. */
+function sunPos(when) {
+  const start = Date.UTC(when.getUTCFullYear(), 0, 1), doy = Math.floor((when - start) / 86400000) + 1;
+  const g = 2 * Math.PI / 365 * (doy - 1 + (when.getUTCHours() - 12) / 24);
+  const eqt = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+  const decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+  const utcMin = when.getUTCHours() * 60 + when.getUTCMinutes() + when.getUTCSeconds() / 60;
+  return { decl, lon: (720 - eqt - utcMin) / 4, eqt };
+}
+function sunTimes(lat, lon, when) {
+  const rad = Math.PI / 180, s = sunPos(when);
+  const x = Math.cos(90.833 * rad) / (Math.cos(lat * rad) * Math.cos(s.decl)) - Math.tan(lat * rad) * Math.tan(s.decl);
+  if (x > 1 || x < -1) return null;
+  const ha = Math.acos(x) / rad;
+  const base = new Date(when); base.setHours(0, 0, 0, 0);
+  const utcMid = Date.UTC(base.getFullYear(), base.getMonth(), base.getDate());
+  const noon = 720 - 4 * lon - s.eqt;
+  return { rise: new Date(utcMid + (noon - 4 * ha) * 60000), set: new Date(utcMid + (noon + 4 * ha) * 60000) };
+}
+function drawEarth(cv, lat0, lon0, when, me) {
+  const N = cv.width, ctx = cv.getContext("2d"), img = ctx.createImageData(N, N), px = new Uint32Array(img.data.buffer);
+  const R = N / 2 - 1, rad = Math.PI / 180, s = sunPos(when);
+  const sp = Math.sin(lat0 * rad), cp = Math.cos(lat0 * rad), sd = Math.sin(s.decl), cd = Math.cos(s.decl);
+  const put = (i, r, g, b) => { px[i] = (255 << 24) | (b << 16) | (g << 8) | r; };
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const nx = (x + 0.5 - N / 2) / R, ny = -(y + 0.5 - N / 2) / R, rr = nx * nx + ny * ny;
+    if (rr > 1) continue;
+    const z = Math.sqrt(1 - rr);
+    const lat = Math.asin(Math.max(-1, Math.min(1, z * sp + ny * cp)));
+    const lon = lon0 * rad + Math.atan2(nx, z * cp - ny * sp);
+    const la = lat / rad, lo = ((lon / rad + 540) % 360) - 180;
+    const land = isLand(la, lo);
+    const ice = la < -66 || la > 80 || (land && la > 62 && lo > -75 && lo < -12);
+    const desert = land && !ice && ((la > 15 && la < 32 && lo > -15 && lo < 35) || (la > 16 && la < 30 && lo > 36 && lo < 56) || (la > -30 && la < -20 && lo > 118 && lo < 142));
+    const light = Math.sin(lat) * sd + Math.cos(lat) * cd * Math.cos(lon - s.lon * rad);
+    const t = Math.max(0, Math.min(1, (light + 0.08) / 0.16));
+    const day = ice ? [232, 240, 250] : desert ? [206, 178, 112] : land ? [84, 168, 82] : [40, 108, 208];
+    const night = ice ? [66, 80, 112] : land ? [24, 44, 40] : [9, 20, 52];
+    const shade = 0.55 + 0.45 * z;
+    let c = [0, 1, 2].map(i => (night[i] + (day[i] - night[i]) * t) * shade);
+    if (land && !ice && t < 0.25 && la > -45 && la < 66) {
+      const h = Math.sin(Math.floor(la * 1.4) * 12.9898 + Math.floor(lo * 1.4) * 78.233) * 43758.5453;
+      if (h - Math.floor(h) < 0.09) c = [255, 208, 110].map(v => v * (0.85 - t));
+    }
+    put(y * N + x, c[0] | 0, c[1] | 0, c[2] | 0);
+  }
+  ctx.putImageData(img, 0, 0);
+  if (me) {
+    const la = me.lat * rad, dl = (me.lon - lon0) * rad;
+    const cosc = sp * Math.sin(la) + cp * Math.cos(la) * Math.cos(dl);
+    if (cosc > 0) {
+      const x = N / 2 + R * Math.cos(la) * Math.sin(dl), y = N / 2 - R * (cp * Math.sin(la) - sp * Math.cos(la) * Math.cos(dl));
+      ctx.fillStyle = "#1a0d06"; ctx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 7, 7);
+      ctx.fillStyle = "#ff9b4a"; ctx.fillRect(Math.round(x) - 2, Math.round(y) - 2, 5, 5);
+      ctx.fillStyle = "#fff"; ctx.fillRect(Math.round(x) - 1, Math.round(y) - 1, 2, 2);
+    }
+  }
+}
+function myPlace() {
+  try { const p = NATIVE && NATIVE.lastPosition ? NATIVE.lastPosition() : ""; if (p) { const o = JSON.parse(p); if (o.lat || o.lon) return o; } } catch (e) {}
+  const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+  const lon = -new Date().getTimezoneOffset() / 4;
+  const lat = /^Europe/.test(tz) ? 47 : /^America/.test(tz) ? 38 : /^Asia/.test(tz) ? 32 : /^Australia/.test(tz) ? -28 : /^Africa/.test(tz) ? 5 : 40;
+  return tz === "Europe/Paris" ? { lat: 46.6, lon: 2.4 } : { lat, lon };
+}
+const WORLD = [["New York", "America/New_York"], ["Londres", "Europe/London"], ["Tokyo", "Asia/Tokyo"], ["Sydney", "Australia/Sydney"]];
+function timeView() {
+  const me = myPlace();
+  const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").split("/").pop().replace(/_/g, " ");
+  viewBody.innerHTML = `<div class="tm-top"><span class="tm-place">${esc(tz)}</span>
+      <div class="tm-clock"><b id="tmHM"></b><span id="tmS"></span></div><div class="tm-date" id="tmDate"></div></div>
+    <div class="earth"><canvas id="earthCv" width="176" height="176" aria-label="La Terre en ce moment"></canvas></div>
+    <p class="tm-state" id="tmState"></p><p class="tm-sun" id="tmSun"></p>
+    <div class="tm-world" id="tmWorld"></div>`;
+  viewEl.style.background = "radial-gradient(90% 60% at 50% 45%, #14285a 0%, #070d22 60%, #03060f 100%)";
+  let lastEarth = 0;
+  const tick = () => {
+    const now = new Date();
+    document.getElementById("tmHM").textContent = now.toLocaleTimeString(LOC(), { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("tmS").textContent = ":" + String(now.getSeconds()).padStart(2, "0");
+    document.getElementById("tmDate").textContent = cap1(now.toLocaleDateString(LOC(), { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+    if (now - lastEarth > 30000) {
+      lastEarth = +now;
+      drawEarth(document.getElementById("earthCv"), Math.max(-55, Math.min(55, me.lat * 0.85)), me.lon, now, me);
+      const s = sunPos(now), rad = Math.PI / 180;
+      const light = Math.sin(me.lat * rad) * Math.sin(s.decl) + Math.cos(me.lat * rad) * Math.cos(s.decl) * Math.cos((me.lon - s.lon) * rad);
+      const st = light > 0.1 ? ["Il fait jour chez toi.", "content"] : light > -0.1 ? ["Le soleil est à l'horizon chez toi.", "emerveille"] : ["Il fait nuit chez toi.", "endormi"];
+      document.getElementById("tmState").textContent = st[0];
+      viewMate(now.getHours() < 6 || now.getHours() >= 23 ? "endormi" : st[1]);
+      const sun = sunTimes(me.lat, me.lon, now);
+      const hm = d => d.toLocaleTimeString(LOC(), { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("tmSun").textContent = sun ? "Lever " + hm(sun.rise) + " · Coucher " + hm(sun.set) : "";
+    }
+    document.getElementById("tmWorld").innerHTML = WORLD.map(([n, z]) => {
+      let t = "", h = 12;
+      try { t = now.toLocaleTimeString(LOC(), { hour: "2-digit", minute: "2-digit", timeZone: z }); h = +now.toLocaleTimeString("en-GB", { hour: "2-digit", hour12: false, timeZone: z }).slice(0, 2); } catch (e) {}
+      return `<div><span>${esc(n)}</span><b>${esc(t)}</b><i>${h >= 7 && h < 20 ? "☀" : "☾"}</i></div>`;
+    }).join("");
+  };
+  tick();
+  viewTimer = setInterval(tick, 1000);
+}
+
+/* ---------- tutoriel : débloquer l'accès à la musique ---------- */
+let musicAsked = false;
+document.getElementById("tutoAccess").addEventListener("click", () => { musicAsked = true; if (NATIVE) NATIVE.openMusicAccess(); });
+document.getElementById("tutoAppInfo").addEventListener("click", () => { musicAsked = true; if (NATIVE && NATIVE.openAppInfo) NATIVE.openAppInfo(); });
+/** Au retour dans l'appli : l'autorisation a-t-elle été donnée ? Sinon, on montre le tutoriel. */
+function checkMusicAccess() {
+  if (!musicAsked || !NATIVE || !NATIVE.musicAccessGranted) return;
+  musicAsked = false;
+  if (NATIVE.musicAccessGranted()) {
+    speak([{ text: "Merci ! Maintenant, je vois ta musique. Lance un morceau et regarde-moi !", mood: "musique" }]);
+  } else {
+    openSheet(); menuGo("music");
+    setTimeout(() => { const t = document.getElementById("musicTuto"); if (t) t.scrollIntoView({ block: "start", behavior: "smooth" }); }, 250);
+    speak([{ text: "On dirait que ton téléphone a bloqué l'autorisation. Suis le tutoriel, je t'explique tout !", mood: "reflechit" }]);
+  }
+}
+
+/* ---------- premier lancement : une suite logique ---------- */
+// 1. langue → 2. confidentialité → 3. apparition et bonjour → 4. visite guidée
+// → 5. cadeau de bienvenue → 6. notifications (expliquées) → 7. cerveau → 8. prénom
+let onboardPending = false;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function sayWait(lines) {
+  speak(lines);
+  await sleep(400);
+  for (let k = 0; k < 120 && (speech.state !== "idle" || busy); k++) await sleep(250);
+  await sleep(300);
+}
+async function waitHidden(el) { while (!el.hidden) await sleep(300); }
+function waitNotifPerm() {
+  return new Promise(res => {
+    const t = setTimeout(() => { window.onNotifPerm = null; res(false); }, 30000);
+    window.onNotifPerm = ok => { clearTimeout(t); window.onNotifPerm = null; res(!!ok); };
+  });
+}
+async function runOnboarding() {
+  if (!onboardPending) return;
+  onboardPending = false;
+  await sleep(500);
+  // cadeau de bienvenue
+  const bonus = NATIVE && NATIVE.dailyBonus ? NATIVE.dailyBonus() : 0;
+  refreshCoins();
+  await sayWait([{ text: "Cadeau de bienvenue : " + ((S.shop.coins || 0)) + " pièces pour bien démarrer !", mood: "emerveille" }]);
+  if (bonus) coinPop(0);
+  // notifications, en expliquant à quoi elles servent
+  if (NATIVE && NATIVE.requestNotifications) {
+    await sayWait([{ text: "Je peux t'envoyer des petits messages : tes réveils, la batterie faible, et parfois de mes nouvelles.", mood: "reflechit" }]);
+    const yes = await confirmBox({ title: "Notifications", text: "Autoriser Canelle AI à t'envoyer des notifications ? Tu pourras changer ça quand tu veux dans les réglages.", ok: "Autoriser", cancel: "Plus tard" });
+    if (yes) {
+      NATIVE.requestNotifications();
+      const ok = await waitNotifPerm();
+      await sayWait([ok ? { text: "Super, merci !", mood: "content" } : { text: "Pas de souci, tu pourras les activer plus tard.", mood: "neutre" }]);
+    }
+  }
+  // cerveau
+  const st = brainStatus();
+  if (NATIVE && st && (st.state === "absent" || st.state === "weak")) {
+    await sayWait([{ text: "Dernière chose : pour discuter de tout, il me faut mon cerveau. Il se télécharge une seule fois, de préférence en Wi-Fi.", mood: "reflechit" }]);
+    if (NATIVE.setBrainIntroShown) NATIVE.setBrainIntroShown();
+    openBrain();
+    await waitHidden(brainSheet);
+    await sleep(400);
+  }
+  // prénom
+  speak([{ text: "Et toi, tu t'appelles comment ?", mood: "content" }]);
+}
+
+document.getElementById("musicAccessBtn").addEventListener("click", () => { musicAsked = true; });
 function greet() {
   const st = brainStatus();
   if (st) S.hasModel = HAS.includes(st.state);
@@ -5316,8 +5938,7 @@ function greet() {
       { text: "Je me suis fait un coin douillet dans ton téléphone.", mood: "clin" },
       { text: "Tu peux me caresser la tête ou toucher mon nez, tu verras !", mood: "amoureux" }
     ];
-    lines.push(!NATIVE || S.hasModel ? { text: "Et toi, tu t'appelles comment ?", mood: "neutre" }
-      : { text: "Pour discuter de tout, je dois d'abord télécharger mon cerveau.", mood: "reflechit" });
+    // la suite (pièces, notifications, cerveau, prénom) vient après la visite guidée : voir runOnboarding()
   } else if (h < 5) {
     lines = [{ text: "Oh… tu es encore debout" + who + " ?", mood: "surpris" }].concat(nightLines(h).slice(1));
     lastNight = Date.now();
@@ -5343,7 +5964,7 @@ function greet() {
     if (st && st.state === "downloading") lines.push({ text: "Mon cerveau se télécharge : " + Math.floor(100 * st.done / (st.total || 1)) + " %.", mood: "content" });
     else if (st && !S.hasModel && st.state !== "weak") lines.push({ text: "Mon cerveau n'est pas encore installé : menu, puis « Mon cerveau ».", mood: "reflechit" });
   }
-  const bonus = NATIVE && NATIVE.dailyBonus && !locked ? NATIVE.dailyBonus() : 0;
+  const bonus = NATIVE && NATIVE.dailyBonus && !locked && S.visits ? NATIVE.dailyBonus() : 0;
   if (bonus) {
     refreshCoins();
     const streak = S.shop.streak || 1;
@@ -5362,7 +5983,7 @@ function greet() {
   ready = true; lastActive = Date.now();
   if (st && S.hasModel) NATIVE.warmUp();
   pollBrain();
-  if (st && st.state === "absent" && !NATIVE.brainIntroShown()) {
+  if (st && st.state === "absent" && !NATIVE.brainIntroShown() && !onboardPending) {
     setTimeout(() => {
       if (busy || !sheet.hidden || !brainSheet.hidden) return;
       NATIVE.setBrainIntroShown();
@@ -5381,6 +6002,7 @@ function boot() {
   refreshCoins(); renderProfile();
   if (LANG !== "fr") relocalize();
   const first = !S.visits;
+  onboardPending = first;
   if (first) { face.reveal = 0; shadowEl.classList.add("gone"); }
   render();
   scheduleBlink(); scheduleLook();

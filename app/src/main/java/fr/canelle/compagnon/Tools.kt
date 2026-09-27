@@ -163,6 +163,74 @@ class Tools(private val ctx: Context, private val foreground: Boolean, private v
         }
     }
 
+    /**
+     * Météo complète pour l'écran météo : maintenant, heure par heure (24 h), 10 jours, lever et coucher du soleil.
+     * Les textes (ciel…) sont en français ; la page les traduit.
+     */
+    suspend fun weatherFull(city: String): JSONObject {
+        val place = resolve(city) ?: return JSONObject().put("erreur", if (city.isBlank()) "position" else "ville")
+        return withContext(Dispatchers.IO) {
+            val base = "https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}&timezone=auto"
+            val j = JSONObject(Net.get(base + "&current=$CURRENT_VARS" +
+                "&hourly=temperature_2m,weather_code,precipitation_probability,is_day" +
+                "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset" +
+                "&forecast_days=10"))
+            var cur = j.getJSONObject("current")
+            var source = "Open-Meteo"
+            if (inAromeZone(place.lat, place.lon)) {
+                runCatching {
+                    val a = JSONObject(Net.get(base + "&current=$CURRENT_VARS&models=meteofrance_seamless&forecast_days=1"))
+                    val c = a.getJSONObject("current")
+                    if (!c.optDouble("temperature_2m").isNaN()) {
+                        cur = c
+                        source = "Météo-France (AROME)"
+                    }
+                }
+            }
+            val code = realCode(cur)
+            val now = JSONObject()
+                .num("t", cur.optDouble("temperature_2m"))
+                .num("feel", cur.optDouble("apparent_temperature"))
+                .num("humidity", cur.optDouble("relative_humidity_2m"))
+                .num("wind", cur.optDouble("wind_speed_10m"))
+                .put("code", code).put("sky", wmo(code))
+                .put("day", cur.optInt("is_day", 1) == 1)
+                .put("time", cur.optString("time"))
+            // heure par heure : les 24 prochaines heures à partir de l'heure actuelle
+            val h = j.getJSONObject("hourly")
+            val times = h.getJSONArray("time")
+            val nowHour = cur.optString("time").take(13) // AAAA-MM-JJTHH
+            var start = 0
+            for (i in 0 until times.length()) if (times.getString(i).take(13) >= nowHour) { start = i; break }
+            val hours = JSONArray()
+            for (i in start until minOf(times.length(), start + 24)) {
+                hours.put(JSONObject()
+                    .put("time", times.getString(i))
+                    .num("t", h.getJSONArray("temperature_2m").optDouble(i))
+                    .put("code", h.getJSONArray("weather_code").optInt(i, -1))
+                    .num("rain", h.getJSONArray("precipitation_probability").optDouble(i))
+                    .put("day", h.getJSONArray("is_day").optInt(i, 1) == 1))
+            }
+            val d = j.getJSONObject("daily")
+            val dates = d.getJSONArray("time")
+            val days = JSONArray()
+            for (i in 0 until dates.length()) {
+                val dc = d.getJSONArray("weather_code").optInt(i, -1)
+                days.put(JSONObject()
+                    .put("date", dates.getString(i))
+                    .put("code", dc).put("sky", wmo(dc))
+                    .num("min", d.getJSONArray("temperature_2m_min").optDouble(i))
+                    .num("max", d.getJSONArray("temperature_2m_max").optDouble(i))
+                    .num("rain", d.getJSONArray("precipitation_probability_max").optDouble(i))
+                    .put("sunrise", d.getJSONArray("sunrise").optString(i))
+                    .put("sunset", d.getJSONArray("sunset").optString(i)))
+            }
+            JSONObject().put("place", place.label).put("lat", place.lat).put("lon", place.lon)
+                .put("now", now).put("hours", hours).put("days", days).put("source", source)
+                .put("utcOffset", j.optInt("utc_offset_seconds", 0))
+        }
+    }
+
     private fun wmo(code: Int): String = when (code) {
         0 -> "ciel dégagé"
         1 -> "plutôt dégagé"
