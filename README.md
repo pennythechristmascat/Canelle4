@@ -1,4 +1,4 @@
-# Canelle AI — compagnon de poche (Android) · V5.10.1 · Early Access
+# Canelle AI — compagnon de poche (Android) · V5.10.2 · Early Access
 
 Canelle est un petit panda roux en pixels qui vit dans ton téléphone. Il discute avec toi, prend de tes nouvelles et sait se servir du téléphone. **Tout fonctionne sur le téléphone** : pas de clé API, pas de compte, pas d'abonnement.
 
@@ -175,13 +175,16 @@ Au premier lancement, Canelle regarde la mémoire du téléphone et choisit son 
 | Téléphone | Cerveau |
 |---|---|
 | 12 Go de mémoire ou plus | Gemma 4 E4B (3,7 Go), le plus intelligent |
-| 8 Go | Gemma 4 E2B (2,6 Go) par défaut ; le E4B peut être choisi dans « Mon cerveau » |
-| 6 Go | Gemma 4 E2B (2,6 Go), le meilleur compromis |
-| Moins de 6 Go | Pas de cerveau : Canelle l'explique, et tout le reste fonctionne (batterie, météo, réveils, musique, jeux…) |
+| 8 Go | Gemma 4 E2B (2,6 Go) par défaut ; le E4B peut être choisi (« Juste ») |
+| 6 Go | Gemma 4 E2B ; le E4B est « Risqué » |
+| 4 Go | Gemma 4 E2B, plus lent (« Juste ») ; le **E4B est impossible** : il n'est pas proposé, et s'il était déjà installé, il n'est plus lancé (retour au E2B proposé) |
+| Moins de 4 Go | Pas de cerveau conseillé : tout le reste fonctionne (on peut quand même essayer le E2B, « Risqué ») |
+
+Retour d'un testeur (Samsung Galaxy A15, 4 Go, Android 16) : le E2B fonctionne, plus lentement ; le E4B fait fermer l'appli par manque de mémoire à chaque chargement.
 
 - On peut changer de cerveau dans « Mon cerveau » (« Passer au cerveau E4B » / « Revenir au cerveau E2B ») : l'ancien reste utilisable pendant le téléchargement du nouveau, puis il est supprimé.
 - Chaque cerveau a son propre garde-fou : s'il fait fermer l'appli, Canelle passe au niveau plus léger (voir plus bas), et un E4B en pause de sécurité propose de revenir au E2B.
-- Les seuils sont réglables dans `LocalModel.kt` (`RAM_E4B_AUTO`, `RAM_E4B_POSSIBLE`, `RAM_E2B_MIN`).
+- Les seuils sont réglables dans `LocalModel.kt` (`RAM_E4B_AUTO`, `RAM_E4B_POSSIBLE`, `RAM_E4B_MIN`, `RAM_E2B_OK`, `RAM_E2B_MIN`).
 - Le gérant et les développeurs peuvent forcer le téléchargement sur un téléphone jugé trop faible, pour tester.
 - Les deux modèles sont sous licence Apache 2.0 (Google, via LiteRT).
 

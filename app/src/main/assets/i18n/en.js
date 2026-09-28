@@ -1614,5 +1614,18 @@
 "Premier lancement (suite)": "First launch (next steps)",
 "en pixels.": "made of pixels.",
 "Capacité d'origine": "Design capacity",
-"Capacité (estimée)": "Capacity (estimated)"
+"Capacité (estimée)": "Capacity (estimated)",
+"Le meilleur compromis. Fonctionne dès 4 Go de mémoire (plus lentement sous 6 Go).": "The best balance. Works from 4 GB of memory (slower under 6 GB).",
+"Le plus intelligent. Conseillé à partir de 12 Go de mémoire, impossible sous 6 Go.": "The smartest. Recommended from 12 GB of memory, impossible under 6 GB.",
+"Trop lourd": "Too heavy",
+"Ce téléphone n'a pas assez de mémoire pour ce cerveau : il planterait à coup sûr.": "This phone doesn't have enough memory for this brain: it would definitely crash.",
+"Cerveau trop lourd": "Brain too heavy",
+"Go de mémoire :": "GB of memory:",
+"ne peut pas y tenir, l'application planterait à coup sûr. Garde le cerveau E2B.": "can't fit, the app would definitely crash. Keep the E2B brain.",
+"Ce cerveau est trop lourd pour ton téléphone.": "This brain is too heavy for your phone.",
+"Garde le cerveau E2B : il fonctionne dès 4 Go de mémoire.": "Keep the E2B brain: it works from 4 GB of memory.",
+"Go de mémoire, et mon cerveau a besoin d'un téléphone de 4 Go au moins. Sans cerveau, la batterie, la météo, les réveils, la musique, les jeux et nos petites phrases marchent quand même. Tu peux quand même en essayer un ci-dessous, mais l'application risque de planter.": "GB of memory, and my brain needs a phone with at least 4 GB. Without a brain, the battery, weather, alarms, music, games and our little chats still work. You can still try one below, but the app may crash.",
+"Ce téléphone n'a pas assez de mémoire pour ce cerveau.": "This phone doesn't have enough memory for this brain.",
+"Avec": "With",
+"Go de mémoire, le cerveau E4B ne peut pas fonctionner : il ferait planter l'application à chaque fois. Reviens au cerveau E2B, qui fonctionne dès 4 Go.": "GB of memory, the E4B brain can't work: it would crash the app every time. Go back to the E2B brain, which works from 4 GB."
 };

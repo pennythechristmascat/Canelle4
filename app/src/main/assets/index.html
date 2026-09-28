@@ -294,6 +294,8 @@ select.field{appearance:auto}
 .model small{grid-column:1;color:var(--phosphor-dim);font-weight:700;line-height:1.35}
 .model .btn{grid-row:1 / 3;grid-column:2;margin:0}
 .fit{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font-size:.7rem;font-weight:800;vertical-align:middle}
+.model .btn:disabled{opacity:.35;cursor:not-allowed}
+.fit.impossible{background:rgba(255,107,90,.12);color:#ff8a7a;text-decoration:line-through}
 .fit.ok{background:rgba(126,226,154,.2);color:#7ee29a}.fit.juste{background:rgba(255,209,102,.2);color:#ffd166}.fit.risque{background:rgba(255,107,90,.2);color:#ff8a7a}
 
 /* ---------- écrans plein écran : météo, batterie, heure ---------- */
@@ -5163,6 +5165,7 @@ const MODEL_INFO = {
 };
 function downloadError(err, model) {
   if (err === "place") { brainStateEl.textContent = "Pas assez de place sur le téléphone."; brainDetail.textContent = "Il faut environ " + (MODEL_INFO[model] || MODEL_INFO.e2b).free + " libres. Libère de la place, puis réessaie."; return true; }
+  if (err === "impossible") { brainStateEl.textContent = "Ce cerveau est trop lourd pour ton téléphone."; brainDetail.textContent = "Garde le cerveau E2B : il fonctionne dès 4 Go de mémoire."; return true; }
   if (err === "faible") { brainStateEl.textContent = "Ton téléphone n'a pas assez de mémoire pour mon cerveau."; brainDetail.textContent = "Toutes mes autres fonctions marchent quand même."; return true; }
   if (err) { brainStateEl.textContent = "Impossible de lancer le téléchargement."; brainDetail.textContent = "Le gestionnaire de téléchargements d'Android est peut-être désactivé."; return true; }
   return false;
@@ -5191,7 +5194,7 @@ function renderBrain(st) {
   const pct = prog.total ? Math.min(100, Math.floor(100 * prog.done / prog.total)) : 0;
   brainTrack.hidden = !(st.state === "downloading" || st.state === "paused" || (sw && (sw.state === "downloading" || sw.state === "paused")));
   brainFill.style.width = pct + "%";
-  const low = st.ramGb && st.ramGb < 7.2 && st.recommended !== "none" && st.model !== "e4b";
+  const low = st.ramGb && st.ramGb < 5.2 && st.recommended !== "none" && st.model !== "e4b";
   brainWarn.hidden = !low;
   if (low) brainWarn.textContent = "Ton téléphone a " + st.ramGb.toFixed(1).replace(".", ",") + " Go de mémoire : c'est juste assez. Je répondrai plus lentement, et en mode économe si besoin.";
   mobileRow.hidden = !["absent", "failed", "paused"].includes(st.state) && !st.canUpgrade && !st.canDowngrade;
@@ -5209,7 +5212,7 @@ function renderBrain(st) {
     }
     case "weak":
       title = "Mon cerveau est trop lourd pour ce téléphone.";
-      detail = "Ton téléphone a " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, et mes cerveaux en demandent au moins 6. " +
+      detail = "Ton téléphone a " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, et mon cerveau a besoin d'un téléphone de 4 Go au moins. " +
         "Sans cerveau, la batterie, la météo, les réveils, la musique, les jeux et nos petites phrases marchent quand même. Tu peux quand même en essayer un ci-dessous, mais l'application risque de planter.";
       showModels = true;
       break;
@@ -5251,6 +5254,12 @@ function renderBrain(st) {
       btns = [["Réessayer", true, wakeBrain]];
       break;
     case "blocked":
+      if (st.model === "e4b" && st.fitE4B === "impossible") {
+        title = "Ce cerveau est trop lourd pour ton téléphone.";
+        detail = "Avec " + (st.ramGb || 0).toFixed(1).replace(".", ",") + " Go de mémoire, le cerveau E4B ne peut pas fonctionner : il ferait planter l'application à chaque fois. Reviens au cerveau E2B, qui fonctionne dès 4 Go.";
+        btns = [];
+        break;
+      }
       title = st.risky ? "Cerveau désactivé pour éviter les plantages." : "Mon cerveau est en pause de sécurité.";
       detail = st.risky
         ? "Ce cerveau est trop lourd pour ton téléphone : il a fait planter l'application. Je l'ai désactivé tout de suite pour que ça ne recommence pas à chaque ouverture. Tout le reste fonctionne."
@@ -5287,10 +5296,10 @@ function renderBrain(st) {
   if (rep0) document.getElementById("brainReportTxt").textContent = rep0;
 }
 const MODELS = {
-  e2b: { label: "Gemma 4 E2B", info: "Le meilleur compromis. Conseillé à partir de 6 Go de mémoire.", bytes: "e2bBytes" },
-  e4b: { label: "Gemma 4 E4B", info: "Le plus intelligent. Conseillé à partir de 12 Go de mémoire.", bytes: "e4bBytes" }
+  e2b: { label: "Gemma 4 E2B", info: "Le meilleur compromis. Fonctionne dès 4 Go de mémoire (plus lentement sous 6 Go).", bytes: "e2bBytes" },
+  e4b: { label: "Gemma 4 E4B", info: "Le plus intelligent. Conseillé à partir de 12 Go de mémoire, impossible sous 6 Go.", bytes: "e4bBytes" }
 };
-const FIT_LABEL = { ok: "Conseillé", juste: "Juste", risque: "Risqué" };
+const FIT_LABEL = { ok: "Conseillé", juste: "Juste", risque: "Risqué", impossible: "Trop lourd" };
 function renderModels(st, show) {
   const box = document.getElementById("brainModels");
   box.hidden = !show;
@@ -5304,7 +5313,9 @@ function renderModels(st, show) {
     const b = document.createElement("b"); b.textContent = m.label + " · " + goN(st[m.bytes] || 0);
     const f = document.createElement("span"); f.className = "fit " + fit; f.textContent = FIT_LABEL[fit]; b.append(f);
     const sm = document.createElement("small"); sm.textContent = m.info;
-    d.append(b, sm, button("Choisir", fit === "ok", () => chooseModel(id)));
+    const pick = button("Choisir", fit === "ok", () => chooseModel(id));
+    if (fit === "impossible") { pick.disabled = true; sm.textContent = "Ce téléphone n'a pas assez de mémoire pour ce cerveau : il planterait à coup sûr."; }
+    d.append(b, sm, pick);
     return d;
   }));
 }
@@ -5313,6 +5324,10 @@ async function chooseModel(id) {
   const st = lastBrain || {};
   const fit = st[id === "e2b" ? "fitE2B" : "fitE4B"] || "ok";
   const ram = (st.ramGb || 0).toFixed(1).replace(".", ",");
+  if (fit === "impossible") {
+    await confirmBox({ title: "Cerveau trop lourd", text: "Ton téléphone a " + ram + " Go de mémoire : " + MODELS[id].label + " ne peut pas y tenir, l'application planterait à coup sûr. Garde le cerveau E2B.", ok: "D'accord", cancel: false });
+    return;
+  }
   if (fit !== "ok") {
     const yes = await confirmBox({
       title: "Attention : risque de plantage",

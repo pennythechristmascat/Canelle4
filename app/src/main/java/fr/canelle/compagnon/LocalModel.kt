@@ -56,11 +56,19 @@ object LocalModel {
     const val RAM_E4B_AUTO = 10.5
     /** À partir d'ici (téléphones de 8 Go), le cerveau E4B peut être choisi à la main. */
     const val RAM_E4B_POSSIBLE = 7.2
-    /** En dessous (moins de 6 Go), le cerveau ne tient pas : Canelle fonctionne sans lui. */
-    const val RAM_E2B_MIN = 5.2
+    /** En dessous (téléphones de moins de 6 Go), le cerveau E4B ne peut pas tenir : il n'est pas proposé. */
+    const val RAM_E4B_MIN = 5.5
+    /** À partir d'ici (téléphones de 6 Go), le cerveau E2B tourne à l'aise. */
+    const val RAM_E2B_OK = 5.2
+    /**
+     * En dessous (téléphones de moins de 4 Go), le cerveau E2B ne tient pas : Canelle fonctionne sans lui.
+     * Retour d'un testeur : le E2B fonctionne sur un Galaxy A15 (4 Go, annoncé 3,7 Go), plus lentement.
+     */
+    const val RAM_E2B_MIN = 3.4
 
     /**
-     * Ce cerveau tient-il dans ce téléphone ? "ok", "juste" (possible mais serré) ou "risque" (l'appli risque de planter).
+     * Ce cerveau tient-il dans ce téléphone ? "ok", "juste" (possible mais serré ou lent),
+     * "risque" (l'appli risque de planter) ou "impossible" (il ne peut pas tenir : on ne le propose pas).
      */
     fun fit(ctx: Context, id: String): String {
         val ram = ramGb(ctx)
@@ -68,9 +76,10 @@ object LocalModel {
         return if (id == E4B.id) when {
             ram >= RAM_E4B_AUTO -> "ok"
             ram >= RAM_E4B_POSSIBLE -> "juste"
-            else -> "risque"
+            ram >= RAM_E4B_MIN -> "risque"
+            else -> "impossible"
         } else when {
-            ram >= RAM_E4B_POSSIBLE -> "ok"
+            ram >= RAM_E2B_OK -> "ok"
             ram >= RAM_E2B_MIN -> "juste"
             else -> "risque"
         }
@@ -179,6 +188,7 @@ object LocalModel {
         val target = modelId.ifBlank { if (Store.modelId.isNotBlank() && !isDownloaded(ctx)) Store.modelId else rec }
         if (target == "none" && !force) return "faible"
         val sp = spec(if (target == "none") E2B.id else target)
+        if (fit(ctx, sp.id) == "impossible") return "impossible"
         if (sp.id == Store.modelId && isDownloaded(ctx)) return null
         val dm = ctx.getSystemService(DownloadManager::class.java) ?: return "indisponible"
         val current = Store.downloadId
@@ -303,7 +313,7 @@ object LocalModel {
             .put("e2bBytes", E2B.approxBytes)
             .put("e4bBytes", E4B.approxBytes)
             // passer au cerveau E4B : possible à partir de 8 Go, si le E2B est installé
-            .put("canUpgrade", installed && cur.id == E2B.id)
+            .put("canUpgrade", installed && cur.id == E2B.id && fit(ctx, E4B.id) != "impossible")
             .put("canDowngrade", installed && cur.id == E4B.id)
             .put("fitE2B", fit(ctx, E2B.id))
             .put("fitE4B", fit(ctx, E4B.id))
@@ -380,6 +390,13 @@ object LocalModel {
         releaseJob?.cancel()
         if (engine != null) return@withContext true
         if (!isDownloaded(ctx)) return@withContext false
+        if (fit(ctx, current(ctx).id) == "impossible") {
+            // il planterait à coup sûr : on ne le lance pas, et l'écran « Mon cerveau » propose de revenir au E2B
+            Store.riskyModel = true
+            Store.brainTier = TIER_BLOCKED
+            lastError = "Ce téléphone n'a pas assez de mémoire pour ce cerveau."
+            return@withContext false
+        }
         checkPreviousCrash()
         var tier = maxOf(Store.brainTier, if (Store.useGpu && !Store.gpuBroken) TIER_GPU else TIER_CPU)
         if (tier >= TIER_BLOCKED) {
